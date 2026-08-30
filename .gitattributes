@@ -1,0 +1,4 @@
+# 개행은 저장소 안에서 LF 로 통일한다. Windows 에서 편집하고 WSL 에서 읽는 일이
+# 섞이므로 core.autocrlf 설정과 무관하게 못 박아 둔다.
+* text=auto eol=lf
+*.md text eol=lf
