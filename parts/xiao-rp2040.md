@@ -118,6 +118,11 @@ RP2040에는 PIO(Programmable I/O) 스테이트머신이 있다.
 플래시 2 MB 전량을 [backups/xiao-rp2040/](../backups/xiao-rp2040/)에 보관한다.
 채취 조건, 검증 결과, 복구 절차, 스펙표의 W25Q080 판정 근거가 그 폴더의 README에 있다.
 
+## 이 보드로 하는 작업
+
+- [rp2040/](../rp2040/). SDK 를 링크하지 않는 베어메탈 펌웨어. 빌드 트리라
+  이 머신에서만 빌드한다.
+
 ## 쓰이는 기기
 
 - [devices/tkl-keyboard.md](../devices/tkl-keyboard.md). 최종품은 베어 RP2040 QFN-56 칩이므로
