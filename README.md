@@ -1,6 +1,6 @@
 # 하드웨어
 
-> 개인 하드웨어 프로젝트의 진입점. 최종 갱신: 2026-08-30
+> 개인 하드웨어 프로젝트의 진입점. 최종 갱신: 2026-08-31
 
 ## 폴더 규칙
 
@@ -91,8 +91,10 @@ PB2 브링업 1f -> 로드맵 4단계 -> 오디오 플레이어 -> 이펙터
 |---|---|---|
 | PB2 브링업 13장, `roadmap.md`, `applications.md` | [GitHub](https://github.com/tolelom/pocket-beagle2). 작업 사본은 WSL `~/pocket-beagle2/` | 저장소가 곧 빌드 트리라 WSL에 있어야 한다. 아래 참조 |
 | PB2 재현 트랙 계획 | WSL `~/pb2-repro/PLAN.md` | 작업장 로컬 |
-| 서버 인프라 (Mac Mini M2, M4) | `../docs/server-migration.md` | 하드웨어가 아니라 인프라 |
-| 소프트웨어 프로젝트 인덱스 | `../projects/docs/README.md` | 별도 계층 |
+| 서버 인프라 (Mac Mini M2, M4) | Windows 데스크톱 `E:\dev\docs\server-migration.md` | 하드웨어가 아니라 인프라 |
+| 소프트웨어 프로젝트 인덱스 | Windows 데스크톱 `E:\dev\projects\docs\README.md` | 별도 계층 |
+
+이 저장소는 머신 두 대에 걸쳐 있다. 저장소 밖은 상대경로로 적지 않고 머신과 전체 경로를 적는다.
 
 ### PB2 저장소를 여기로 합치지 않는 이유
 
@@ -113,3 +115,4 @@ PB2 브링업 1f -> 로드맵 4단계 -> 오디오 플레이어 -> 이펙터
 합치려면 `hardware/`를 WSL로 옮기는 방향뿐인데, 그러면 문서 편집이 매번 `\\wsl$` 경유가 된다.
 얻는 것은 진입점 통합 하나이고 그것은 링크로 해결된다.
 
+발행은 그쪽에서 돌아간다. 저장소 깊이가 바뀌면 그쪽에서 깨진다.
