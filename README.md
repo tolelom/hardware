@@ -20,7 +20,7 @@
 | 기기 | 부품 | 상태 | 막는 것 | 갱신 |
 |---|---|---|---|---|
 | [TKL 87키 키보드](devices/tkl-keyboard.md) | RP2040 베어칩 | 멈춤 | 케이스 DXF 도면 | 08-30 |
-| [분리형 무선 컨트롤러](devices/split-controller.md) | XIAO nRF52840 ×2 | 미착수 | 없음 | 08-30 |
+| [분리형 무선 컨트롤러](devices/split-controller.md) | XIAO nRF52840 ×2 | 미착수 | 없음 | 08-31 |
 | [휴대형 오디오 플레이어](devices/audio-player.md) | PocketBeagle 2 | 미착수 | I2S DAC 미보유 | 08-30 |
 | PB2 브링업 (학습) | PocketBeagle 2 | 진행 중 (1e까지) | 없음 | 08-30 |
 | 오디오 이펙터 | PocketBeagle 2 | 계획만 | 플레이어 선행 | 08-30 |
@@ -35,9 +35,9 @@
 | 부품 | 보유 | 배정 | 실물 검증 | 갱신 |
 |---|---|---|---|---|
 | [PocketBeagle 2](parts/pocketbeagle2.md) | 1 | 브링업, 오디오 플레이어 | 상당함 | 08-30 |
-| [XIAO nRF52840 / Sense](parts/xiao-nrf52840.md) | Sense 1, 논-Sense 1 | 컨트롤러 | 없음 | 08-30 |
+| [XIAO nRF52840 / Sense](parts/xiao-nrf52840.md) | Sense 1, 논-Sense 1 | 컨트롤러 | 부트로더 진입까지 | 08-31 |
 | [XIAO nRF54LM20A / Sense](parts/xiao-nrf54lm20.md) | 입고 예정 (각 1) | 컨트롤러 (도착 후 판단) | 없음 | 08-30 |
-| [XIAO RP2040](parts/xiao-rp2040.md) | 개수 미집계 | 키보드 펌웨어 검증 | 없음 | 08-30 |
+| [XIAO RP2040](parts/xiao-rp2040.md) | 개수 미집계 | 키보드 펌웨어 검증 | 부트로더 진입까지 | 08-31 |
 | [RPi 3B+](parts/rpi-3bplus.md) | 1 | 미정 | 없음 | 08-30 |
 | [Arduino Uno 클론](parts/arduino-uno.md) | 1 | 배정 없음 | - | 08-30 |
 
