@@ -56,12 +56,13 @@ flash id는 `picotool info -a`가 보고하는 값이다. 부트로더 모드의
 | Pico SDK (C/C++) | SDK 2.3.0 클론으로 boot2 레퍼런스 빌드까지 확인. 보드에 굽는 것은 확인 필요 |
 | QMK / Vial | 확인 필요. RP2040은 QMK 공식 지원 플랫폼이지만 XIAO 보드 정의 유무는 확인 안 함 |
 
-호스트 도구는 `arm-none-eabi-gcc` 13.2, `cmake` 3.31, `gdb-multiarch` 15.1,
-`picotool` 2.3.0(`~/.local/bin`)이 갖춰져 있다. `openocd`는 미설치다.
+호스트 도구는 Ubuntu에 갖춰져 있다. `arm-none-eabi-gcc` 13.2, `cmake` 3.31,
+`gdb-multiarch` 15.1, `picotool` 2.3.0(`~/.local/bin`)이다. `openocd`는 미설치다.
+Windows 데스크톱의 WSL 두 distro에는 없다. 2026-08-31에 확인했다.
 
 ## USB 식별과 부트로더
 
-보드를 Ubuntu 호스트에 연결해 확인했다.
+보드를 Ubuntu에 연결해 확인했다.
 
 | 모드 | USB ID | 인터페이스 | 저장장치 |
 |---|---|---|---|
@@ -144,8 +145,8 @@ GPIO12의 WS2812가 유력한 대상이다. 대조는 안 했다.
 
 ## 이 보드로 하는 작업
 
-- [rp2040/](../rp2040/). SDK를 링크하지 않는 베어메탈 펌웨어. 빌드 트리라
-  이 머신에서만 빌드한다. 1단계(GPIO 직접 제어)까지 진행했다.
+- [rp2040/](../rp2040/). SDK를 링크하지 않는 베어메탈 펌웨어. 빌드 트리다.
+  툴체인과 보드가 Ubuntu에 있어 거기서만 빌드한다. 1단계(GPIO 직접 제어)까지 진행했다.
 
 ## 쓰이는 기기
 
