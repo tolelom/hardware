@@ -20,6 +20,6 @@ _start:
        점프해 들어오는 경로에서는 그 보장이 없어 여기서 다시 세운다. */
     ldr r0, = __stack_top
     mov sp, r0
-
+    bl main
 hang:
     b hang
