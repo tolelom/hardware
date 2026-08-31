@@ -2,3 +2,7 @@
 # 섞이므로 core.autocrlf 설정과 무관하게 못 박아 둔다.
 * text=auto eol=lf
 *.md text eol=lf
+
+# 바이너리는 개행 변환 대상이 아니다. text=auto 의 자동 판별에 기대지 않는다.
+*.bin -text
+*.uf2 -text
