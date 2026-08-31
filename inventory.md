@@ -15,9 +15,9 @@
 | 머신 | 사양 | 용도 |
 |---|---|---|
 | 메인 데스크톱 (Windows 11) | Ryzen 7 9800X3D / RAM 64GB / RTX 4080 SUPER | 주 개발기. WSL2 Ubuntu-22.04에서 PB2 빌드 |
-| MacBook Pro M1 Pro | RAM·저장 확인 필요 | |
-| Mac Mini M4 (서버) | RAM 16GB | 앱 + 리버스 프록시. Colima VM 9GB 할당 |
-| Mac Mini M2 (서버) | RAM 8GB | DB + Git + CI/CD + 모니터링 |
+| MacBook Pro M1 Pro | RAM 16GB / SSD 1TB | |
+| Mac Mini M4 (서버) | RAM 16GB / SSD 256GB | 앱 + 리버스 프록시. Colima VM 9GB 할당 |
+| Mac Mini M2 (서버) | RAM 8GB / SSD 256GB | DB + Git + CI/CD + 모니터링 |
 
 > 서버 2대의 역할 분담과 마이그레이션 계획은 Windows 데스크톱 `E:\dev\docs\server-migration.md`에 있다.
 > (`server-migration-v2.md`는 빈 파일이다.)
@@ -29,11 +29,11 @@
 | 보드 | 수량 | 비고 |
 |---|---|---|
 | [PocketBeagle 2 Rev A1](parts/pocketbeagle2.md) (TI AM6254) | 1 | 브링업 1a~1e 완료, 1f 미착수 |
-| [Seeed XIAO RP2040](parts/xiao-rp2040.md) | ? | 수량 확인 필요. 노출 GPIO 11. WiFi 없음 |
+| [Seeed XIAO RP2040](parts/xiao-rp2040.md) | 1 | 노출 GPIO 11. WiFi 없음 |
 | [Seeed XIAO nRF52840](parts/xiao-nrf52840.md) | 1 | 논-Sense |
 | [Seeed XIAO nRF52840 Sense](parts/xiao-nrf52840.md) | 1 | IMU(LSM6DS3TR-C) + PDM 마이크 |
-| [Seeed XIAO nRF54LM20A](parts/xiao-nrf54lm20.md) | 1 (입고 예정) | 기본 버전 |
-| [Seeed XIAO nRF54LM20A Sense](parts/xiao-nrf54lm20.md) | 1 (입고 예정) | GPIO 28(관통홀과 패드 혼합), BLE 6.0, nPM1300 PMIC |
+| [Seeed XIAO nRF54LM20A](parts/xiao-nrf54lm20.md) | 1 (도착 예정) | 기본 버전 |
+| [Seeed XIAO nRF54LM20A Sense](parts/xiao-nrf54lm20.md) | 1 (도착 예정) | GPIO 28(관통홀과 패드 혼합), BLE 6.0, nPM1300 PMIC |
 | [Arduino Uno 클론](parts/arduino-uno.md) | 1 | 프로젝트 배정 없음 |
 | [Raspberry Pi 3B+](parts/rpi-3bplus.md) | 1 | 용도 미정 |
 
@@ -142,3 +142,5 @@
 - 2026-08-30: 작업 공간 문체 규칙 적용. em dash 74건, "정본" 17건, 볼드 401건 제거.
 - 2026-08-31: 상태 칸을 걷어내고 보유는 수량 또는 있음·없음으로, 확인 못 한 값은
   비고의 "확인 필요"로 통일. 서버 문서 위치를 머신과 전체 경로로 적음.
+- 2026-08-31: 컴퓨팅 환경의 저장 용량 확정. XIAO RP2040 수량 1로 확정.
+  "입고 예정"을 "도착 예정"으로 통일.

@@ -36,8 +36,8 @@
 |---|---|---|---|---|
 | [PocketBeagle 2](parts/pocketbeagle2.md) | 1 | 브링업, 오디오 플레이어 | 상당함 | 08-30 |
 | [XIAO nRF52840 / Sense](parts/xiao-nrf52840.md) | Sense 1, 논-Sense 1 | 컨트롤러 | 부트로더 진입까지 | 08-31 |
-| [XIAO nRF54LM20A / Sense](parts/xiao-nrf54lm20.md) | 입고 예정 (각 1) | 컨트롤러 (도착 후 판단) | 없음 | 08-30 |
-| [XIAO RP2040](parts/xiao-rp2040.md) | 개수 미집계 | 키보드 펌웨어 검증 | 부트로더 진입까지 | 08-31 |
+| [XIAO nRF54LM20A / Sense](parts/xiao-nrf54lm20.md) | 도착 예정 (각 1) | 컨트롤러 (도착 후 판단) | 없음 | 08-31 |
+| [XIAO RP2040](parts/xiao-rp2040.md) | 1 | 키보드 펌웨어 검증 | 부트로더 진입까지 | 08-31 |
 | [RPi 3B+](parts/rpi-3bplus.md) | 1 | 미정 | 없음 | 08-30 |
 | [Arduino Uno 클론](parts/arduino-uno.md) | 1 | 배정 없음 | - | 08-30 |
 
