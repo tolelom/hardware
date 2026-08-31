@@ -33,7 +33,7 @@
 | [Seeed XIAO nRF52840](parts/xiao-nrf52840.md) | 1 | 논-Sense |
 | [Seeed XIAO nRF52840 Sense](parts/xiao-nrf52840.md) | 1 | IMU(LSM6DS3TR-C) + PDM 마이크 |
 | [Seeed XIAO nRF54LM20A](parts/xiao-nrf54lm20.md) | 1 (입고 예정) | 기본 버전 |
-| [Seeed XIAO nRF54LM20A Sense](parts/xiao-nrf54lm20.md) | 1 (입고 예정) | GPIO 28, BLE 6.0, nPM1300 PMIC |
+| [Seeed XIAO nRF54LM20A Sense](parts/xiao-nrf54lm20.md) | 1 (입고 예정) | GPIO 28(관통홀과 패드 혼합), BLE 6.0, nPM1300 PMIC |
 | [Arduino Uno 클론](parts/arduino-uno.md) | 1 | 프로젝트 배정 없음 |
 | [Raspberry Pi 3B+](parts/rpi-3bplus.md) | 1 | 용도 미정 |
 
