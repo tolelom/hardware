@@ -17,7 +17,10 @@ Pico SDK를 링크하지 않고 레지스터를 직접 다루는 펌웨어다. �
 | `ld/ram.ld` | SRAM `0x20000000` 배치. 벡터 테이블 맨 앞, bss 맨 뒤 |
 | `src/start.S` | 벡터 테이블 두 워드와 리셋 핸들러 |
 | `src/main.c` | 현재 단계의 본체 |
+| `src/clock.[ch]` | XOSC 기동과 PLL_SYS 125MHz 전환 |
+| `src/uart.[ch]` | UART0 초기화와 문자열 출력 |
 | `Makefile` | 빌드 4단계와 check, dump, load, clean |
+| `reference/` | 읽기용 참고 자료. SDK 의 boot2 소스와 출처·라이선스 |
 
 ## 빌드
 
