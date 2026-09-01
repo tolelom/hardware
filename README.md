@@ -10,6 +10,7 @@
 | `devices/` | 기기 계획서. 단계와 판정 기준 중심. 상세 설계는 링크 |
 | `backups/` | 보드에서 채취한 원본. 공장 출하 플래시 등 |
 | `rp2040/` | RP2040 베어메탈 펌웨어. 빌드 트리다. 툴체인과 보드가 Ubuntu에 있어 거기서만 빌드한다 |
+| `nrf52840/` | XIAO nRF52840 Sense CircuitPython 트랙. 빌드가 없어 Windows에서 진행한다 |
 | `inventory.md` | 보유 장비 목록 |
 
 확인된 것만 적는다. 안 해본 것은 "확인 필요", 모르는 것은 "모름"으로 남긴다.
@@ -26,6 +27,7 @@
 | [휴대형 오디오 플레이어](devices/audio-player.md) | PocketBeagle 2 | 멈춤 | 보류 결정 (09-01) | 09-01 |
 | PB2 브링업 (학습) | PocketBeagle 2 | 진행 중 (1e까지) | 없음 | 08-30 |
 | [RP2040 베어메탈](rp2040/) (학습) | XIAO RP2040 | 진행 중 (3단계 완료) | 없음 | 09-01 |
+| [52840 CircuitPython](nrf52840/) (학습) | XIAO nRF52840 Sense | 미착수 | 없음 | 09-01 |
 | [베이스 이펙터](devices/bass-effector.md) | Teensy 4.1 (미보유) | 멈춤 | 부품 구성 재검토 | 09-01 |
 | [LDAC 송신 동글](devices/ldac-dongle.md) | PocketBeagle 2, RPi 3B+(검증용) | 계획만 | 없음 (1단계 기준) | 09-01 |
 | RPi 활용 | RPi 3B+ | 용도 미정 | 용도 결정 | 08-30 |

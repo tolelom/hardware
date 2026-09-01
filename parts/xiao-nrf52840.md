@@ -1,7 +1,7 @@
 # Seeed XIAO nRF52840 / Sense
 
 부품 기준 문서. 확인된 것만 적는다. 모르는 것은 "모름"으로 남긴다.
-최종 갱신: 2026-08-31
+최종 갱신: 2026-09-01
 
 ## 스펙
 
@@ -97,6 +97,18 @@ SoftDevice는 Nordic이 바이너리로 배포하는 BLE 스택이다. CircuitPy
 - UART 1채널이 있다. 핀 위치는 확인 안 함.
 - SWD 패드의 물리적 위치와 크기는 모름. 실물로 확인해야 한다.
 - 호스트가 Ubuntu일 때 dialout과 plugdev 그룹에 속해 있으면 별도 udev 규칙 없이 접근된다.
+
+## 데이터시트
+
+2026-09-01에 받아 `datasheets/`에 두었다. 출처는 전부 Seeed 위키(files.seeedstudio.com) 미러다.
+
+| 문서 | 파일 | 비고 |
+|---|---|---|
+| nRF52840 Product Specification v1.5 | [datasheets/nrf52840_ps.pdf](datasheets/nrf52840_ps.pdf) | Nordic 공식 최신은 v1.11이나 직접 다운로드가 403이라 미러 v1.5를 받았다 |
+| LSM6DS3TR-C 데이터시트 | [datasheets/lsm6ds3tr-c.pdf](datasheets/lsm6ds3tr-c.pdf) | TR-C 변종 문서임을 내용으로 확인했다 |
+| PDM 마이크 MSM261D3526H1CPM | [datasheets/msm261d3526h1cpm-mic.pdf](datasheets/msm261d3526h1cpm-mic.pdf) | 부품번호는 Seeed 위키 기준. 실물 보드 리비전과 같은지는 확인 안 함 |
+| 충전 IC BQ25101 | [datasheets/bq25101-charger.pdf](datasheets/bq25101-charger.pdf) | |
+| XIAO nRF52840 회로도 | [datasheets/xiao-nrf52840-sense-schematic.pdf](datasheets/xiao-nrf52840-sense-schematic.pdf) | LSM6DS3TR-C가 포함돼 있어 Sense를 커버한다 |
 
 ## 쓰이는 기기
 
