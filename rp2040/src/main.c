@@ -1,5 +1,5 @@
 #include "clock.h"
-#include "probe.h"
+#include "uart.h"
 
 #define REG(addr) (*(volatile unsigned int *)(addr))
 
@@ -23,8 +23,8 @@
 #define LED_R             17u
 #define LED_B             25u
 
-/* 125MHz 기준. 클럭이 19 배 빨라졌으므로 1 단계 값도 함께 키웠다. */
-#define BLINK_DELAY       2000000u
+/* 깜빡임과 로그의 간격. 125MHz 기준으로 눈에 보이는 정도로 잡았다. */
+#define BLINK_DELAY       10000000u
 
 int main(void) {
     /* IO_BANK0 의 잠금을 푼다. 나머지 24 개 블록은 건드리지 않아야 하고
@@ -45,24 +45,25 @@ int main(void) {
     /* 출력 방향을 연다. 이걸 빼면 값을 써도 핀까지 나가지 않는다. */
     REG(SIO_GPIO_OE_SET) = (1u << LED_G) | (1u << LED_R) | (1u << LED_B);
 
-    /* clk_sys 를 ROSC 에서 PLL_SYS 125MHz 로 옮긴다. */
+    /* clk_sys 를 ROSC 에서 PLL_SYS 125MHz 로 옮긴다. UART 보드레이트가 이
+       클럭의 분주에서 나오므로 UART 초기화보다 반드시 앞에 와야 한다. */
     clock_start_xosc();
     clock_start_pll_sys();
 
-    /* 임시. 옮긴 결과를 LED 로 읽고 그 자리에서 멈춘다. 돌아오지 않으므로
-       아래 깜빡임 루프는 지금 도달하지 않는다. 3 단계에서 UART 가 붙으면
-       이 호출과 probe.[ch] 를 함께 지운다. */
-    probe_clock_source();
+    uart_init();
+    uart_puts("rp2040 baremetal\r\n");
 
-    /* 둘을 반대 상태로 시작시킨다. 아래에서 동시에 뒤집으므로
-       여기서 갈라놓지 않으면 같이 깜빡이게 된다. */
-    REG(SIO_GPIO_OUT_SET) = 1u << LED_G; /* HIGH = 꺼짐 */
-    REG(SIO_GPIO_OUT_CLR) = 1u << LED_R; /* LOW  = 켜짐 */
+    /* 파랑은 쓰지 않는다. OUT 리셋값이 0(LOW)이라 배정만 해두면 켜진 채로 남는다.
+       초록은 아래에서 빨강과 반대로 깜빡이도록 여기서 갈라놓는다. */
+    REG(SIO_GPIO_OUT_SET) = (1u << LED_G) | (1u << LED_B);  /* HIGH = 꺼짐 */
+    REG(SIO_GPIO_OUT_CLR) = 1u << LED_R;                    /* LOW  = 켜짐 */
 
-    /* XOR 은 마스크에 든 비트를 전부 뒤집는다. 현재 값을 읽을 필요가 없다.
+    /* LED 는 UART 가 안 나올 때 코드가 도는지 보는 최후 수단으로 남긴다.
+       XOR 은 마스크에 든 비트를 뒤집으므로 현재 값을 읽을 필요가 없다.
        지연 루프의 volatile 을 빼면 컴파일러가 루프를 통째로 지운다. */
     while (1) {
         REG(SIO_GPIO_OUT_XOR) = (1u << LED_R) | (1u << LED_G);
+        uart_puts("hello\r\n");
         for (volatile unsigned int i = 0; i < BLINK_DELAY; i++) {
         }
     }
