@@ -1,6 +1,6 @@
 # 하드웨어
 
-> 개인 하드웨어 프로젝트의 진입점. 최종 갱신: 2026-08-31
+> 개인 하드웨어 프로젝트의 진입점. 최종 갱신: 2026-09-01
 
 ## 폴더 규칙
 
@@ -35,14 +35,16 @@
 
 ## 부품
 
-| 부품 | 보유 | 배정 | 실물 검증 | 갱신 |
-|---|---|---|---|---|
-| [PocketBeagle 2](parts/pocketbeagle2.md) | 1 | 브링업, 오디오 플레이어 | 상당함 | 08-30 |
-| [XIAO nRF52840 / Sense](parts/xiao-nrf52840.md) | Sense 1, 논-Sense 1 | 컨트롤러 | 부트로더 진입까지 | 08-31 |
-| [XIAO nRF54LM20A / Sense](parts/xiao-nrf54lm20.md) | 도착 예정 (각 1) | 컨트롤러 (도착 후 판단) | 없음 | 08-31 |
-| [XIAO RP2040](parts/xiao-rp2040.md) | 1 | 베어메탈 학습, 키보드 펌웨어 검증 | 자작 펌웨어로 UART 출력까지 | 09-01 |
-| [RPi 3B+](parts/rpi-3bplus.md) | 1 | 미정 | 없음 | 08-30 |
-| [Arduino Uno 클론](parts/arduino-uno.md) | 1 | 배정 없음 | - | 08-30 |
+| 부품 | 배정 | 실물 검증 | 갱신 |
+|---|---|---|---|
+| [PocketBeagle 2](parts/pocketbeagle2.md) | 브링업, 오디오 플레이어 | 상당함 | 08-30 |
+| [XIAO nRF52840 / Sense](parts/xiao-nrf52840.md) | 컨트롤러 | 부트로더 진입까지 | 08-31 |
+| [XIAO nRF54LM20A / Sense](parts/xiao-nrf54lm20.md) | 컨트롤러 (도착 후 판단) | 없음 (도착 예정) | 09-01 |
+| [XIAO RP2040](parts/xiao-rp2040.md) | 베어메탈 학습, 키보드 펌웨어 검증 | 자작 펌웨어로 UART 출력까지 | 09-01 |
+| [RPi 3B+](parts/rpi-3bplus.md) | 미정 | 없음 | 08-30 |
+| [Arduino Uno 클론](parts/arduino-uno.md) | 배정 없음 | - | 08-30 |
+
+보유 수량은 [inventory.md](inventory.md)가 기준이다. 여기는 배정과 검증 상태만 본다.
 
 ## 순서를 정할 때 쓸 재료
 
