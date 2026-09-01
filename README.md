@@ -23,11 +23,11 @@
 |---|---|---|---|---|
 | [TKL 87키 키보드](devices/tkl-keyboard.md) | RP2040 베어칩 | 멈춤 | 케이스 DXF 도면 | 08-30 |
 | [분리형 무선 컨트롤러](devices/split-controller.md) | XIAO nRF52840 ×2 | 미착수 | 없음 | 08-31 |
-| [휴대형 오디오 플레이어](devices/audio-player.md) | PocketBeagle 2 | 미착수 | I2S DAC 미보유 | 08-30 |
+| [휴대형 오디오 플레이어](devices/audio-player.md) | PocketBeagle 2 | 멈춤 | 보류 결정 (09-01) | 09-01 |
 | PB2 브링업 (학습) | PocketBeagle 2 | 진행 중 (1e까지) | 없음 | 08-30 |
 | [RP2040 베어메탈](rp2040/) (학습) | XIAO RP2040 | 진행 중 (3단계 완료) | 없음 | 09-01 |
-| [베이스 이펙터](devices/bass-effector.md) | Teensy 4.1(미보유) 또는 PocketBeagle 2 | 멈춤 | 부품 구성 재검토 | 09-01 |
-| [LDAC 송신 동글](devices/ldac-dongle.md) | RPi 3B+(검증용), gadget 보드 미정 | 계획만 | 없음 (1단계 기준) | 09-01 |
+| [베이스 이펙터](devices/bass-effector.md) | Teensy 4.1 (미보유) | 멈춤 | 부품 구성 재검토 | 09-01 |
+| [LDAC 송신 동글](devices/ldac-dongle.md) | PocketBeagle 2, RPi 3B+(검증용) | 계획만 | 없음 (1단계 기준) | 09-01 |
 | RPi 활용 | RPi 3B+ | 용도 미정 | 용도 결정 | 08-30 |
 
 상태 어휘는 여섯 개로 고정한다: 진행 중 / 멈춤 / 미착수 / 계획만 / 용도 미정 / 완료.
@@ -38,7 +38,7 @@
 
 | 부품 | 배정 | 실물 검증 | 갱신 |
 |---|---|---|---|
-| [PocketBeagle 2](parts/pocketbeagle2.md) | 브링업, 오디오 플레이어 | 상당함 | 08-30 |
+| [PocketBeagle 2](parts/pocketbeagle2.md) | 브링업, LDAC 송신 동글 | 상당함 | 09-01 |
 | [XIAO nRF52840 / Sense](parts/xiao-nrf52840.md) | 컨트롤러 | 부트로더 진입까지 | 08-31 |
 | [XIAO nRF54LM20A / Sense](parts/xiao-nrf54lm20.md) | 컨트롤러 (도착 후 판단) | 없음 (도착 예정) | 09-01 |
 | [XIAO RP2040](parts/xiao-rp2040.md) | 베어메탈 학습, 키보드 펌웨어 검증 | 자작 펌웨어로 UART 출력까지 | 09-01 |
@@ -54,7 +54,7 @@
 ### 선행 조건
 
 ```
-PB2 브링업 1f -> 로드맵 4단계 -> 오디오 플레이어 -> 이펙터
+PB2 브링업 1f -> 로드맵 4단계 -> (보류) 오디오 플레이어
                       +-------> RPi 후보 B(TFTP/NFS)가 필요해지는 시점
 
 키보드: 케이스 DXF -> [모든 후속 단계]
@@ -62,8 +62,8 @@ PB2 브링업 1f -> 로드맵 4단계 -> 오디오 플레이어 -> 이펙터
 
 컨트롤러: 선행 조건 없음
 
-이펙터(Teensy 경로): 부품 구성 재검토 -> 주문 -> [전체]
-LDAC 동글: 1~2단계는 RPi 3B+로 가능 -> 3단계는 gadget 보드(Zero 2 W 입수 또는 플레이어 6단계)
+이펙터(Teensy): 부품 구성 재검토 -> 주문 -> [전체]
+LDAC 동글: 1~2단계는 RPi 3B+로 지금 가능 -> 3단계 PB2 이식(USB1 배선, BT 동글). 브링업과 독립
 ```
 
 ### 지금 시작 가능한 것
