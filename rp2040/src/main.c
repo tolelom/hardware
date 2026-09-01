@@ -23,6 +23,9 @@
 #define LED_R             17u
 #define LED_B             25u
 
+/* 125MHz 기준. 클럭이 19 배 빨라졌으므로 1 단계 값도 함께 키웠다. */
+#define BLINK_DELAY       2000000u
+
 int main(void) {
     /* IO_BANK0 의 잠금을 푼다. 나머지 24 개 블록은 건드리지 않아야 하고
        이 레지스터에는 SET/CLR 짝이 없어 읽고 고쳐 쓴다. */
@@ -32,7 +35,9 @@ int main(void) {
     while ((REG(RESETS_RESET_DONE) & RESETS_IO_BANK0) == 0) {
     }
 
-    /* 두 핀을 SIO 가 쓰도록 배정한다. 상위 필드는 리셋값이 0 이라 통째로 쓴다. */
+    /* 세 핀을 SIO 가 쓰도록 배정한다. 상위 필드는 리셋값이 0 이라 통째로 쓴다.
+       파랑은 안 쓰더라도 배정해야 한다. 놔두면 리셋값 풀다운으로 희미하게
+       켜져서 다른 LED 판독을 흐린다. */
     REG(IO_BANK0_GPIO16_CTRL) = FUNCSEL_SIO;
     REG(IO_BANK0_GPIO17_CTRL) = FUNCSEL_SIO;
     REG(IO_BANK0_GPIO25_CTRL) = FUNCSEL_SIO;
@@ -40,10 +45,13 @@ int main(void) {
     /* 출력 방향을 연다. 이걸 빼면 값을 써도 핀까지 나가지 않는다. */
     REG(SIO_GPIO_OE_SET) = (1u << LED_G) | (1u << LED_R) | (1u << LED_B);
 
-    /* 임시. 부트롬이 넘겨준 clk_sys 출처를 읽고 그 자리에서 멈춘다.
-       기준선을 확정하면 이 호출과 probe.[ch] 를 함께 지운다. */
+    /* clk_sys 를 ROSC 에서 PLL_SYS 125MHz 로 옮긴다. */
     clock_start_xosc();
     clock_start_pll_sys();
+
+    /* 임시. 옮긴 결과를 LED 로 읽고 그 자리에서 멈춘다. 돌아오지 않으므로
+       아래 깜빡임 루프는 지금 도달하지 않는다. 3 단계에서 UART 가 붙으면
+       이 호출과 probe.[ch] 를 함께 지운다. */
     probe_clock_source();
 
     /* 둘을 반대 상태로 시작시킨다. 아래에서 동시에 뒤집으므로
@@ -55,7 +63,7 @@ int main(void) {
        지연 루프의 volatile 을 빼면 컴파일러가 루프를 통째로 지운다. */
     while (1) {
         REG(SIO_GPIO_OUT_XOR) = (1u << LED_R) | (1u << LED_G);
-        for (volatile int i = 0; i < 100000; i++) {
+        for (volatile unsigned int i = 0; i < BLINK_DELAY; i++) {
         }
     }
 }

@@ -29,8 +29,7 @@
 
 /* clk_sys 의 출처를 한 자리 숫자로 접는다.
    1 ROSC   2 XOSC   3 PLL_SYS   4 PLL_USB   5 그 밖 */
-static unsigned int clk_sys_source(void)
-{
+static unsigned int clk_sys_source(void) {
     unsigned int sys = REG(CLK_SYS_SELECTED);
 
     /* SELECTED 는 원핫이다. 비트 0 은 SRC=0, 즉 clk_ref 를 그대로 쓰는 경우다. */
@@ -52,13 +51,11 @@ static unsigned int clk_sys_source(void)
     return 5;
 }
 
-static void spin(unsigned int n)
-{
+static void spin(unsigned int n) {
     for (volatile unsigned int i = 0; i < n; i++) { }
 }
 
-void probe_clock_source(void)
-{
+void probe_clock_source(void) {
     /* clk_sys 주파수를 모르니 지연은 절대 시간이 아니다. 빨강이 몇 번
        깜빡이는지만 세면 되므로 빠르든 느리든 판정에는 지장이 없다. */
     const unsigned int SHORT = 4000000u;
