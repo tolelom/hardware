@@ -85,4 +85,6 @@ PocketBeagle 2로 microSD 음원을 재생하는 독립형 휴대 플레이어�
 
 이펙터는 왕복 지연 10 ms 이하가 목표다.
 ADC와 DAC가 모두 있는 코덱, 그리고 악기용 입력 버퍼 회로가 추가로 필요하다.
-내용을 더 정한 뒤 이 폴더에 별도 파일로 승격한다.
+계획서는 [bass-effector.md](bass-effector.md)로 승격됐다.
+
+6단계(무선 송신)는 [LDAC 송신 동글](ldac-dongle.md)의 최종 형태와 같은 기능이다.
