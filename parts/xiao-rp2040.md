@@ -49,7 +49,7 @@ flash id는 `picotool info -a`가 보고하는 값이다. 부트로더 모드의
 
 | 스택 | 상태 |
 |---|---|
-| 베어메탈 (gcc, ld, objcopy, picotool) | 검증됨. SRAM 적재로 클럭 설정까지 확인. [rp2040/](../rp2040/) |
+| 베어메탈 (gcc, ld, objcopy, picotool) | 검증됨. SRAM 적재로 UART 출력까지 확인. [rp2040/](../rp2040/) |
 | picotool | 검증됨. 2.3.0을 소스 빌드해 PICOBOOT로 플래시 읽기와 `load -x` 적재·실행까지 확인 |
 | Arduino | 확인 필요. 공장 펌웨어가 arduino-pico 4.4.0 산출물이라 동작은 하나 직접 빌드는 안 함 |
 | CircuitPython / MicroPython | 확인 필요 |
@@ -124,7 +124,10 @@ OE와 OUT은 별개다. `SIO_GPIO_OE_SET`을 빼면 값을 써도 핀까지 나�
 
 - SWD 패드가 노출돼 있다. 출처는 Seeed 위키.
 - Raspberry Pi Debug Probe가 RP2040 SWD용 장비다. 실제 연결은 안 해봤다.
-- UART 1채널이 있다. 핀 위치는 확인 안 함.
+- UART0 은 GPIO0 이 TX, GPIO1 이 RX 다. 보드 실크스크린으로는 D6 과 D7 이고
+  D0·D1 이 아니다. 실크스크린의 D 번호와 GPIO 번호는 다르다. 베어메탈 3단계에서
+  Raspberry Pi Debug Probe 의 UART 브리지에 물려 확인했다. 115200 과 1 Mbaud
+  둘 다 깨지지 않았다.
 - 호스트가 Ubuntu일 때 dialout과 plugdev 그룹만으로 접근되는 것은 CDC 시리얼(`/dev/ttyACM*`)뿐이다.
   PICOBOOT는 raw USB라 장치 노드에 쓰기 권한이 필요하고, 기본값은 root 전용이다.
   `picotool`의 `udev/60-picotool.rules`를 `/etc/udev/rules.d/`에 넣어야 일반 사용자로 쓸 수 있다.

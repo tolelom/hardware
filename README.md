@@ -25,7 +25,7 @@
 | [분리형 무선 컨트롤러](devices/split-controller.md) | XIAO nRF52840 ×2 | 미착수 | 없음 | 08-31 |
 | [휴대형 오디오 플레이어](devices/audio-player.md) | PocketBeagle 2 | 미착수 | I2S DAC 미보유 | 08-30 |
 | PB2 브링업 (학습) | PocketBeagle 2 | 진행 중 (1e까지) | 없음 | 08-30 |
-| [RP2040 베어메탈](rp2040/) (학습) | XIAO RP2040 | 진행 중 (2단계 완료) | 없음 | 09-01 |
+| [RP2040 베어메탈](rp2040/) (학습) | XIAO RP2040 | 진행 중 (3단계 완료) | 없음 | 09-01 |
 | 오디오 이펙터 | PocketBeagle 2 | 계획만 | 플레이어 선행 | 08-30 |
 | RPi 활용 | RPi 3B+ | 용도 미정 | 용도 결정 | 08-30 |
 
@@ -40,7 +40,7 @@
 | [PocketBeagle 2](parts/pocketbeagle2.md) | 1 | 브링업, 오디오 플레이어 | 상당함 | 08-30 |
 | [XIAO nRF52840 / Sense](parts/xiao-nrf52840.md) | Sense 1, 논-Sense 1 | 컨트롤러 | 부트로더 진입까지 | 08-31 |
 | [XIAO nRF54LM20A / Sense](parts/xiao-nrf54lm20.md) | 도착 예정 (각 1) | 컨트롤러 (도착 후 판단) | 없음 | 08-31 |
-| [XIAO RP2040](parts/xiao-rp2040.md) | 1 | 베어메탈 학습, 키보드 펌웨어 검증 | 자작 펌웨어로 클럭 설정까지 | 09-01 |
+| [XIAO RP2040](parts/xiao-rp2040.md) | 1 | 베어메탈 학습, 키보드 펌웨어 검증 | 자작 펌웨어로 UART 출력까지 | 09-01 |
 | [RPi 3B+](parts/rpi-3bplus.md) | 1 | 미정 | 없음 | 08-30 |
 | [Arduino Uno 클론](parts/arduino-uno.md) | 1 | 배정 없음 | - | 08-30 |
 
