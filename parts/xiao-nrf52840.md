@@ -1,7 +1,8 @@
 # Seeed XIAO nRF52840 / Sense
 
 부품 기준 문서. 확인된 것만 적는다. 모르는 것은 "모름"으로 남긴다.
-최종 갱신: 2026-09-01
+"문서 기준"은 벤더 문서나 공개 저장소에서 읽은 값이고 실물로는 안 해봤다는 뜻이다.
+최종 갱신: 2026-09-07
 
 ## 스펙
 
@@ -45,19 +46,56 @@ Plus 변종(미보유): GPIO 20, UART ×2, SPI ×2, I2S ×1.
    컨트롤러 오른손 배치(버튼 8, 조이스틱 X/Y 2)가 10핀을 쓰므로 여유가 1핀이다.
    계산은 [devices/split-controller.md](../devices/split-controller.md)에 있다.
 2. WiFi가 없다. 무선은 BLE, 802.15.4, 2.4GHz 독자 프로토콜뿐이다.
-3. BLE 버전은 모름. Seeed 위키에서 정확한 표기를 찾지 못했다.
+3. BLE 버전은 Nordic 제품 브리프 v3.0 기준 Bluetooth 5.3이다. Seeed 위키에는 표기가 없다.
+   보드에 실린 SoftDevice S140 7.3.0이 어느 버전으로 인증됐는지는 모름.
+4. 배터리 전압 측정 경로가 있고 노출 GPIO를 쓰지 않는다. 아래 배터리 절에 있다.
+   단 P0.14를 HIGH로 두면 P0.31에 최대 3.6V가 걸려 핀이 상할 수 있다. 출처는 Seeed 위키.
+
+## 배터리 (문서 기준)
+
+출처: Seeed 위키 XIAO_BLE 및 battery_charging_considerations. 실물로는 안 해봤다.
+
+| 신호 | 핀 | 내용 |
+|---|---|---|
+| READ_BAT_ENABLE | P0.14 | LOW로 두면 분압 경로가 열린다. 읽는 동안 LOW 유지 |
+| AIN7_BAT | P0.31 | ADC 입력. 배터리 전압의 약 1/3이 들어온다 |
+| CHARGE_RATE | P0.13 | 충전 전류 선택. 50 mA / 100 mA |
+| CHARGE_STATUS | P0.17 | 충전 상태 |
+
+CircuitPython 보드 정의에는 `VBATT`(P0.31), `CHARGE_STATUS`, `CHARGE_RATE`가 있고
+P0.14는 이름이 없어 `microcontroller.pin.P0_14`로 잡는다.
+컨트롤러 계획서의 GPIO 예산에서 배터리 전압 측정은 이 경로를 쓰므로 핀을 소모하지 않는다.
 
 ## 툴체인
 
 | 스택 | 상태 |
 |---|---|
-| CircuitPython | 확인 필요. 직접 안 돌려봤다 |
+| CircuitPython | 문서 기준 지원. circuitpython.org에 `Seeed_XIAO_nRF52840_Sense` 보드 이미지가 있고 최신 안정판은 10.3.0이다(2026-09-07). 8.2.0 이상은 UF2 부트로더 0.6.1 이상을 요구하는데 보유 보드가 0.6.1이라 충족한다. 직접 안 돌려봤다 |
 | Arduino (Seeed nRF52 보드패키지) | 확인 필요 |
-| Zephyr / nRF Connect SDK | 확인 필요 |
-| ZMK | 확인 필요. nRF52840은 ZMK가 널리 쓰는 칩이지만 XIAO 보드 정의 유무는 확인 안 함 |
+| Zephyr / nRF Connect SDK | 문서 기준 지원. Zephyr 본가에 `xiao_ble` 보드가 등록돼 있다 |
+| ZMK | 문서 기준 지원. ZMK 공식 하드웨어 목록에 `xiao_ble//zmk`가 있다 |
 
 "검증됨"이 하나도 없는 것은 아직 한 번도 안 켜봤기 때문이다.
 첫 작업에서 하나를 검증하면 이 표부터 갱신한다.
+
+### CircuitPython 핀 이름 (문서 기준)
+
+출처는 CircuitPython 저장소 `ports/nordic/boards/Seeed_XIAO_nRF52840_Sense/pins.c`.
+Sense의 IMU와 마이크는 전원 핀이 따로 있고, IMU는 기본 I2C와 다른 버스에 달려 있다.
+`board.I2C()`로 스캔하면 IMU가 안 보인다. 이것이 CircuitPython 트랙 1단계의 함정이다.
+
+| 대상 | 핀 이름 | 물리 핀 |
+|---|---|---|
+| 기본 I2C (외부 핀) | `SDA`, `SCL` | P0.04, P0.05 |
+| IMU 전원 | `IMU_PWR` | P1.08. HIGH로 켠다 |
+| IMU I2C | `IMU_SDA`, `IMU_SCL` | P0.07, P0.27 |
+| IMU 인터럽트 | `IMU_INT1` | P0.11 |
+| 마이크 전원 | `MIC_PWR` | P1.10. HIGH로 켠다 |
+| PDM | `PDM_CLK`, `PDM_DATA` | P1.00, P0.16 |
+| RGB LED | `LED_RED`, `LED_GREEN`, `LED_BLUE` | P0.26, P0.30, P0.06 |
+
+`audiobusio.PDMIn`이 소리에 반응하지 않고 상수만 채우는 문제는 `MIC_PWR`을 안 켜서 생긴다.
+CircuitPython 이슈 #6602(2022)가 이 원인으로 닫혔다.
 
 ## USB 식별과 부트로더
 
@@ -109,6 +147,10 @@ SoftDevice는 Nordic이 바이너리로 배포하는 BLE 스택이다. CircuitPy
 | PDM 마이크 MSM261D3526H1CPM | [datasheets/msm261d3526h1cpm-mic.pdf](datasheets/msm261d3526h1cpm-mic.pdf) | 부품번호는 Seeed 위키 기준. 실물 보드 리비전과 같은지는 확인 안 함 |
 | 충전 IC BQ25101 | [datasheets/bq25101-charger.pdf](datasheets/bq25101-charger.pdf) | |
 | XIAO nRF52840 회로도 | [datasheets/xiao-nrf52840-sense-schematic.pdf](datasheets/xiao-nrf52840-sense-schematic.pdf) | LSM6DS3TR-C가 포함돼 있어 Sense를 커버한다 |
+
+## 이 보드로 하는 작업
+
+- [nrf52840/](../nrf52840/). CircuitPython 학습 트랙. 미착수. 0, 1단계가 컨트롤러 계획서와 겹친다
 
 ## 쓰이는 기기
 

@@ -2,7 +2,7 @@
 
 부품 기준 문서. 확인된 것만 적는다. 모르는 것은 "모름"으로 남긴다.
 미보유. 도착 예정이다. Sense 1개와 기본 1개. 도착 전이라 실물 검증은 전무하다.
-최종 갱신: 2026-08-31
+최종 갱신: 2026-09-07
 
 ## 스펙
 
@@ -25,8 +25,10 @@
 | 공정 | 22 nm |
 | 가격 | Sense $14.90 |
 
-Sense 변종이 추가하는 것: 6축 IMU, PDM 마이크.
-IMU 부품번호는 모름. 자료에 "six-axis IMU"로만 나온다.
+Sense 변종이 추가하는 것: 6축 IMU LSM6DS3TR-C, PDM 마이크 MSM261DGT006.
+출처는 Seeed 위키 getting started와 Zephyr 보드 문서(2026-09-07). IMU가 nRF52840 Sense와
+같은 부품이라 IMU 코드는 그대로 옮겨진다. 마이크는 부품번호가 다르다.
+외장 플래시는 PY25Q64HA 64 Mbit(8 MB). Zephyr 보드 문서 기준.
 
 ## nRF52840과의 차이
 
@@ -74,18 +76,21 @@ L15였다면 USB가 없어 유선 HID 프로토타입 자체가 불가능했다.
 
 | 스택 | 상태 |
 |---|---|
-| Zephyr | 문서상 지원. nRF54LM20 DK 보드가 Zephyr에 등록돼 있다 |
-| nRF Connect SDK | 문서상 지원. Nordic 공식 디바이스 가이드가 있다 |
-| ZMK | 모름. ZMK 공식 하드웨어 문서에서 nRF54L 계열 지원 표기를 찾지 못했다 |
-| CircuitPython / Arduino | 모름 |
+| Zephyr | 문서상 지원. Zephyr 본가에 `xiao_nrf54lm20a` 보드가 등록돼 있다(2026-09-07 확인) |
+| nRF Connect SDK | 문서상 지원. Seeed 위키가 nRF Connect SDK와 PlatformIO(Zephyr) 경로를 권장한다 |
+| ZMK | 모름. ZMK 공식 하드웨어 문서에서 nRF54L 계열 지원 표기를 찾지 못했다(2026-09-07 재확인) |
+| MicroPython | Seeed가 튜토리얼을 제공한다고 적혀 있다. 내용은 안 봤다 |
+| CircuitPython / Arduino | 모름. Seeed 포럼에 nrf54 Arduino 코어 언급이 있으나 공식 여부는 확인 안 함 |
 
 ZMK 항목이 이 부품의 가장 큰 미지수다.
 컨트롤러 설계가 ZMK를 지목하고 있는데 nRF54L에서 도는지 확인되지 않았다.
-도착 후 첫 확인 항목이다.
+도착 후 첫 확인 항목이다. Zephyr 본가에 보드가 있으므로 ZMK가 Zephyr 버전을
+따라잡는 시점에 열릴 가능성은 있다. 추측이다.
 
 ## 디버깅 경로
 
-전부 모름. SWD 패드 노출 여부, 위치, Debug Probe 호환성 모두 실물 확인이 필요하다.
+SWCLK, SWDIO 패드가 있다고 Seeed 위키에 적혀 있다. 위치, 크기, Debug Probe 호환성은
+실물 확인이 필요하다.
 
 ## 쓰이는 기기
 

@@ -2,7 +2,7 @@
 
 > 개인 보유 개발 장비 목록. 진입점은 [README](README.md).
 > 보드별 상세(스펙, 제약, 툴체인, 디버깅 경로)는 [`parts/`](parts/)에 있다. 여기는 보유 목록만 본다.
-> 최종 갱신: 2026-09-01
+> 최종 갱신: 2026-09-07
 
 보유는 수량으로 적고, 수량을 세기 어려운 항목은 있음·없음·여유 있음으로 적는다.
 확인하지 못한 값은 추측으로 채우지 않고 비고에 "확인 필요"로 남긴다.
@@ -33,7 +33,7 @@
 | [Seeed XIAO nRF52840](parts/xiao-nrf52840.md) | 1 | 논-Sense |
 | [Seeed XIAO nRF52840 Sense](parts/xiao-nrf52840.md) | 1 | IMU(LSM6DS3TR-C) + PDM 마이크 |
 | [Seeed XIAO nRF54LM20A](parts/xiao-nrf54lm20.md) | 1 (도착 예정) | 기본 버전 |
-| [Seeed XIAO nRF54LM20A Sense](parts/xiao-nrf54lm20.md) | 1 (도착 예정) | GPIO 28(관통홀과 패드 혼합), BLE 6.0, nPM1300 PMIC |
+| [Seeed XIAO nRF54LM20A Sense](parts/xiao-nrf54lm20.md) | 1 (도착 예정) | GPIO 28(관통홀과 패드 혼합), BLE 6.0, nPM1300 PMIC. IMU는 52840 Sense와 같은 LSM6DS3TR-C(문서 기준) |
 | [Arduino Uno 클론](parts/arduino-uno.md) | 1 | 프로젝트 배정 없음 |
 | [Raspberry Pi 3B+](parts/rpi-3bplus.md) | 1 | 용도 미정 |
 
@@ -167,3 +167,4 @@ ENIG 표면처리에 소켓 패드가 커서 젖음성 문제가 날 자리가 �
 - 2026-09-01: 인두기가 ALIENTEK T90B로 확인돼 팁 규격 C245 확정. 소모품 후보에
   구매 시점 칸을 추가하고 시세·유통 확인 결과(951 국내 미유통, UP-78 유효기간,
   치즐팁 품번)를 반영.
+- 2026-09-07: LM20A Sense의 IMU 부품번호를 문서 기준으로 채움.

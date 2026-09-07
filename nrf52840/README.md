@@ -3,7 +3,7 @@
 학습 트랙. CircuitPython으로 Sense의 IMU와 마이크를 다루고, 유선 USB HID까지 잇는다.
 부품 기준 문서: [parts/xiao-nrf52840.md](../parts/xiao-nrf52840.md)
 기기 계획서: [devices/split-controller.md](../devices/split-controller.md). 0, 1단계 판정이 이 트랙과 겹친다.
-최종 갱신: 2026-09-01
+최종 갱신: 2026-09-07
 
 확인된 것만 적는다. 안 해본 것은 "확인 필요", 모르는 것은 "모름"으로 남긴다.
 
@@ -26,7 +26,7 @@
 | # | 단계 | 판정 기준 |
 |---|---|---|
 | 0 | CircuitPython 설치, 첫 구동 | 직접 올린 코드로 LED가 깜빡이고 시리얼에 출력이 나온다. 공장 펌웨어도 LED를 순환시키므로 LED만으로는 판정하지 않는다 |
-| 1 | IMU 존재 확인 | I2C 스캔에 LSM6DS3TR-C가 응답한다. parts 문서의 "어느 보드가 Sense인지 I2C 최종 확인 안 함"이 해소된다 |
+| 1 | IMU 존재 확인 | `IMU_SCL`·`IMU_SDA` 버스 스캔에 `0x6a`가 응답한다. parts 문서의 "어느 보드가 Sense인지 I2C 최종 확인 안 함"이 해소된다 |
 | 2 | IMU 활용 | 기울기에 따라 RGB LED 색이 바뀌고, 흔들기를 감지한다. 컨트롤러 5단계(IMU 연동)의 선행 학습 |
 | 3 | 마이크 입력 | PDM 마이크로 소리 크기를 읽어 LED 밝기가 반응한다 |
 | 4 | 유선 USB HID | 커스텀 게임패드 디스크립터로 PC가 게임패드로 인식하고, 점퍼선 입력 1개가 게임패드 테스터에 뜬다. 컨트롤러 1단계 판정과 동일 |
@@ -34,6 +34,49 @@
 0단계 통과 시 parts 툴체인 표의 CircuitPython을 검증됨으로 갱신한다.
 1단계 통과 시 parts 보유 현황의 Sense 판별 항목을 갱신한다.
 4단계 통과 시 컨트롤러 계획서의 1단계를 완료로 갱신한다.
+
+## 0단계 절차
+
+문서 기준이다. 실물로 통과하면 이 절을 "확인됨"으로 고친다.
+
+1. circuitpython.org의 `Seeed_XIAO_nRF52840_Sense` 페이지에서 UF2를 받는다.
+   2026-09-07 기준 최신 안정판은 10.3.0이고 파일명은
+   `adafruit-circuitpython-Seeed_XIAO_nRF52840_Sense-en_US-10.3.0.uf2`다.
+2. Sense 보드(USB 시리얼 `602E9B3FB161B682`)를 꽂고 리셋을 두 번 눌러 `XIAO-SENSE` 드라이브를 띄운다.
+3. UF2를 드라이브에 복사한다. 보드가 재부팅되고 드라이브 이름이 `CIRCUITPY`로 바뀐다.
+4. `CIRCUITPY`에 `code.py`를 둔다. `LED_RED`를 깜빡이며 `print`로 카운터를 찍는다.
+5. CDC 시리얼 콘솔에 카운터가 올라가면 통과다. Windows에서는 COM 포트로 잡힌다.
+
+부트로더 요건은 충족한다. CircuitPython 8.2.0 이상이 UF2 부트로더 0.6.1 이상을 요구하는데
+보유 보드 둘 다 0.6.1이다. 값은 parts 문서에 있다.
+
+## 1단계 함정
+
+Sense의 IMU는 외부 핀의 기본 I2C(`board.I2C()`, P0.04/P0.05)가 아니라
+`IMU_SDA`·`IMU_SCL`(P0.07/P0.27) 별도 버스에 달려 있고, `IMU_PWR`(P1.08)을 HIGH로
+올려야 전원이 들어간다. 기본 버스를 스캔하면 아무것도 안 나오며 그것은 논-Sense라는
+증거가 아니다. LSM6DS3TR-C의 7비트 주소는 `0x6a`다(SA0가 GND일 때. 회로도 확인 필요).
+
+```python
+import board, busio, digitalio, time
+pwr = digitalio.DigitalInOut(board.IMU_PWR)
+pwr.direction = digitalio.Direction.OUTPUT
+pwr.value = True
+time.sleep(0.1)
+i2c = busio.I2C(board.IMU_SCL, board.IMU_SDA)
+while not i2c.try_lock():
+    pass
+print([hex(a) for a in i2c.scan()])
+i2c.unlock()
+```
+
+논-Sense 보드에서 같은 코드를 돌려 빈 목록이 나오면 두 보드의 판별이 양쪽에서 끝난다.
+핀 이름의 출처는 parts 문서의 CircuitPython 핀 절이다.
+
+## 3단계 함정
+
+마이크도 `MIC_PWR`(P1.10)을 HIGH로 켜야 한다. 안 켜면 `audiobusio.PDMIn`이 소리에 반응하지
+않고 상수만 채운다. CircuitPython 이슈 #6602가 이 원인으로 닫혔다. 핀은 `PDM_CLK`, `PDM_DATA`.
 
 ## 4단계 주의
 
@@ -43,9 +86,10 @@ CircuitPython 표준 `adafruit_hid` 라이브러리에 게임패드가 없다. �
 
 ## 확인 안 된 것
 
-- CircuitPython 보드 이미지는 circuitpython.org에서 받는다. 어떤 버전을 쓸지, UF2가 실제로 올라가는지는 안 해봤다.
-- Windows에서 CIRCUITPY 드라이브 인식 여부. 기존 확인은 전부 Ubuntu 호스트에서 했다.
-- PDM 마이크의 CircuitPython 지원 범위(`audiobusio.PDMIn`)를 보드에서 돌려보지 않았다.
+- UF2가 실제로 올라가는지. 위 절차는 문서 기준이다.
+- Windows에서 CIRCUITPY 드라이브와 COM 포트 인식 여부. 기존 확인은 전부 Ubuntu 호스트에서 했다.
+- `audiobusio.PDMIn`을 이 보드에서 돌려보지 않았다. 지원 자체는 보드 정의에 PDM 핀이 있어 문서 기준으로는 된다.
+- LSM6DS3TR-C의 I2C 주소가 `0x6a`인지 `0x6b`인지는 회로도의 SA0 배선으로 확정한다. 스캔 결과로 판정되므로 사전 확인은 필수가 아니다.
 
 ## 코드 배치
 

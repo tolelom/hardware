@@ -2,7 +2,7 @@
 
 부품 기준 문서. 확인된 것만 적는다. 모르는 것은 "모름"으로 남긴다.
 다른 부품과 달리 이 보드는 실물 검증이 상당히 진행돼 있다. 아래 "검증됨"은 직접 돌려본 것이다.
-최종 갱신: 2026-09-02
+최종 갱신: 2026-09-07
 
 ## 문서 기준은 pocket-beagle2 저장소
 
@@ -87,5 +87,10 @@ DFU는 SD를 건드리지 않는 구제 경로다.
 
 ## 쓰이는 기기
 
-- [devices/audio-player.md](../devices/audio-player.md). 브링업 완료 후 전환할 실사용 기기
-- 오디오 이펙터. `applications.md`에 계획이 있다. 플레이어 다음 순서이며 미착수다
+2026-09-01 오디오 트랙 재편 이후의 배정이다.
+
+- [devices/ldac-dongle.md](../devices/ldac-dongle.md). 최종 보드로 확정. 3단계에서 USB1 호스트 배선과
+  BT 동글이 붙는다. I2S를 안 거치므로 브링업과 독립이다
+- [devices/audio-player.md](../devices/audio-player.md). 보류. 재개하면 로드맵 4단계 도달과 I2S DAC가 선행이다
+- [devices/bass-effector.md](../devices/bass-effector.md). Teensy로 확정됐고 이 보드는 2세대 후보다.
+  `applications.md`의 이펙터 절은 그 시점에 쓴다
