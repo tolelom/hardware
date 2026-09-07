@@ -65,6 +65,24 @@ MTW4의 협상 코덱은 aptX나 SBC-XQ가 될 텐데, 어느 쪽이 잡히는�
 출력의 `api.bluez5.codec`으로 본다. 협상은 수신기가 결정하므로 강제하려면 wireplumber
 설정에서 코덱 우선순위를 바꾼다.
 
+1단계 명령 순서. 문서 기준이고 돌려보면 이 절을 고친다.
+
+```
+sudo apt install pipewire wireplumber libspa-0.2-bluetooth
+systemctl --user enable --now pipewire wireplumber
+bluetoothctl            # power on, scan on, pair <MAC>, trust <MAC>, connect <MAC>
+wpctl status            # Sinks 아래에 이어폰이 뜨는지
+wpctl inspect <sink id> | grep -E 'api.bluez5.codec|device.profile'
+pw-play test.flac       # 또는 wpctl set-default <sink id> 뒤에 아무 플레이어
+```
+
+코덱을 고정하려면 `~/.config/wireplumber/wireplumber.conf.d/` 아래 파일에
+`bluez5.codecs = [ aptx ]` 같은 항목을 둔다. 키 이름은 WirePlumber 0.5 문서 기준이며
+Trixie의 버전에서 같은지 확인한다.
+
+OS Lite는 데스크톱 세션이 없으므로 `systemctl --user`가 돌려면 로그인 세션이 필요하다.
+ssh로 들어가서 하면 되고, 부팅 시 자동 기동은 `loginctl enable-linger`로 건다.
+
 Pi 3B+는 최근 켜본 기록이 없어 SD 내용부터 확인한다.
 
 ## 리스크
