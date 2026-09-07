@@ -97,6 +97,11 @@ Sense의 IMU와 마이크는 전원 핀이 따로 있고, IMU는 기본 I2C와 �
 `audiobusio.PDMIn`이 소리에 반응하지 않고 상수만 채우는 문제는 `MIC_PWR`을 안 켜서 생긴다.
 CircuitPython 이슈 #6602(2022)가 이 원인으로 닫혔다.
 
+`datasheets/`의 회로도 3쪽과 대조했다. 넷 이름이 `INTERNAL_I2C_SCL`(P0.27),
+`INTERNAL_I2C_SDA`(P0.07), `6D_PWR`(P1.08), `6D_INT1`, `P1.10_MIC_PWR`, `P1.00_PDM_CLK`,
+`P0.16_PDM_DATA`, `P0.14_~READ_BAT`, `P0.31_AIN7_BAT`로 위 표와 맞는다.
+LSM6DS3TR-C의 I2C 주소는 `0x6A`다. SA0가 GND에 묶여 있어 고정이다.
+
 ## USB 식별과 부트로더
 
 보드 2개를 Ubuntu 호스트에 연결해 확인했다. 두 보드의 값이 모두 같다.

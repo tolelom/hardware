@@ -81,7 +81,7 @@ SRAM 빌드와 달라지는 것은 셋이다.
   돌리지 않아 XOSC가 꺼진 채로 넘어온다. 2단계 문서에 예고한 대로다.
 
 boot2의 CRC를 붙이는 방법은 둘이다. `verify.py`의 CRC 함수를 재사용해 붙이거나,
-Ubuntu에 클론된 pico-sdk의 `src/rp2040/boot_stage2/pad_checksum`을 쓴다.
+Ubuntu에 클론된 pico-sdk의 `src/rp2040/boot_stage2/pad_checksum`을 쓴다(경로는 SDK master에서 확인).
 전자는 이 저장소 안에서 닫히고 후자는 SDK가 만든 것과 바이트 대조가 된다.
 첫 시도는 후자로 하고 통과하면 전자로 바꿔 두 결과가 같은지 본다.
 

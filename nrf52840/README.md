@@ -55,7 +55,8 @@
 Sense의 IMU는 외부 핀의 기본 I2C(`board.I2C()`, P0.04/P0.05)가 아니라
 `IMU_SDA`·`IMU_SCL`(P0.07/P0.27) 별도 버스에 달려 있고, `IMU_PWR`(P1.08)을 HIGH로
 올려야 전원이 들어간다. 기본 버스를 스캔하면 아무것도 안 나오며 그것은 논-Sense라는
-증거가 아니다. LSM6DS3TR-C의 7비트 주소는 `0x6a`다(SA0가 GND일 때. 회로도 확인 필요).
+증거가 아니다. LSM6DS3TR-C의 7비트 주소는 `0x6a`다. SA0가 GND에 묶여 있어 바꿀 수
+없고, Seeed 위키 예제와 Zephyr 디바이스 트리가 같은 값을 쓴다(2026-09-07 확인).
 
 ```python
 import board, busio, digitalio, time
@@ -89,7 +90,6 @@ CircuitPython 표준 `adafruit_hid` 라이브러리에 게임패드가 없다. �
 - UF2가 실제로 올라가는지. 위 절차는 문서 기준이다.
 - Windows에서 CIRCUITPY 드라이브와 COM 포트 인식 여부. 기존 확인은 전부 Ubuntu 호스트에서 했다.
 - `audiobusio.PDMIn`을 이 보드에서 돌려보지 않았다. 지원 자체는 보드 정의에 PDM 핀이 있어 문서 기준으로는 된다.
-- LSM6DS3TR-C의 I2C 주소가 `0x6a`인지 `0x6b`인지는 회로도의 SA0 배선으로 확정한다. 스캔 결과로 판정되므로 사전 확인은 필수가 아니다.
 
 ## 코드 배치
 
