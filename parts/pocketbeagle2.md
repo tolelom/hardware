@@ -2,7 +2,7 @@
 
 부품 기준 문서. 확인된 것만 적는다. 모르는 것은 "모름"으로 남긴다.
 다른 부품과 달리 이 보드는 실물 검증이 상당히 진행돼 있다. 아래 "검증됨"은 직접 돌려본 것이다.
-최종 갱신: 2026-09-07
+최종 갱신: 2026-09-08
 
 ## 문서 기준은 pocket-beagle2 저장소
 
@@ -91,6 +91,7 @@ DFU는 SD를 건드리지 않는 구제 경로다.
 
 - [devices/ldac-dongle.md](../devices/ldac-dongle.md). 최종 보드로 확정. 3단계에서 USB1 호스트 배선과
   BT 동글이 붙는다. I2S를 안 거치므로 브링업과 독립이다
-- [devices/audio-player.md](../devices/audio-player.md). 보류. 재개하면 로드맵 4단계 도달과 I2S DAC가 선행이다
+- [devices/audio-player.md](../devices/audio-player.md). 1세대 거치형(2026-09-08). 로드맵 4단계 도달과
+  PCM5102A 모듈이 선행이다. USB1 호스트 배선은 LDAC 동글과 공용
 - [devices/bass-effector.md](../devices/bass-effector.md). Teensy로 확정됐고 이 보드는 2세대 후보다.
   `applications.md`의 이펙터 절은 그 시점에 쓴다
