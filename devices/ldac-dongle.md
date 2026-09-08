@@ -3,7 +3,7 @@
 iPhone(Lightning)에서 고음질 Bluetooth 송신을 하는 거치형 동글을 만든다.
 음악 전용이다. HFP(통화)는 지원하지 않고 영상 립싱크 어긋남은 감수한다.
 부품 기준 문서: [parts/pocketbeagle2.md](../parts/pocketbeagle2.md), [parts/rpi-3bplus.md](../parts/rpi-3bplus.md)
-최종 갱신: 2026-09-07
+최종 갱신: 2026-09-08
 
 ## 구성 (2026-08-14 확정)
 
@@ -77,8 +77,8 @@ pw-play test.flac       # 또는 wpctl set-default <sink id> 뒤에 아무 플�
 ```
 
 코덱을 고정하려면 `~/.config/wireplumber/wireplumber.conf.d/` 아래 파일에
-`bluez5.codecs = [ aptx ]` 같은 항목을 둔다. 키 이름은 WirePlumber 0.5 문서 기준이며
-Trixie의 버전에서 같은지 확인한다.
+`monitor.bluez.properties = { bluez5.codecs = [ aptx ] }` 블록을 둔다. 키 이름과 블록 구조는
+WirePlumber 0.5 문서 기준이며 Trixie의 버전에서 같은지 확인한다.
 
 OS Lite는 데스크톱 세션이 없으므로 `systemctl --user`가 돌려면 로그인 세션이 필요하다.
 ssh로 들어가서 하면 되고, 부팅 시 자동 기동은 `loginctl enable-linger`로 건다.
