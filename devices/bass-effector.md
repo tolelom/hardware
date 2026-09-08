@@ -77,7 +77,7 @@ Teensy 4.1은 SparkFun 재고 있음(2026-09-01 확인), Audio Shield Rev D는 D
 
 | 품목 | 품번 | 수량 | 비고 |
 |---|---|---|---|
-| Teensy 4.1 (Headers) | SparkFun DEV-16996, DigiKey 취급 | 1 | 헤더 납땜판이고 이더넷 PHY 있음(2026-09-07 확인, SparkFun $35.95). 헤더 없는 기본판 DEV-16771은 품절(입고 2027-02 안내). Audio Shield에 소켓을 달아 얹으므로 헤더판이 맞다 |
+| Teensy 4.1 (Headers) | SparkFun DEV-16996, DigiKey 취급 | 1 | 헤더 납땜판이고 이더넷 PHY 있음(2026-09-07 확인, SparkFun $35.95). 헤더 없는 기본판 DEV-16771은 품절(입고 2027-02 안내). Audio Shield에 소켓을 달아 얹으므로 헤더판을 쓴다 |
 | Audio Shield Rev D | DEV-15845 | 1 | 구 품번 15421은 2023년 단종. 혼동 주의 |
 | 암 소켓 24핀 | PPTC241LFBN-RC | 2 | 쉴드에 납땜, 14핀 커팅 |
 | 6.35mm TS 모노 잭 | Switchcraft 12A | 2 | 국내가 반값이나 배송 통합 우선 판단 |
@@ -135,7 +135,7 @@ Teensy 4.1은 SparkFun 재고 있음(2026-09-01 확인), Audio Shield Rev D는 D
 
 | 항목 | 상태 |
 |---|---|
-| DSP 개발 구성 부품 | 미주문. DigiKey 장바구니 기준 약 10만 원 |
+| DSP 개발 구성 부품 | 미주문 |
 | 페달화 부품 | 미주문. 3단계 전까지 불필요 |
 | 베이스 앰프 | 없음. 판정은 오디오 인터페이스로 대신한다 |
 

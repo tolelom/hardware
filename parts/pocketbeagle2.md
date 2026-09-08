@@ -32,8 +32,6 @@
 
 ## 제약
 
-확인된 것만 적는다.
-
 1. SWD를 지원하지 않는다. AM62x에는 SWD가 없다.
    따라서 Raspberry Pi Debug Probe의 SWD 포트는 커넥터를 바꿔도 이 보드에 쓸 수 없다.
 2. WiFi와 Bluetooth가 없다. 사양표에 항목 자체가 없다. 무선은 USB1에 동글을 물려 얻는다.
