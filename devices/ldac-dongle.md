@@ -100,6 +100,17 @@ ssh로 들어가서 하면 되고, 부팅 시 자동 기동은 `loginctl enable-
 
 Pi 3B+는 최근 켜본 기록이 없어 SD 내용부터 확인한다.
 
+## 부품 (3단계)
+
+1~2단계는 Pi 3B+ 온보드 BT라 부품이 없다. 3단계 PB2 이식에 필요한 것이다.
+
+| 항목 | 품명·구매처 | 비고 |
+|---|---|---|
+| USB1용 USB-A 소켓 | USB-A 암 THT 커넥터 또는 DIP 브레이크아웃. 디바이스마트·엘레파츠 | 오디오 플레이어 2단계와 공용 |
+| Bluetooth 동글 | Realtek RTL8761B 계열. ASUS USB-BT500(RTL8761BU, 커널 5.8부터), TP-Link UB500(RTL8761B, 장치 ID가 커널 5.16부터 등록). 2026-09-08 확인 | 펌웨어는 Debian `firmware-realtek`(문서 기준). BT 5.0에 EDR 3Mbps라 LDAC 990kbps에 여유가 있다 |
+| Lightning 어댑터 | Apple Lightning to USB 3 Camera Adapter, 모델 A1619 | 정품. 서드파티 어댑터의 USB 오디오 인식은 확인하지 않았다 |
+| LDAC 수신기 | EarFun Air Pro 4+ 후보. 위 코덱 결론 절 | 2단계에서 0단계 판정 뒤에 산다 |
+
 ## 리스크
 
 - USB-BT 클럭 드리프트. 가젯 클럭과 BT 클럭이 다른 소스라 비동기 리샘플링이
