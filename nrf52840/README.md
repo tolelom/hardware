@@ -3,7 +3,7 @@
 학습 트랙. CircuitPython으로 Sense의 IMU와 마이크를 다루고, 유선 USB HID까지 잇는다.
 부품 기준 문서: [parts/xiao-nrf52840.md](../parts/xiao-nrf52840.md)
 기기 계획서: [devices/split-controller.md](../devices/split-controller.md). 0, 1단계 판정이 이 트랙과 겹친다.
-최종 갱신: 2026-09-07
+최종 갱신: 2026-09-11
 
 확인된 것만 적는다. 안 해본 것은 "확인 필요", 모르는 것은 "모름"으로 남긴다.
 
@@ -95,3 +95,18 @@ CircuitPython 표준 `adafruit_hid` 라이브러리에 게임패드가 없다. �
 
 이 폴더에 단계별로 둔다. CircuitPython은 빌드가 없고 .py 복사가 전부라
 rp2040 트랙과 달리 Windows에서 편집하고 실행까지 된다.
+
+보드가 실행하는 파일 이름은 `code.py`로 고정이라 단계별 폴더 안에 그 이름으로 둔다.
+폴더째 `CIRCUITPY`에 복사하면 이름을 고칠 일이 없다.
+
+| 경로 | 단계 |
+|---|---|
+| `stage0/code.py` | 0. LED 토글과 시리얼 카운터. `board_id`와 `cpu.uid`를 주기적으로 다시 찍는다 |
+| `stage1/code.py` | 1. `IMU_PWR`을 올리고 IMU 버스를 스캔해 `0x6a`를 판정한다 |
+
+두 스크립트의 출력 문자열은 ASCII다. 판정 근거가 시리얼 출력이고 Windows 시리얼
+모니터의 코드 페이지에 따라 한글이 깨질 수 있다.
+
+1단계 스크립트는 스캔 예외도 결과로 받는다. 논-Sense 보드에서 계획이 기대하는 것은
+빈 목록이지만, 내부 버스에 풀업이 없으면 `busio.I2C`가 예외를 낼 수도 있다.
+어느 쪽이 실제인지는 돌려봐야 안다.
