@@ -1,5 +1,6 @@
 #include "serial_console.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -8,6 +9,10 @@
 
 namespace {
 constexpr float kMaximumInputDriveDb = 30.0f;  // T16 청음으로 조정
+constexpr int kMinimumPgaStep = -1;  // 자동
+constexpr int kMaximumPgaStep = 15;  // SGTL5000 lineInLevel 범위
+constexpr float kMinimumSidechainHighPassHz = 0.0f;  // 0 = 끔
+constexpr float kMaximumSidechainHighPassFraction = 0.45f;  // 나이퀴스트보다 조금 아래
 }  // namespace
 
 SerialConsole::SerialConsole(EffectorProcessor& processor, EffectorParameters& parameters)
@@ -52,11 +57,15 @@ void SerialConsole::handleLine(const char* line) {
     } else if (std::strcmp(command, "threshold") == 0 && fields >= 2) {
         parameters_.compressor.thresholdDbfs = first;
     } else if (std::strcmp(command, "sidechain") == 0 && fields >= 2) {
-        parameters_.compressor.sidechainHighPassHz = first;
+        const float maximumSidechainHighPassHz =
+            kMaximumSidechainHighPassFraction * AUDIO_SAMPLE_RATE_EXACT;
+        parameters_.compressor.sidechainHighPassHz =
+            std::clamp(first, kMinimumSidechainHighPassHz, maximumSidechainHighPassHz);
     } else if (std::strcmp(command, "trim") == 0 && fields >= 2) {
         parameters_.unityTrimDb = first;
     } else if (std::strcmp(command, "pga") == 0 && fields >= 2) {
-        parameters_.manualPgaStep = static_cast<int>(first);
+        parameters_.manualPgaStep =
+            std::clamp(static_cast<int>(first), kMinimumPgaStep, kMaximumPgaStep);
     } else if (std::strcmp(command, "effect") == 0 && fields >= 2) {
         parameters_.effectEnabled = first > 0.5f;
     } else if (std::strcmp(command, "tone") == 0) {

@@ -14,7 +14,7 @@
 
 - 설계 기준은 설계서다. 수치와 규칙은 설계서 절 번호로 인용한다
 - 1단계 범위: 계획서 단계 1(M2, T5, T7, T8, T9, T15). 아날로그 입출력단, K1 릴레이, 노브, LED 하드웨어는 넣지 않는다
-- 샘플레이트 `AUDIO_SAMPLE_RATE_EXACT`(44117.647Hz), 오디오 블록 32샘플
+- 샘플레이트 `AUDIO_SAMPLE_RATE_EXACT`(Teensy 4 코어에서 44100Hz), 오디오 블록 32샘플
 - `lib/effector_core`는 Arduino·OpenAudio 헤더를 포함하지 않는다
 - 네이티브 빌드: C++17, `-Wall -Wextra -Werror`
 - 변수·함수 이름은 줄여 쓰지 않는다. 단위(`Db`, `Hz`, `Seconds`)와 id는 허용
@@ -73,7 +73,7 @@
 |---|---|---|---|
 | MCU | SparkFun 16996 또는 20360 | 1 | Teensy 4.1 헤더판, 재고 있음 |
 | 코덱 | SparkFun 15845 | 1 | Audio Adapter Rev D |
-| 헤더 | SparkFun PRT-00116 | 1 | 2.54mm 스트레이트, Shield 14핀 두 줄로 잘라 쓸 수 있는 길이 |
+| 헤더 | Chip Quik HDR100IMP40M-G-V-TH | 1 | 2.54mm 스트레이트, Shield 14핀 두 줄로 잘라 쓸 수 있는 길이 |
 | op-amp | TI OPA2992IDR | 2 | SOIC-8 |
 | SOIC 변환 기판 | SparkFun BOB-13655 | 2 | SOIC-8을 DIP-8 핀 간격으로 |
 | 차지 펌프 | TI LT1054CP | 2 | PDIP-8 |
@@ -256,7 +256,7 @@ int main() {
 #include <cstddef>
 #include <vector>
 
-constexpr float kTestSampleRateHz = 44117.647f;
+constexpr float kTestSampleRateHz = 44100.0f;
 
 inline std::vector<float> makeSine(float frequencyHz, float amplitude,
                                    std::size_t sampleCount) {
@@ -785,7 +785,7 @@ int main(int argumentCount, char** arguments) {
         std::fprintf(stderr, "usage: static_gain threshold ratio attack release toneDbfs\n");
         return 2;
     }
-    const float sampleRateHz = 44117.647f;
+    const float sampleRateHz = 44100.0f;
     CompressorSettings settings;
     settings.thresholdDbfs = std::strtof(arguments[1], nullptr);
     settings.ratio = std::strtof(arguments[2], nullptr);
@@ -822,7 +822,7 @@ target_compile_options(static_gain PRIVATE -Wall -Wextra -Werror)
 ```
 
 Run: `cmake -S effector -B effector/build && cmake --build effector/build && ./effector/build/static_gain -20 4 0.05 0.2 -6.0206`
-Expected: `-8.237`
+Expected: `-8.238`
 
 - [ ] **Step 7: 커밋**
 
@@ -1736,7 +1736,7 @@ void setup() {
     codec.enable();
     codec.inputSelect(AUDIO_INPUT_LINEIN);
     codec.lineInLevel(0);
-    codec.lineOutLevel(13);
+    codec.lineOutLevel(17);  // 2.53Vpp, 설계서 4.2절
     codec.adcHighPassFilterDisable();
     codec.disableAdcZeroCross();
 
@@ -1823,7 +1823,7 @@ git commit -m "[Feat] 이펙터 1단계 Teensy 펌웨어와 시리얼 콘솔"
 
 - [ ] **Step 1: Shield 헤더 납땜**
 
-PRT-00116을 14핀 두 줄로 잘라 Audio Shield Rev D 양쪽 핀 열에 납땜한다. Shield와 Teensy는 쌓지 않고 브레드보드에 나란히 꽂는다(설계서 5.3절).
+HDR100IMP40M-G-V-TH를 14핀 두 줄로 잘라 Audio Shield Rev D 양쪽 핀 열에 납땜한다. Shield와 Teensy는 쌓지 않고 브레드보드에 나란히 꽂는다(설계서 5.3절).
 
 - [ ] **Step 2: Teensy와 Shield 배선**
 

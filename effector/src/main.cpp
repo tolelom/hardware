@@ -29,7 +29,7 @@ void setup() {
     codec.enable();
     codec.inputSelect(AUDIO_INPUT_LINEIN);
     codec.lineInLevel(0);
-    codec.lineOutLevel(13);
+    codec.lineOutLevel(17);  // 2.53Vpp, 설계서 4.2절
     codec.adcHighPassFilterDisable();
     codec.disableAdcZeroCross();
 

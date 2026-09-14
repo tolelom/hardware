@@ -22,4 +22,4 @@ PlatformIO로 한다. Ubuntu에서는 `~/.platformio/penv/bin/pio`, 집 Windows�
 
 ## 시리얼 명령
 
-`status`를 입력하면 명령 목록과 현재 상태가 나온다.
+`status`를 입력하면 현재 상태 한 줄이 나온다. 알 수 없는 명령을 입력하면 명령 목록이 나온다.
