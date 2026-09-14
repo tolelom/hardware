@@ -56,27 +56,30 @@ PSRAM(8MB)을 쓴다.
 |---|---|---|
 | MCU | Teensy 4.1 헤더판. SparkFun 16996(이더넷 있음) 또는 20360(이더넷 없음) | DigiKey |
 | 코덱 | Audio Shield Rev D, SparkFun 15845. 구 품번 15421은 2023년 단종 | DigiKey |
+| 헤더 | Shield 연결용 2.54mm 스트레이트 핀 헤더 40핀, Chip Quik HDR100IMP40M-G-V-TH. 14핀씩 두 줄로 잘라 쓴다. 원래 후보 SparkFun PRT-00116은 상시 재고 품목이 아니라 대체 | DigiKey |
 | op-amp 2개 | OPA2992IDR, SOIC-8. 1개는 여분 | DigiKey |
 | 차지 펌프 2개 | LT1054CP, PDIP-8. 1개는 여분 | DigiKey |
 | 5V 레귤레이터 | 7805, TO-220 | 페달파츠 |
 | 릴레이 | TQ2-9V. 논래칭 DPDT, 코일 579Ω(약 15.5mA, 문서 기준) | DigiKey |
-| 전원 보호 | P-MOSFET(Vgs ±20V 이상 또는 게이트 보호 제너), 과전압 차단용 12V 제너와 NPN. 품번 확인 필요 | 확인 필요 |
-| 다이오드·트랜지스터 | 더블러용 쇼트키 2개(1N5817·1N5819급), K1 플라이백 1N4148, K1 구동 NPN | 확인 필요 |
-| 전해 커패시터 | 벌크 1000µF/25V, 레일 100µF/25V 이상 | 확인 필요 |
+| 전원 보호 | P-MOSFET Infineon IRF9540NPBF(Vgs 정격 ±20V, Vds 100V, TO-220) 2개, 과전압 차단용 12V 제너 onsemi 1N4742A 2개와 구동 NPN onsemi 2N3904BU 2개 | DigiKey |
+| 다이오드·트랜지스터 | 더블러용 쇼트키 Taiwan Semiconductor Corporation 1N5819(40V, 1A, DO-41) 4개, K1 플라이백 onsemi 1N4148 4개, K1 구동 NPN onsemi 2N3904BU 2개. 쇼트키 원래 후보 onsemi 1N5819는 주문 불가라 대체 | DigiKey |
+| 전해 커패시터 | 벌크 Panasonic EEU-FR1E102(1000µF, 25V) 2개, 레일 Panasonic EEU-FR1E101B(100µF, 25V) 2개. 레일 쪽 원래 후보 EEU-FR1E101은 품절이라 후속 리비전으로 대체 | DigiKey |
 | 포텐셔미터 5개 | Alpha 16mm 싱글 B10K 솔더 타입 | 페달파츠 |
 | 노브 5개 | 푸시핏 | 페달파츠 |
 | 풋스위치 | 모멘터리 2P | 페달파츠 |
 | DC 잭 | 패널 장착, 홀 12mm. 2.1mm 여부 확인 필요 | 페달파츠 |
 | IN/OUT 잭 2개 | 박스형 1/4" | 페달파츠 |
+| 1단계 연결 잭 | Switchcraft 12A, 6.35mm 모노 2개. 브레드보드 단계 입출력 연결용이라 케이스용 IN/OUT 잭과 별도로 먼저 산다 | DigiKey |
 | LED 9개 | 3mm | 페달파츠 |
 | 케이스 | 1590BB 클론 | 페달파츠 |
-| USB | 패널 장착 Micro-B 연장 케이블 | 확인 필요 |
-| 변환 기판 | SOIC-8 to DIP, 브레드보드용 | 확인 필요 |
+| USB | 패널 장착 Micro-B 연장 케이블. 보유 확인 필요, 없으면 추가 | 확인 필요 |
+| 변환 기판 | SOIC-8 to DIP, SparkFun BOB-13655. 4개입 1팩이라 1팩 주문으로 2개 소요를 채운다 | DigiKey |
 
 저항·커패시터는 회로도에서 값이 정해진다.
 
-주문은 두 번으로 나눈다. DigiKey 1차는 MCU, 코덱, op-amp, 차지 펌프, 릴레이, 변환 기판이고 1단계 전에
-한 번에 주문한다. 페달파츠 부품과 케이스는 2단계 결과와 패널 배치가 정해진 뒤 주문한다.
+주문은 두 번으로 나눈다. DigiKey 1차는 MCU, 코덱, 헤더, op-amp, 변환 기판, 차지 펌프, 릴레이, 전원 보호
+부품, 다이오드·트랜지스터, 전해 커패시터, 1단계 연결 잭이고 1단계 전에 한 번에 주문한다. 페달파츠
+부품과 케이스는 2단계 결과와 패널 배치가 정해진 뒤 주문한다.
 
 ### 주문 시 알아둘 것
 
