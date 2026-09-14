@@ -14,3 +14,7 @@ add_executable(native_tests ${TEST_SOURCES})
 target_include_directories(native_tests PRIVATE test)
 target_link_libraries(native_tests PRIVATE effector_core)
 target_compile_options(native_tests PRIVATE -Wall -Wextra -Werror)
+
+add_executable(static_gain tools/static_gain.cpp)
+target_link_libraries(static_gain PRIVATE effector_core)
+target_compile_options(static_gain PRIVATE -Wall -Wextra -Werror)
