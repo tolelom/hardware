@@ -11,6 +11,7 @@
 | `backups/` | 보드에서 채취한 원본. 공장 출하 플래시 등 |
 | `rp2040/` | RP2040 베어메탈 펌웨어. 빌드 트리다. 툴체인과 보드가 Ubuntu에 있어 거기서만 빌드한다 |
 | `nrf52840/` | XIAO nRF52840 Sense CircuitPython 트랙. 빌드가 없어 Windows에서 진행한다 |
+| `effector/` | 베이스 컴프레서 펌웨어. 코어는 CMake로 네이티브 테스트, 보드 빌드는 PlatformIO |
 | `inventory.md` | 보유 장비 목록 |
 
 확인된 것만 적는다. 안 해본 것은 "확인 필요", 모르는 것은 "모름"으로 남긴다.
