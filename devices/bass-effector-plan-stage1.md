@@ -1850,7 +1850,7 @@ Switchcraft 12A 두 개를 잭 A(입력), 잭 B(출력)로 쓴다. 잭 A 팁은 
 Teensy를 USB로 PC에 연결한다(1단계에는 VIN·VUSB 패드를 끊지 않는다).
 
 Run: `cd effector && pio run -e teensy41 -t upload && pio device monitor -b 115200`
-Expected: `effector stage 1 ready. type status`. `status` 입력 시 `gainDb=0.00 ... pgaStep=0 ...` 형식 한 줄
+Expected: `effector stage 1 ready. type status`. `status` 입력 시 `gainDb=0.00 ... pgaStep=0 ...` 형식 한 줄. `AudioOutputI2S_F32: *** WARNING ***: audio_block says len = ...` 블록 길이 경고가 찍히지 않는다
 
 - [ ] **Step 5: 첫 소리**
 
