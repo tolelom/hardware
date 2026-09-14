@@ -1,6 +1,6 @@
 # 베이스 이펙터 계획
 
-상세 설계: [bass-effector-design.md](bass-effector-design.md)
+상세 설계: [bass-effector-design.md](bass-effector-design.md). 회로 값과 결선: [bass-effector-schematic.md](bass-effector-schematic.md)
 최종 갱신: 2026-09-14
 
 ## 무엇을 만드나
@@ -63,9 +63,9 @@ PSRAM(8MB)을 쓴다.
 | 9V 어댑터 | 정전압 9V 센터 마이너스 2.1mm, 500mA 이상. 보유한 것은 9V 건전지뿐이라 2단계 T1부터 필요하다 | 페달파츠 1차 |
 | 저항·필름 커패시터 | 값은 회로도에서 정한다. 입력·출력 커플링과 패드, 바이어스 분압, 게이트·베이스 저항, 감시 분압. 서랍 저항은 값 미확인이라 셈에 넣지 않는다 | 페달파츠 1차 |
 | 릴레이 | TQ2-9V. 논래칭 DPDT, 코일 579Ω(약 15.5mA, 문서 기준) | DigiKey |
-| 전원 보호 | P-MOSFET Infineon IRF9540NPBF(Vgs 정격 ±20V, Vds 100V, TO-220) 2개. 백투백으로 2개 다 쓴다(설계서 3.5절), 여분 아님. 과전압 차단용 12V 제너 onsemi 1N4742A 2개와 구동 NPN onsemi 2N3904BU 2개 | DigiKey |
-| 다이오드·트랜지스터 | 더블러용 쇼트키 Taiwan Semiconductor Corporation 1N5819(40V, 1A, DO-41) 4개, K1 플라이백 onsemi 1N4148 4개, K1 구동 NPN onsemi 2N3904BU 2개. 쇼트키 원래 후보 onsemi 1N5819는 주문 불가라 대체 | DigiKey |
-| 전해 커패시터 | 벌크 Panasonic EEU-FR1E102(1000µF, 25V) 2개, 레일 Panasonic EEU-FR1E101B(100µF, 25V) 2개. 레일 쪽 원래 후보 EEU-FR1E101은 품절이라 후속 리비전으로 대체 | DigiKey |
+| 전원 보호 | P-MOSFET Infineon IRF9540NPBF(Vgs 정격 ±20V, Vds 100V, TO-220) 2개. 백투백으로 2개 다 쓴다(설계서 3.5절), 여분 아님. 과전압 차단용 12V 제너 onsemi 1N4742A 2개와 구동 PNP onsemi 2N3906BU 2개(회로 설계에서 NPN 대신 PNP로 확정, 1개 여분) | DigiKey |
+| 다이오드·트랜지스터 | 더블러용 쇼트키 Taiwan Semiconductor Corporation 1N5819(40V, 1A, DO-41) 4개, K1 플라이백 onsemi 1N4148 4개, K1 구동 NPN onsemi 2N3904BU 2개(1개 여분). 쇼트키 원래 후보 onsemi 1N5819는 주문 불가라 대체 | DigiKey |
+| 전해 커패시터 | 벌크 Panasonic EEU-FR1E102(1000µF, 25V) 2개(1개 여분). 레일·Vbias용 100µF는 12V 어댑터 대비로 35V(Panasonic FR 시리즈 EEU-FR1V101, 재고 확인) 4개(1개 여분). 10µF 50V(Panasonic FR 시리즈, 품번은 주문 시 검색) 6개(1개 여분). 원래 후보였던 100µF 25V EEU-FR1E101B는 뺀다 | DigiKey |
 | 포텐셔미터 5개 | Alpha 16mm 싱글 B10K 솔더 타입 | 페달파츠 |
 | 노브 5개 | 푸시핏 | 페달파츠 |
 | 풋스위치 | 모멘터리 2P | 페달파츠 |
@@ -82,11 +82,10 @@ PSRAM(8MB)을 쓴다.
 | 주문 | 품목 | 시점 |
 |---|---|---|
 | DigiKey 1차 | MCU, 코덱, 헤더, op-amp, 변환 기판, 차지 펌프, 릴레이, 전원 보호 부품, 다이오드·트랜지스터, 전해 커패시터, 1단계 연결 잭 | 1단계 전 |
-| 페달파츠 1차 | 7805, 9V 어댑터, DC 잭, 저항·필름 커패시터 | DigiKey 1차와 같은 때. 2단계 T1(전 부하 레일 전압)이 7805와 어댑터를 요구하므로 2단계 뒤로 미루면 거기서 멈춘다 |
+| 페달파츠 1차 | 7805, 9V 어댑터, DC 잭, 저항·필름·세라믹 커패시터, DIP-8 소켓 2개. 값과 수량은 [회로 설계 9절](bass-effector-schematic.md#9-부품-수량) | DigiKey 1차와 같은 때. 2단계 T1(전 부하 레일 전압)이 7805와 어댑터를 요구하므로 2단계 뒤로 미루면 거기서 멈춘다 |
 | 페달파츠 2차 | 포텐셔미터, 노브, 풋스위치, LED, IN/OUT 잭, 케이스 | 2단계 결과 뒤, 3단계 전. 케이스 타공 좌표는 풋스위치 치수를 잰 뒤 정한다 |
 
-저항·필름 커패시터 값은 회로도에서 정한 뒤 페달파츠 1차에 넣는다. 회로도가 DigiKey 1차보다 늦으면
-페달파츠 1차만 뒤로 밀고, 그래도 2단계 착수 전에는 도착해 있어야 한다.
+저항·커패시터 값은 회로 설계(2026-09-14)에서 정해졌다. 2단계 측정으로 값이 바뀌면 회로 설계와 생성기를 같이 고친다.
 
 ### 주문 시 알아둘 것
 

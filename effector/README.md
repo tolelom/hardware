@@ -3,6 +3,12 @@
 설계는 [../devices/bass-effector-design.md](../devices/bass-effector-design.md), 단계는
 [../devices/bass-effector.md](../devices/bass-effector.md)에 있다.
 
+## 회로도
+
+`hardware/`에 KiCad 회로도(`bass-compressor.kicad_sch`, KiCad 8 형식)와 그것을 만드는 `gen_schematic.py`,
+자동 생성 넷리스트 `netlist.md`가 있다. 값의 근거는 [../devices/bass-effector-schematic.md](../devices/bass-effector-schematic.md).
+회로도를 손으로 고치지 않고 생성기의 PARTS 표를 고쳐 다시 만든다(실행법은 그 문서 10절).
+
 ## 네이티브 테스트
 
 PlatformIO 없이 CMake와 g++로 돌린다.
