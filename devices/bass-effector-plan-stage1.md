@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Seed3와 DigiKey 1차 주문 품번을 확정하고, Daisy Seed3로 디지털 경로(컴프레서 펌웨어)를 만들어 설계서 1단계 측정(M2, T5, T7, T8, T9, T15)을 통과시킨다.
+**Goal:** Seed3와 DigiKey 주문 품번을 확정하고, Daisy Seed3로 디지털 경로(컴프레서 펌웨어)를 만들어 설계서 1단계 측정(M2, T5, T7, T8, T9, T15)을 통과시킨다.
 
 **Architecture:** 신호 처리 로직과 시리얼 콘솔은 플랫폼 헤더가 없는 코어 라이브러리(`effector/lib/effector_core`)에 두고 PC에서 CMake와 g++로 테스트한다. Seed3 펌웨어(`effector/src/main.cpp`)는 libDaisy 오디오 콜백이 코어를 부르고 USB CDC를 콘솔에 잇는 얇은 층이고, 1단계에는 노브 대신 시리얼 명령으로 파라미터를 넣는다.
 
@@ -51,7 +51,7 @@
 
 ---
 
-### Task 1: Seed3와 DigiKey 1차 주문 품번 확정
+### Task 1: Seed3와 DigiKey 주문 품번 확정
 
 **Files:**
 - Modify: `devices/bass-effector.md` (부품 절 표)
@@ -88,8 +88,14 @@ daisy.audio에서 Seed3 1개를 주문한다(미국 발송, 배송지 한국 선
 | 소신호 다이오드 | onsemi 1N4148 | 4 | 스루홀 |
 | 벌크 커패시터 | Panasonic EEU-FR1E102 | 2 | 1000µF, 25V 이상 |
 | 레일·Vbias·VIN 필터 커패시터 | Panasonic EEU-FR1V101 | 5 | 100µF, 35V 이상. 12V 어댑터에서 레일 약 23V. 1개 여분 |
-| 펌프·커플링 커패시터 | Panasonic FR 시리즈, 품번 검색 | 6 | 10µF, 50V |
+| 펌프·커플링 커패시터 | Panasonic EEU-FR1H100 | 6 | 10µF, 50V |
 | 1단계 연결 잭 | Switchcraft 12A | 2 | 6.35mm TS |
+| 저항 1/4W 금속피막 1% | 값별 검색 | 회로 설계 9절 사용 수 +2 | 2.2M, 1.8M, 100k, 47k, 10k, 4.7k, 3.3k, 2.2k, 1k, 820Ω, 470Ω, 100Ω, 10Ω, 3.3Ω |
+| 필름 커패시터 63V 이상 | 값별 검색 | 각 2 | 100nF, 1µF |
+| 세라믹 커패시터 50V | 값별 검색 | 100nF 10, 4.7nF 2 | |
+| DIP-8 소켓 | 검색 | 2 | LT1054와 변환 기판용 |
+| 솔더윅 | Chemtronics 80-2-5 | 1 | 1.5mm 폭, 1.5m |
+| 납흡입기 | 검색 | 1 | |
 
 - [ ] **Step 3: 합계 확인**
 
@@ -103,7 +109,7 @@ daisy.audio에서 Seed3 1개를 주문한다(미국 발송, 배송지 한국 선
 
 ```bash
 git add devices/bass-effector.md
-git commit -m "[Docs] 이펙터 DigiKey 1차 주문 품번 확정"
+git commit -m "[Docs] 이펙터 DigiKey 주문 품번 확정"
 ```
 
 주문과 결제는 사용자가 한다.
