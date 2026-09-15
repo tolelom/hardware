@@ -1,6 +1,6 @@
 """베이스 컴프레서 페달 회로도 생성기.
 
-KiCad 공식 심볼 라이브러리(9.0.5 태그의 .kicad_sym)에서 심볼 정의를 그대로 끌어와
+KiCad 공식 심볼 라이브러리(9.0.7 태그의 .kicad_sym)에서 심볼 정의를 그대로 끌어와
 bass-compressor.kicad_sch(KiCad 8 형식, 9·10에서 열림)와 netlist.md를 만든다.
 값과 결선은 이 파일의 PARTS 표가 기준이고, 설계 근거는
 devices/bass-effector-schematic.md에 있다.
@@ -9,8 +9,8 @@ devices/bass-effector-schematic.md에 있다.
     python gen_schematic.py --libs <kicad_sym 폴더> [--out <출력 폴더>]
 
 폴더는 설치된 KiCad 9의 심볼 폴더(Ubuntu: /usr/share/kicad/symbols)이거나, GitLab kicad-symbols
-저장소 9.0.5 태그에서 받은 파일들이다.
-    https://gitlab.com/api/v4/projects/kicad%2Flibraries%2Fkicad-symbols/repository/files/<이름>.kicad_sym/raw?ref=9.0.5
+저장소 9.0.7 태그에서 받은 파일들이다.
+    https://gitlab.com/api/v4/projects/kicad%2Flibraries%2Fkicad-symbols/repository/files/<이름>.kicad_sym/raw?ref=9.0.7
 """
 
 from __future__ import annotations
@@ -173,6 +173,8 @@ BLOCKS = [
         Part("R14", "Device", "R", "10k", {"1": "VS", "2": "OV_B"}, note="Q3 에미터-베이스. 평상시 Q3 차단"),
         Part("R15", "Device", "R", "4.7k", {"1": "OV_B", "2": "ZK"}, note="Q3 베이스 전류 제한"),
         Part("D3", "Device", "D_Zener", "1N4742A 12V", {"1": "ZK", "2": "GND"}, note="임계 약 12.7V"),
+        Part("D14", "Device", "D_Zener", "1N4744A 15V", {"1": "VS", "2": "VG"},
+             note="Q1·Q2 게이트 보호. 캐소드가 소스. 꽂는 순간 Vgs를 15V로 제한"),
         Part("C7", "Device", "C_Polarized", "1000u 25V", {"1": "V9", "2": "GND"}, note="벌크. 차단 시 VIN 4V까지 약 22ms 유지"),
     ]),
     Block("B. LT1054 더블러와 아날로그 레일 (설계서 4.2절, 데이터시트 그림 20)", [

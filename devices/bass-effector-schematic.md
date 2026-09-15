@@ -21,7 +21,7 @@ DC 잭 슬리브(+9V) ─ Q1 D    S ─┬─ S    D Q2 ─ V9 ─ C7 1000µF �
                     G ─┬─ G ──┘  (VS)
                        │        Q3 2N3906: E=VS, C=VG, B ─ R15 4.7k ─ D3 12V 제너 ─ GND
                        R13 100k          R14 10k: VS-B
-                       GND
+                       GND               D14 15V 제너: 캐소드 VS, 애노드 VG
 DC 잭 센터 ─ GND
 ```
 
@@ -33,6 +33,7 @@ DC 잭 센터 ─ GND
 | R14 | 10k | Q3 에미터-베이스. 제너가 안 흐를 때 베이스를 소스에 붙여 Q3를 끈다 |
 | R15 | 4.7k | Q3 베이스와 제너 사이 전류 제한. 없으면 도통 시 에미터-베이스 접합과 제너가 맞물려 전류가 제한되지 않는다. 18V 입력에서 (18 - 0.7 - 12) / 4.7k = 1.1mA 베이스 전류, R13 전류 0.18mA를 포화로 끈다 |
 | D3 | 1N4742A 12V | 임계 = Vz + Veb = 약 12.7V. 낮은 전류에서 제너가 12V보다 조금 아래에서 꺾여 실제 임계는 12.2V 근처. 정전압 9V 어댑터 무부하 9.6V는 안 걸리고 12V 어댑터는 걸릴 수도 안 걸릴 수도 있다(설계서 3.5절) |
+| D14 | 1N4744A 15V | Q1·Q2 게이트-소스 보호. 18V 어댑터를 꽂는 순간 Q3가 켜지기 전에 Vgs가 약 17.3V까지 가고 케이블 링잉이 더해지면 정격 ±20V를 넘을 수 있어 15V로 묶는다. 9V에서 8.9V, 차단 임계 12.7V에서도 15V 아래라 평소에는 흐르지 않는다. 역방향 누설 5µA 이하(9.1V 기준)는 R13에서 0.5V 이하라 Vgs에 영향이 작다(2026-09-15 추가) |
 | C7 | 1000µF 25V | 벌크. 230mA 부하에서 9V → 8V(감시 임계)까지 4.3ms, 4V(Seed3 VIN 하한)까지 22ms(설계서 3.5절) |
 
 동작 확인(설계서 3.5절 그대로): 정방향에서 Q1 바디 다이오드가 먼저 도통하고 게이트가 GND라 두 채널이
@@ -198,7 +199,7 @@ libDaisy에서 A0~A5는 `seed::A0`~`seed::A5`, D0~D10은 `seed::D0`~`seed::D10`�
 
 ## 9. 부품 수량
 
-DigiKey 주문에 이미 있는 것 중 이 회로가 쓰는 수: IRF9540N 2, 2N3904 1, 1N4742A 1, 1N5819 2, 1N4148 1,
+DigiKey 주문에 이미 있는 것 중 이 회로가 쓰는 수: IRF9540N 2, 2N3904 1, 1N4742A 1, 1N4744A 1, 1N5819 2, 1N4148 1,
 LT1054 1, OPA2992 1, TQ2-9V 1, 1000µF 25V 1. Seed3는 daisy.audio 직판이다. 주문 구성은 계획서 부품 절에 있다.
 
 | 품목 | 값 | 수량 | 사용처 |
@@ -239,7 +240,7 @@ ERC를 돌리고, 필요하면 라벨을 따라 선으로 정리한다. KiCad 9.
 
     kicad-cli sch erc --severity-all --format report -o erc.txt effector/hardware/bass-compressor.kicad_sch
 
-다시 만들려면 KiCad 9가 설치된 PC에서는 그 심볼 폴더를, 아니면 KiCad 심볼 라이브러리 9.0.5의 .kicad_sym
+다시 만들려면 KiCad 9가 설치된 PC에서는 그 심볼 폴더를, 아니면 KiCad 심볼 라이브러리 9.0.7의 .kicad_sym
 파일 11개(Device, Amplifier_Operational, Transistor_FET, Transistor_BJT, Regulator_SwitchedCapacitor, Relay,
 Connector, Connector_Audio, Connector_Generic, Switch, power)를 받은 폴더를 지정한다.
 
@@ -252,6 +253,8 @@ Connector, Connector_Audio, Connector_Generic, Switch, power)를 받은 폴더�
 설계서를 고치지 않고 여기서만 정한 것과, 설계서를 이 문서에 맞춰 고친 것.
 
 - 과전압 차단 트랜지스터를 NPN에서 PNP(2N3906)로 바꿨다. 설계서 3.5절을 같이 고쳤다
+- 게이트 보호 제너 D14(1N4744A 15V)를 더했다. 설계서 3.5절의 "Vgs 정격 ±20V 이상이거나 게이트 보호 제너" 중 둘 다
+  택한다(2026-09-15 검토). 직렬 R은 R13 100k가 맡는다
 - LED 저항을 1k에서 470Ω으로 내렸다. 설계서 부품표는 페달파츠 주문이라 값만 여기서 정한다
 - 레일·Vbias 전해 커패시터를 25V에서 35V로 올렸다. 12V 어댑터 대비
 - 출력단 게인을 +14.8dB 대신 E24 값으로 +15.1dB로 잡았다. 유니티 트림이 흡수한다

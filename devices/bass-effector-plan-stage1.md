@@ -84,6 +84,7 @@ daisy.audio에서 Seed3 2개를 주문했다(2026-09-15). 핀 헤더 동봉 여�
 | 릴레이 | Panasonic TQ2-9V | 2 | 논래칭 DPDT, 9V 코일. 1개 여분 |
 | P-MOSFET | Infineon IRF9540NPBF | 3 | VGS 정격 ±20V 이상, VDS 절댓값 30V 이상, TO-220. 백투백으로 2개를 쓰고 1개 여분 |
 | 12V 제너 | onsemi 1N4742A | 2 | 12V, 1W, 스루홀 |
+| 15V 제너 | onsemi 1N4744A | 2 | 15V, 1W, 스루홀. Q1·Q2 게이트 보호 D14. 1개 여분 |
 | PNP | onsemi 2N3906BU | 2 | TO-92. 과전압 차단 구동 |
 | NPN | onsemi 2N3904BU | 2 | TO-92. K1 구동 |
 | 쇼트키 | Taiwan Semiconductor Corporation 1N5819 | 4 | 1A, 40V, 스루홀 |
