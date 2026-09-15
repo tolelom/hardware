@@ -8,7 +8,8 @@ devices/bass-effector-schematic.md에 있다.
 사용:
     python gen_schematic.py --libs <kicad_sym 폴더> [--out <출력 폴더>]
 
-라이브러리 파일은 GitLab kicad-symbols 저장소 9.0.5 태그에서 받는다.
+폴더는 설치된 KiCad 9의 심볼 폴더(Ubuntu: /usr/share/kicad/symbols)이거나, GitLab kicad-symbols
+저장소 9.0.5 태그에서 받은 파일들이다.
     https://gitlab.com/api/v4/projects/kicad%2Flibraries%2Fkicad-symbols/repository/files/<이름>.kicad_sym/raw?ref=9.0.5
 """
 
@@ -106,9 +107,16 @@ class Library:
             tree = _clone(self.raw(lib, parent_name[1]))
             base = parent_name[1]
             child_props = {p[1]: p for p in find_all(child, "property")}
-            for prop in find_all(tree, "property"):
-                if prop[1] in child_props:
-                    prop[2] = child_props[prop[1]][2]
+            # 자식이 정의한 속성은 값만이 아니라 위치·글꼴까지 통째로 자식 것을 쓴다(KiCad와 같은 결과)
+            is_property = lambda n: isinstance(n, list) and n and n[0] == "property"
+            for index, node in enumerate(tree):
+                if is_property(node) and node[1] in child_props:
+                    tree[index] = _clone(child_props[node[1]])
+            last_property = max(i for i, n in enumerate(tree) if is_property(n))
+            for prop_name, prop in child_props.items():
+                if not any(is_property(n) and n[1] == prop_name for n in tree):
+                    last_property += 1
+                    tree.insert(last_property, _clone(prop))
         tree[1] = f"{lib}:{name}"
         for sub in find_all(tree, "symbol"):
             sub[1] = name + sub[1][len(base):]
@@ -150,7 +158,7 @@ class Block:
     parts: list[Part] = field(default_factory=list)
 
 
-# 넷 이름 규칙: T41_P<핀>_<역할>은 Teensy 4.1 핀, SHIELD_*는 Audio Shield 패드.
+# 넷 이름 규칙: SEED_<핀 이름>_<역할>은 Daisy Seed3 핀. J4 핀 번호가 Seed3 물리 핀 번호(데이터시트 표 2)다.
 BLOCKS = [
     Block("A. 전원 입력과 보호 (설계서 3.5절)", [
         Part("J3", "Connector", "Barrel_Jack", "DC 9V 센터 마이너스", {"1": "GND", "2": "VIN_RAW"},
@@ -165,7 +173,7 @@ BLOCKS = [
         Part("R14", "Device", "R", "10k", {"1": "VS", "2": "OV_B"}, note="Q3 에미터-베이스. 평상시 Q3 차단"),
         Part("R15", "Device", "R", "4.7k", {"1": "OV_B", "2": "ZK"}, note="Q3 베이스 전류 제한"),
         Part("D3", "Device", "D_Zener", "1N4742A 12V", {"1": "ZK", "2": "GND"}, note="임계 약 12.7V"),
-        Part("C7", "Device", "C_Polarized", "1000u 25V", {"1": "V9", "2": "GND"}, note="벌크. 차단 시 8.7ms 유지"),
+        Part("C7", "Device", "C_Polarized", "1000u 25V", {"1": "V9", "2": "GND"}, note="벌크. 차단 시 VIN 4V까지 약 22ms 유지"),
     ]),
     Block("B. LT1054 더블러와 아날로그 레일 (설계서 4.2절, 데이터시트 그림 20)", [
         Part("U2", "Regulator_SwitchedCapacitor", "LT1054", "LT1054CP",
@@ -183,16 +191,14 @@ BLOCKS = [
         Part("R12", "Device", "R", "10k", {"1": "VBIAS", "2": "GND"}, note="Vbias 분압 하"),
         Part("C6", "Device", "C_Polarized", "100u 35V", {"1": "VBIAS", "2": "GND"}, note="Vbias. 20Hz에서 80옴"),
     ]),
-    Block("C. 5V 레귤레이터와 전원 감시 (설계서 3.5절, 5.4절)", [
-        Part("U3", "Regulator_Linear", "L7805", "7805", {"1": "V9", "2": "GND", "3": "T41_VIN_5V"},
-             note="탭을 케이스에 절연 고정"),
-        Part("C11", "Device", "C", "100n", {"1": "V9", "2": "GND"}, note="7805 입력 가까이"),
-        Part("C12", "Device", "C", "100n", {"1": "T41_VIN_5V", "2": "GND"}),
-        Part("C13", "Device", "C_Polarized", "10u 50V", {"1": "T41_VIN_5V", "2": "GND"}),
+    Block("C. Seed3 VIN 필터와 전원 감시 (설계서 3.5절, 4.1절)", [
+        Part("R32", "Device", "R", "3.3R", {"1": "V9", "2": "SEED_VIN"}, note="VIN 필터. 150mA에서 0.5V 강하"),
+        Part("C11", "Device", "C_Polarized", "100u 35V", {"1": "SEED_VIN", "2": "GND"}, note="VIN 필터. 차단 0.5kHz"),
+        Part("C12", "Device", "C", "100n", {"1": "SEED_VIN", "2": "GND"}, note="핀 39 가까이"),
         Part("R19", "Device", "R", "47k", {"1": "V9", "2": "VMON"}, note="감시 분압 상. 18V에서 3.16V"),
         Part("R20", "Device", "R", "10k", {"1": "VMON", "2": "GND"}, note="감시 분압 하"),
         Part("C14", "Device", "C", "100n", {"1": "VMON", "2": "GND"}, note="시정수 0.8ms"),
-        Part("R21", "Device", "R", "1k", {"1": "VMON", "2": "T41_P39_A15_VMON"}, note="ADC 핀 직렬"),
+        Part("R21", "Device", "R", "1k", {"1": "VMON", "2": "SEED_A5_VMON"}, note="ADC 핀 직렬"),
     ]),
     Block("D. 입력 네트워크와 버퍼, 패드 (설계서 4.1절)", [
         Part("J1", "Connector_Audio", "AudioJack2", "IN 6.35mm TS", {"T": "IN_TIP", "S": "GND"}),
@@ -202,18 +208,19 @@ BLOCKS = [
         Part("R3", "Device", "R", "1.8M", {"1": "IN_C", "2": "VBIAS"}, note="R_bias. R1과 병렬 약 1M"),
         Part("U1", "Amplifier_Operational", "TL072", "OPA2992", {"3": "IN_C", "2": "BUF_OUT", "1": "BUF_OUT"},
              unit=1, note="A: 유니티 버퍼"),
-        Part("C2", "Device", "C", "1u 필름", {"1": "BUF_OUT", "2": "PAD_IN"}, note="패드 커플링. 2.8Hz"),
-        Part("R4", "Device", "R", "47k", {"1": "PAD_IN", "2": "SHIELD_LINEIN_L"}, note="패드 직렬"),
-        Part("R5", "Device", "R", "15k", {"1": "SHIELD_LINEIN_L", "2": "GND"}, note="패드 션트. 29k와 병렬로 -15.2dB"),
+        Part("C2", "Device", "C_Polarized", "10u 50V", {"1": "BUF_OUT", "2": "PAD_IN"}, note="패드 커플링. 2.3Hz. + 쪽이 버퍼"),
+        Part("R4", "Device", "R", "5.6k", {"1": "PAD_IN", "2": "SEED_AUDIO_IN1"}, note="패드 직렬"),
+        Part("R5", "Device", "R", "1.2k", {"1": "SEED_AUDIO_IN1", "2": "GND"}, note="패드 션트. -15.1dB, 출력 임피던스 1k"),
+        Part("C23", "Device", "C", "3.3n", {"1": "SEED_AUDIO_IN1", "2": "GND"}, note="종단. 1k와 48kHz"),
     ]),
     Block("E. 출력단 (설계서 4.2절)", [
-        Part("C3", "Device", "C", "1u 필름", {"1": "SHIELD_LINEOUT_L", "2": "OUT_IN"}, note="R6와 1.6Hz"),
+        Part("C3", "Device", "C", "1u 필름", {"1": "SEED_AUDIO_OUT1", "2": "OUT_IN"}, note="R6와 1.6Hz"),
         Part("R6", "Device", "R", "100k", {"1": "OUT_IN", "2": "VBIAS"}, note="출력단 + 입력 바이어스"),
         Part("U1", "Amplifier_Operational", "TL072", "OPA2992", {"5": "OUT_IN", "6": "FB", "7": "U1B_OUT"},
-             unit=2, note="B: 비반전 +15.7dB"),
+             unit=2, note="B: 비반전 +15.1dB"),
         Part("U1", "Amplifier_Operational", "TL072", "OPA2992", {"8": "VRAIL", "4": "GND"},
              unit=3, note="전원"),
-        Part("R7", "Device", "R", "51k", {"1": "U1B_OUT", "2": "FB"}, note="피드백. 게인 1 + 51k/10k = 6.1"),
+        Part("R7", "Device", "R", "47k", {"1": "U1B_OUT", "2": "FB"}, note="피드백. 게인 1 + 47k/10k = 5.7"),
         Part("R8", "Device", "R", "10k", {"1": "FB", "2": "FB_C"}),
         Part("C4", "Device", "C_Polarized", "10u 50V", {"1": "FB_C", "2": "GND"}, note="DC 게인 1. + 쪽이 R8"),
         Part("R9", "Device", "R", "100R", {"1": "U1B_OUT", "2": "OUT_R"}, note="케이블 용량 분리"),
@@ -228,50 +235,52 @@ BLOCKS = [
              note="코일 꺼짐 = NC = 트루 바이패스. 11·21 COM, 12·22 NC, 14·24 NO"),
         Part("D4", "Device", "D", "1N4148", {"1": "V9", "2": "K1_COIL"}, note="플라이백. 캐소드 9V"),
         Part("Q4", "Transistor_BJT", "2N3904", "2N3904", {"1": "GND", "2": "Q4_B", "3": "K1_COIL"}),
-        Part("R17", "Device", "R", "2.2k", {"1": "T41_P2_K1DRV", "2": "Q4_B"}, note="베이스 1.2mA"),
+        Part("R17", "Device", "R", "2.2k", {"1": "SEED_D0_K1DRV", "2": "Q4_B"}, note="베이스 1.2mA"),
         Part("R18", "Device", "R", "10k", {"1": "Q4_B", "2": "GND"}, note="리셋 중 K1 해제"),
     ]),
     Block("G. 컨트롤: 노브, 풋스위치, LED (설계서 3.2절, 3.3절, 4.3절)", [
-        Part("RV1", "Device", "R_Potentiometer", "B10K Input", {"1": "T41_3V3", "2": "T41_P24_A10_INPUT", "3": "GND"}),
-        Part("RV2", "Device", "R_Potentiometer", "B10K Ratio", {"1": "T41_3V3", "2": "T41_P25_A11_RATIO", "3": "GND"}),
-        Part("RV3", "Device", "R_Potentiometer", "B10K Att/Rel", {"1": "T41_3V3", "2": "T41_P26_A12_ATTREL", "3": "GND"}),
-        Part("RV4", "Device", "R_Potentiometer", "B10K Blend", {"1": "T41_3V3", "2": "T41_P27_A13_BLEND", "3": "GND"}),
-        Part("RV5", "Device", "R_Potentiometer", "B10K Output", {"1": "T41_3V3", "2": "T41_P38_A14_OUTPUT", "3": "GND"}),
-        Part("C18", "Device", "C", "100n", {"1": "T41_P24_A10_INPUT", "2": "GND"}),
-        Part("C19", "Device", "C", "100n", {"1": "T41_P25_A11_RATIO", "2": "GND"}),
-        Part("C20", "Device", "C", "100n", {"1": "T41_P26_A12_ATTREL", "2": "GND"}),
-        Part("C21", "Device", "C", "100n", {"1": "T41_P27_A13_BLEND", "2": "GND"}),
-        Part("C22", "Device", "C", "100n", {"1": "T41_P38_A14_OUTPUT", "2": "GND"}),
-        Part("SW1", "Switch", "SW_Push", "풋스위치 모멘터리", {"1": "T41_P3_FSW", "2": "GND"}),
-        Part("R22", "Device", "R", "10k", {"1": "T41_3V3", "2": "T41_P3_FSW"}, note="풀업"),
-        Part("C15", "Device", "C", "100n", {"1": "T41_P3_FSW", "2": "GND"}, note="디바운스 보조"),
+        Part("RV1", "Device", "R_Potentiometer", "B10K Input", {"1": "SEED_3V3A", "2": "SEED_A0_INPUT", "3": "GND"}),
+        Part("RV2", "Device", "R_Potentiometer", "B10K Ratio", {"1": "SEED_3V3A", "2": "SEED_A1_RATIO", "3": "GND"}),
+        Part("RV3", "Device", "R_Potentiometer", "B10K Att/Rel", {"1": "SEED_3V3A", "2": "SEED_A2_ATTREL", "3": "GND"}),
+        Part("RV4", "Device", "R_Potentiometer", "B10K Blend", {"1": "SEED_3V3A", "2": "SEED_A3_BLEND", "3": "GND"}),
+        Part("RV5", "Device", "R_Potentiometer", "B10K Output", {"1": "SEED_3V3A", "2": "SEED_A4_OUTPUT", "3": "GND"}),
+        Part("C18", "Device", "C", "100n", {"1": "SEED_A0_INPUT", "2": "GND"}),
+        Part("C19", "Device", "C", "100n", {"1": "SEED_A1_RATIO", "2": "GND"}),
+        Part("C20", "Device", "C", "100n", {"1": "SEED_A2_ATTREL", "2": "GND"}),
+        Part("C21", "Device", "C", "100n", {"1": "SEED_A3_BLEND", "2": "GND"}),
+        Part("C22", "Device", "C", "100n", {"1": "SEED_A4_OUTPUT", "2": "GND"}),
+        Part("SW1", "Switch", "SW_Push", "풋스위치 모멘터리", {"1": "SEED_D1_FSW", "2": "GND"}),
+        Part("R22", "Device", "R", "10k", {"1": "SEED_3V3D", "2": "SEED_D1_FSW"}, note="풀업"),
+        Part("C15", "Device", "C", "100n", {"1": "SEED_D1_FSW", "2": "GND"}, note="디바운스 보조"),
     ] + [
         item for i in range(8) for item in (
-            Part(f"R{23 + i}", "Device", "R", "470R", {"1": f"T41_P{28 + i}_METER{i + 1}", "2": f"LED{i + 1}_A"}),
+            Part(f"R{23 + i}", "Device", "R", "470R", {"1": f"SEED_D{2 + i}_METER{i + 1}", "2": f"LED{i + 1}_A"}),
             Part(f"D{5 + i}", "Device", "LED", f"3mm 미터 {i + 1}", {"1": "GND", "2": f"LED{i + 1}_A"}),
         )
     ] + [
-        Part("R31", "Device", "R", "470R", {"1": "T41_P36_LEDON", "2": "LED9_A"}),
+        Part("R31", "Device", "R", "470R", {"1": "SEED_D10_LEDON", "2": "LED9_A"}),
         Part("D13", "Device", "LED", "3mm 온", {"1": "GND", "2": "LED9_A"}),
     ]),
-    Block("H. Teensy 4.1과 Audio Shield 연결 (설계서 4.3절). Shield의 I2S·I2C는 핀 번호 같은 것끼리 직결", [
-        Part("J4", "Connector_Generic", "Conn_01x20", "Teensy 4.1 사용 핀", {
-            "1": "T41_VIN_5V", "2": "T41_3V3", "3": "GND", "4": "T41_P2_K1DRV", "5": "T41_P3_FSW",
-            "6": "T41_P24_A10_INPUT", "7": "T41_P25_A11_RATIO", "8": "T41_P26_A12_ATTREL",
-            "9": "T41_P27_A13_BLEND", "10": "T41_P38_A14_OUTPUT", "11": "T41_P39_A15_VMON",
-            "12": "T41_P28_METER1", "13": "T41_P29_METER2", "14": "T41_P30_METER3", "15": "T41_P31_METER4",
-            "16": "T41_P32_METER5", "17": "T41_P33_METER6", "18": "T41_P34_METER7", "19": "T41_P35_METER8",
-            "20": "T41_P36_LEDON"},
-            note="커넥터 핀 번호는 표기용. Teensy 실제 핀은 넷 이름의 P 번호"),
-        Part("J5", "Connector_Generic", "Conn_01x03", "Audio Shield Rev D 라인 패드",
-             {"1": "SHIELD_LINEIN_L", "2": "SHIELD_LINEOUT_L", "3": "GND"}),
+    Block("H. Daisy Seed3 소켓 (설계서 4.3절). 핀 번호는 Seed3 데이터시트 표 2와 같다", [
+        Part("J4", "Connector_Generic", "Conn_01x40", "Daisy Seed3 2x20 소켓", {
+            "1": "SEED_D0_K1DRV", "2": "SEED_D1_FSW",
+            "3": "SEED_D2_METER1", "4": "SEED_D3_METER2", "5": "SEED_D4_METER3", "6": "SEED_D5_METER4",
+            "7": "SEED_D6_METER5", "8": "SEED_D7_METER6", "9": "SEED_D8_METER7", "10": "SEED_D9_METER8",
+            "11": "SEED_D10_LEDON", "12": "NC", "13": "NC", "14": "NC", "15": "NC",
+            "16": "SEED_AUDIO_IN1", "17": "NC", "18": "SEED_AUDIO_OUT1", "19": "NC",
+            "20": "GND", "21": "SEED_3V3A",
+            "22": "SEED_A0_INPUT", "23": "SEED_A1_RATIO", "24": "SEED_A2_ATTREL", "25": "SEED_A3_BLEND",
+            "26": "SEED_A4_OUTPUT", "27": "SEED_A5_VMON",
+            "28": "NC", "29": "NC", "30": "NC", "31": "NC", "32": "NC", "33": "NC", "34": "NC", "35": "NC",
+            "36": "NC", "37": "NC", "38": "SEED_3V3D", "39": "SEED_VIN", "40": "GND"},
+            note="16 Audio In 1, 18 Audio Out 1, 20 AGND, 21 3V3A, 38 3V3D, 39 VIN, 40 DGND. 12~15(D11~D14)는 비움"),
     ]),
-    Block("I. ERC용 전원 플래그", [
+    Block("I. ERC용 전원 플래그. GND는 U2 VOUT(전원 출력 핀)이 구동하므로 플래그를 두지 않는다", [
         Part("PF1", "power", "PWR_FLAG", "PWR_FLAG", {"1": "VIN_RAW"}),
         Part("PF2", "power", "PWR_FLAG", "PWR_FLAG", {"1": "V9"}),
         Part("PF3", "power", "PWR_FLAG", "PWR_FLAG", {"1": "VRAIL"}),
-        Part("PF4", "power", "PWR_FLAG", "PWR_FLAG", {"1": "T41_3V3"}),
-        Part("PF5", "power", "PWR_FLAG", "PWR_FLAG", {"1": "GND"}),
+        Part("PF4", "power", "PWR_FLAG", "PWR_FLAG", {"1": "SEED_3V3A"}),
+        Part("PF6", "power", "PWR_FLAG", "PWR_FLAG", {"1": "SEED_3V3D"}),
     ]),
 ]
 

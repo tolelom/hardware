@@ -637,7 +637,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(property "Reference" "Q"
-			(at 5.08 1.27 0)
+			(at 5.08 1.905 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -646,7 +646,7 @@
 			)
 		)
 		(property "Value" "2N3906"
-			(at 5.08 -1.27 0)
+			(at 5.08 0 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -655,11 +655,13 @@
 			)
 		)
 		(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline"
-			(at 5.08 2.54 0)
+			(at 5.08 -1.905 0)
 			(effects
 				(font
 					(size 1.27 1.27)
+					(italic yes)
 				)
+				(justify left)
 				(hide yes)
 			)
 		)
@@ -669,6 +671,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 				(hide yes)
 			)
 		)
@@ -681,7 +684,34 @@
 				(hide yes)
 			)
 		)
+		(property "Sim.Device" "PNP"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" "1=E 2=B 3=C"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(property "ki_keywords" "PNP Transistor"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "ki_fp_filters" "TO?92*"
 			(at 0 0 0)
 			(effects
 				(font
@@ -1658,147 +1688,6 @@
 					)
 				)
 				(number "2"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-			)
-		)
-	)
-	(symbol "Regulator_Linear:L7805"
-		(pin_names
-			(offset 0.254)
-		)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(property "Reference" "U"
-			(at -3.81 3.175 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "L7805"
-			(at 0 3.175 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 0.635 -3.81 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "http://www.st.com/content/ccc/resource/technical/document/datasheet/41/4f/b3/b0/12/d4/47/88/CD00000444.pdf/files/CD00000444.pdf/jcr:content/translations/en.CD00000444.pdf"
-			(at 0 -1.27 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Positive 1.5A 35V Linear Regulator, Fixed Output 5V, TO-220/TO-263/TO-252"
-			(at 0 0 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "ki_keywords" "Voltage Regulator 1.5A Positive"
-			(at 0 0 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "ki_fp_filters" "TO?252* TO?263* TO?220*"
-			(at 0 0 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(symbol "L7805_0_1"
-			(rectangle
-				(start -5.08 1.905)
-				(end 5.08 -5.08)
-				(stroke
-					(width 0.254)
-					(type default)
-				)
-				(fill
-					(type background)
-				)
-			)
-		)
-		(symbol "L7805_1_1"
-			(pin power_in line
-				(at -7.62 0 0)
-				(length 2.54)
-				(name "IN"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "1"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-			)
-			(pin power_in line
-				(at 0 -7.62 90)
-				(length 2.54)
-				(name "GND"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "2"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-			)
-			(pin power_out line
-				(at 7.62 0 180)
-				(length 2.54)
-				(name "OUT"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "3"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -2966,7 +2855,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(property "Reference" "Q"
-			(at 5.08 1.27 0)
+			(at 5.08 1.905 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2975,7 +2864,7 @@
 			)
 		)
 		(property "Value" "2N3904"
-			(at 5.08 -1.27 0)
+			(at 5.08 0 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2984,11 +2873,13 @@
 			)
 		)
 		(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline"
-			(at 5.08 2.54 0)
+			(at 5.08 -1.905 0)
 			(effects
 				(font
 					(size 1.27 1.27)
+					(italic yes)
 				)
+				(justify left)
 				(hide yes)
 			)
 		)
@@ -2998,6 +2889,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 				(hide yes)
 			)
 		)
@@ -3010,7 +2902,34 @@
 				(hide yes)
 			)
 		)
+		(property "Sim.Device" "NPN"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" "1=E 2=B 3=C"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(property "ki_keywords" "NPN Transistor"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "ki_fp_filters" "TO?92*"
 			(at 0 0 0)
 			(effects
 				(font
@@ -3669,7 +3588,7 @@
 			)
 		)
 	)
-	(symbol "Connector_Generic:Conn_01x20"
+	(symbol "Connector_Generic:Conn_01x40"
 		(pin_names
 			(offset 1.016)
 			(hide yes)
@@ -3678,15 +3597,15 @@
 		(in_bom yes)
 		(on_board yes)
 		(property "Reference" "J"
-			(at 0 25.4 0)
+			(at 0 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "Conn_01x20"
-			(at 0 -27.94 0)
+		(property "Value" "Conn_01x40"
+			(at 0 -53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3711,7 +3630,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Generic connector, single row, 01x20, script generated (kicad-library-utils/schlib/autogen/connector/)"
+		(property "Description" "Generic connector, single row, 01x40, script generated (kicad-library-utils/schlib/autogen/connector/)"
 			(at 0 0 0)
 			(effects
 				(font
@@ -3738,16 +3657,126 @@
 				(hide yes)
 			)
 		)
-		(symbol "Conn_01x20_1_1"
+		(symbol "Conn_01x40_1_1"
 			(rectangle
-				(start -1.27 24.13)
-				(end 1.27 -26.67)
+				(start -1.27 49.53)
+				(end 1.27 -52.07)
 				(stroke
 					(width 0.254)
 					(type default)
 				)
 				(fill
 					(type background)
+				)
+			)
+			(rectangle
+				(start -1.27 48.387)
+				(end 0 48.133)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 45.847)
+				(end 0 45.593)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 43.307)
+				(end 0 43.053)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 40.767)
+				(end 0 40.513)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 38.227)
+				(end 0 37.973)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 35.687)
+				(end 0 35.433)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 33.147)
+				(end 0 32.893)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 30.607)
+				(end 0 30.353)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 28.067)
+				(end 0 27.813)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 25.527)
+				(end 0 25.273)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
 				)
 			)
 			(rectangle
@@ -3970,8 +3999,118 @@
 					(type none)
 				)
 			)
+			(rectangle
+				(start -1.27 -27.813)
+				(end 0 -28.067)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 -30.353)
+				(end 0 -30.607)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 -32.893)
+				(end 0 -33.147)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 -35.433)
+				(end 0 -35.687)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 -37.973)
+				(end 0 -38.227)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 -40.513)
+				(end 0 -40.767)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 -43.053)
+				(end 0 -43.307)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 -45.593)
+				(end 0 -45.847)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 -48.133)
+				(end 0 -48.387)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.27 -50.673)
+				(end 0 -50.927)
+				(stroke
+					(width 0.1524)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
 			(pin passive line
-				(at -5.08 22.86 0)
+				(at -5.08 48.26 0)
 				(length 3.81)
 				(name "Pin_1"
 					(effects
@@ -3989,7 +4128,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 20.32 0)
+				(at -5.08 45.72 0)
 				(length 3.81)
 				(name "Pin_2"
 					(effects
@@ -4007,7 +4146,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 17.78 0)
+				(at -5.08 43.18 0)
 				(length 3.81)
 				(name "Pin_3"
 					(effects
@@ -4025,7 +4164,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 15.24 0)
+				(at -5.08 40.64 0)
 				(length 3.81)
 				(name "Pin_4"
 					(effects
@@ -4043,7 +4182,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 12.7 0)
+				(at -5.08 38.1 0)
 				(length 3.81)
 				(name "Pin_5"
 					(effects
@@ -4061,7 +4200,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 10.16 0)
+				(at -5.08 35.56 0)
 				(length 3.81)
 				(name "Pin_6"
 					(effects
@@ -4079,7 +4218,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 7.62 0)
+				(at -5.08 33.02 0)
 				(length 3.81)
 				(name "Pin_7"
 					(effects
@@ -4097,7 +4236,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 5.08 0)
+				(at -5.08 30.48 0)
 				(length 3.81)
 				(name "Pin_8"
 					(effects
@@ -4115,7 +4254,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 2.54 0)
+				(at -5.08 27.94 0)
 				(length 3.81)
 				(name "Pin_9"
 					(effects
@@ -4133,7 +4272,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 0 0)
+				(at -5.08 25.4 0)
 				(length 3.81)
 				(name "Pin_10"
 					(effects
@@ -4151,7 +4290,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 -2.54 0)
+				(at -5.08 22.86 0)
 				(length 3.81)
 				(name "Pin_11"
 					(effects
@@ -4169,7 +4308,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 -5.08 0)
+				(at -5.08 20.32 0)
 				(length 3.81)
 				(name "Pin_12"
 					(effects
@@ -4187,7 +4326,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 -7.62 0)
+				(at -5.08 17.78 0)
 				(length 3.81)
 				(name "Pin_13"
 					(effects
@@ -4205,7 +4344,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 -10.16 0)
+				(at -5.08 15.24 0)
 				(length 3.81)
 				(name "Pin_14"
 					(effects
@@ -4223,7 +4362,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 -12.7 0)
+				(at -5.08 12.7 0)
 				(length 3.81)
 				(name "Pin_15"
 					(effects
@@ -4241,7 +4380,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 -15.24 0)
+				(at -5.08 10.16 0)
 				(length 3.81)
 				(name "Pin_16"
 					(effects
@@ -4259,7 +4398,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 -17.78 0)
+				(at -5.08 7.62 0)
 				(length 3.81)
 				(name "Pin_17"
 					(effects
@@ -4277,7 +4416,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 -20.32 0)
+				(at -5.08 5.08 0)
 				(length 3.81)
 				(name "Pin_18"
 					(effects
@@ -4295,7 +4434,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 -22.86 0)
+				(at -5.08 2.54 0)
 				(length 3.81)
 				(name "Pin_19"
 					(effects
@@ -4313,7 +4452,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 -25.4 0)
+				(at -5.08 0 0)
 				(length 3.81)
 				(name "Pin_20"
 					(effects
@@ -4330,169 +4469,359 @@
 					)
 				)
 			)
-		)
-	)
-	(symbol "Connector_Generic:Conn_01x03"
-		(pin_names
-			(offset 1.016)
-			(hide yes)
-		)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(property "Reference" "J"
-			(at 0 5.08 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "Conn_01x03"
-			(at 0 -5.08 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 0 0 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 0 0 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 0 0 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "ki_keywords" "connector"
-			(at 0 0 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "ki_fp_filters" "Connector*:*_1x??_*"
-			(at 0 0 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(symbol "Conn_01x03_1_1"
-			(rectangle
-				(start -1.27 3.81)
-				(end 1.27 -3.81)
-				(stroke
-					(width 0.254)
-					(type default)
-				)
-				(fill
-					(type background)
-				)
-			)
-			(rectangle
-				(start -1.27 2.667)
-				(end 0 2.413)
-				(stroke
-					(width 0.1524)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(rectangle
-				(start -1.27 0.127)
-				(end 0 -0.127)
-				(stroke
-					(width 0.1524)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(rectangle
-				(start -1.27 -2.413)
-				(end 0 -2.667)
-				(stroke
-					(width 0.1524)
-					(type default)
-				)
-				(fill
-					(type none)
-				)
-			)
-			(pin passive line
-				(at -5.08 2.54 0)
-				(length 3.81)
-				(name "Pin_1"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "1"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-			)
-			(pin passive line
-				(at -5.08 0 0)
-				(length 3.81)
-				(name "Pin_2"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "2"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-			)
 			(pin passive line
 				(at -5.08 -2.54 0)
 				(length 3.81)
-				(name "Pin_3"
+				(name "Pin_21"
 					(effects
 						(font
 							(size 1.27 1.27)
 						)
 					)
 				)
-				(number "3"
+				(number "21"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -5.08 0)
+				(length 3.81)
+				(name "Pin_22"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "22"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -7.62 0)
+				(length 3.81)
+				(name "Pin_23"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "23"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -10.16 0)
+				(length 3.81)
+				(name "Pin_24"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "24"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -12.7 0)
+				(length 3.81)
+				(name "Pin_25"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "25"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -15.24 0)
+				(length 3.81)
+				(name "Pin_26"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "26"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -17.78 0)
+				(length 3.81)
+				(name "Pin_27"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "27"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -20.32 0)
+				(length 3.81)
+				(name "Pin_28"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "28"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -22.86 0)
+				(length 3.81)
+				(name "Pin_29"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "29"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -25.4 0)
+				(length 3.81)
+				(name "Pin_30"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "30"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -27.94 0)
+				(length 3.81)
+				(name "Pin_31"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "31"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -30.48 0)
+				(length 3.81)
+				(name "Pin_32"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "32"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -33.02 0)
+				(length 3.81)
+				(name "Pin_33"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "33"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -35.56 0)
+				(length 3.81)
+				(name "Pin_34"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "34"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -38.1 0)
+				(length 3.81)
+				(name "Pin_35"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "35"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -40.64 0)
+				(length 3.81)
+				(name "Pin_36"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "36"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -43.18 0)
+				(length 3.81)
+				(name "Pin_37"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "37"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -45.72 0)
+				(length 3.81)
+				(name "Pin_38"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "38"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -48.26 0)
+				(length 3.81)
+				(name "Pin_39"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "39"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -50.8 0)
+				(length 3.81)
+				(name "Pin_40"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "40"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -4763,7 +5092,7 @@
 	(property "Value" "1000u 25V" (at 416.56 44.45 0) (effects (font (size 1.27 1.27)) (justify left)))
 	(property "Footprint" "" (at 411.48 45.72 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(property "Datasheet" "~" (at 411.48 45.72 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "벌크. 차단 시 8.7ms 유지" (at 411.48 45.72 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "벌크. 차단 시 VIN 4V까지 약 22ms 유지" (at 411.48 45.72 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "1" (uuid "405547c9-8de0-502e-a235-8186143c1a2b"))
 	(pin "2" (uuid "c9c43f28-8823-5a80-b16d-e3caec726437"))
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "C7") (unit 1))))
@@ -4995,147 +5324,126 @@
 	(wire (pts (xy 533.4 105.41) (xy 533.4 107.95)) (stroke (width 0) (type default)) (uuid "4e884501-1219-5cf7-9acb-985bb889e891"))
 	(global_label "GND" (shape passive) (at 533.4 107.95 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "22792a40-6e08-58b8-9412-d20fec27b817")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 533.4 107.95 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(text "C. 5V 레귤레이터와 전원 감시 (설계서 3.5절, 5.4절)" (exclude_from_sim no) (at 25.4 172.72 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "d41b9493-d014-5caa-9a71-8e65460db950"))
-	(symbol (lib_id "Regulator_Linear:L7805") (at 66.04 198.12 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
-	(uuid "77a351b3-bfb1-5003-8fa2-2de68acea706")
-	(property "Reference" "U3" (at 71.12 194.31 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "7805" (at 71.12 196.85 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Footprint" "" (at 66.04 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Datasheet" "~" (at 66.04 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "탭을 케이스에 절연 고정" (at 66.04 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(pin "1" (uuid "44bd3fac-7c94-5f93-9e7a-81c37b0949d9"))
-	(pin "2" (uuid "786c14be-d0e3-5f5c-bea5-de3d3bcb1864"))
-	(pin "3" (uuid "e44f3af4-fb4d-5be8-a3b1-179701b64e9b"))
-	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "U3") (unit 1))))
+	(text "C. Seed3 VIN 필터와 전원 감시 (설계서 3.5절, 4.1절)" (exclude_from_sim no) (at 25.4 172.72 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "725ea301-5f3c-5f77-8d58-a1ac3a61a16a"))
+	(symbol (lib_id "Device:R") (at 45.72 198.12 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+	(uuid "e0442748-cc1e-5026-93a5-8427a393c930")
+	(property "Reference" "R32" (at 50.8 194.31 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "3.3R" (at 50.8 196.85 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Footprint" "" (at 45.72 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Datasheet" "~" (at 45.72 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "VIN 필터. 150mA에서 0.5V 강하" (at 45.72 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(pin "1" (uuid "dcff2841-0ece-5fbe-ad43-3e603908fe14"))
+	(pin "2" (uuid "14b7687f-fd44-514b-bca6-1ceab5f91330"))
+	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R32") (unit 1))))
 )
-	(wire (pts (xy 58.42 198.12) (xy 55.88 198.12)) (stroke (width 0) (type default)) (uuid "2e5409e9-c92f-553d-bf3c-6ca84b1fddcf"))
-	(global_label "V9" (shape passive) (at 55.88 198.12 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "b13d07d8-16b1-50bf-b3e8-7114e3764b48")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 55.88 198.12 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 66.04 205.74) (xy 66.04 208.28)) (stroke (width 0) (type default)) (uuid "d50288aa-87c8-584c-9ee1-f48bf3a81359"))
-	(global_label "GND" (shape passive) (at 66.04 208.28 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "91713c50-9df1-50a8-8374-30ca10a18315")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 66.04 208.28 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 73.66 198.12) (xy 76.2 198.12)) (stroke (width 0) (type default)) (uuid "77669ef6-90c4-58e1-9d85-31646d3bd231"))
-	(global_label "T41_VIN_5V" (shape passive) (at 76.2 198.12 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "0463666f-672d-52c7-b3b2-61053e8f4183")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 76.2 198.12 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(symbol (lib_id "Device:C") (at 127 198.12 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+	(wire (pts (xy 45.72 194.31) (xy 45.72 191.77)) (stroke (width 0) (type default)) (uuid "bfc2d14f-db07-5722-84b8-3dc4791a5442"))
+	(global_label "V9" (shape passive) (at 45.72 191.77 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "41563deb-019a-5a38-b6dd-d65641aba35b")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 45.72 191.77 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 45.72 201.93) (xy 45.72 204.47)) (stroke (width 0) (type default)) (uuid "d98fe809-6cad-50e9-88f9-6389aa97c8d2"))
+	(global_label "SEED_VIN" (shape passive) (at 45.72 204.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "86cc716a-76df-5052-b2cf-9784b0cc6460")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 45.72 204.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(symbol (lib_id "Device:C_Polarized") (at 86.36 198.12 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "3be59ba4-0cb5-5859-80e1-cb57cf6768cd")
-	(property "Reference" "C11" (at 132.08 194.31 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "100n" (at 132.08 196.85 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Footprint" "" (at 127 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Datasheet" "~" (at 127 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "7805 입력 가까이" (at 127 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Reference" "C11" (at 91.44 194.31 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "100u 35V" (at 91.44 196.85 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Footprint" "" (at 86.36 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Datasheet" "~" (at 86.36 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "VIN 필터. 차단 0.5kHz" (at 86.36 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "1" (uuid "b2fb861b-d5fe-585e-b77e-1cdbe1d3589f"))
 	(pin "2" (uuid "4d2c0ffa-cb01-5976-a373-5de38536694b"))
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "C11") (unit 1))))
 )
-	(wire (pts (xy 127 194.31) (xy 127 191.77)) (stroke (width 0) (type default)) (uuid "75c0478b-8e29-5675-b7d2-f879ab3f5524"))
-	(global_label "V9" (shape passive) (at 127 191.77 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "1c1ce8f4-f3f1-5011-b0de-c93d40e5e419")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 127 191.77 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 127 201.93) (xy 127 204.47)) (stroke (width 0) (type default)) (uuid "2f5a1120-a472-56a5-852b-0d4e9b71e03b"))
-	(global_label "GND" (shape passive) (at 127 204.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "18d17b49-a585-5323-9f3d-6a382c1f7f17")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 127 204.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(symbol (lib_id "Device:C") (at 167.64 198.12 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+	(wire (pts (xy 86.36 194.31) (xy 86.36 191.77)) (stroke (width 0) (type default)) (uuid "75c0478b-8e29-5675-b7d2-f879ab3f5524"))
+	(global_label "SEED_VIN" (shape passive) (at 86.36 191.77 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "1c1ce8f4-f3f1-5011-b0de-c93d40e5e419")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 86.36 191.77 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 86.36 201.93) (xy 86.36 204.47)) (stroke (width 0) (type default)) (uuid "2f5a1120-a472-56a5-852b-0d4e9b71e03b"))
+	(global_label "GND" (shape passive) (at 86.36 204.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "18d17b49-a585-5323-9f3d-6a382c1f7f17")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 86.36 204.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(symbol (lib_id "Device:C") (at 127 198.12 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "2b59ac0d-824e-5e7b-bc11-33abdf44c9cf")
-	(property "Reference" "C12" (at 172.72 194.31 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "100n" (at 172.72 196.85 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Footprint" "" (at 167.64 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Datasheet" "~" (at 167.64 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "" (at 167.64 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Reference" "C12" (at 132.08 194.31 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "100n" (at 132.08 196.85 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Footprint" "" (at 127 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Datasheet" "~" (at 127 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "핀 39 가까이" (at 127 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "1" (uuid "29da620c-f8b8-53b6-8bfd-aa12400a1b61"))
 	(pin "2" (uuid "fdddb666-f6e5-5cc7-963b-f782698bb504"))
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "C12") (unit 1))))
 )
-	(wire (pts (xy 167.64 194.31) (xy 167.64 191.77)) (stroke (width 0) (type default)) (uuid "fe59b2e6-10c1-5cc5-a599-21a6aded8254"))
-	(global_label "T41_VIN_5V" (shape passive) (at 167.64 191.77 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "85ec264d-a29f-5eb8-bb74-85e02fca425b")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 167.64 191.77 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 167.64 201.93) (xy 167.64 204.47)) (stroke (width 0) (type default)) (uuid "21ab7233-5647-521e-98dd-97c46c7856f2"))
-	(global_label "GND" (shape passive) (at 167.64 204.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "a7b2dcd9-ebc3-5e34-8179-872d7228084e")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 167.64 204.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(symbol (lib_id "Device:C_Polarized") (at 208.28 198.12 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
-	(uuid "d0011dba-fbec-56b1-be5a-986ee39481a8")
-	(property "Reference" "C13" (at 213.36 194.31 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "10u 50V" (at 213.36 196.85 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Footprint" "" (at 208.28 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Datasheet" "~" (at 208.28 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "" (at 208.28 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(pin "1" (uuid "a738b672-682a-56ed-a05b-b7da6441991b"))
-	(pin "2" (uuid "632dd5b1-4854-560d-a58f-0fac75345f29"))
-	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "C13") (unit 1))))
-)
-	(wire (pts (xy 208.28 194.31) (xy 208.28 191.77)) (stroke (width 0) (type default)) (uuid "5bc4bcf1-b73b-5463-aee6-9e00958bc626"))
-	(global_label "T41_VIN_5V" (shape passive) (at 208.28 191.77 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "2fa6bf58-ddef-5170-9c07-a91b9c0265c2")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 208.28 191.77 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 208.28 201.93) (xy 208.28 204.47)) (stroke (width 0) (type default)) (uuid "28735bf1-2a47-5d54-a8d8-7eab46f4b38c"))
-	(global_label "GND" (shape passive) (at 208.28 204.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "55ab4b33-6c4c-5d47-9137-6aa21ef80d67")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 208.28 204.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(symbol (lib_id "Device:R") (at 248.92 198.12 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+	(wire (pts (xy 127 194.31) (xy 127 191.77)) (stroke (width 0) (type default)) (uuid "fe59b2e6-10c1-5cc5-a599-21a6aded8254"))
+	(global_label "SEED_VIN" (shape passive) (at 127 191.77 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "85ec264d-a29f-5eb8-bb74-85e02fca425b")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 127 191.77 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 127 201.93) (xy 127 204.47)) (stroke (width 0) (type default)) (uuid "21ab7233-5647-521e-98dd-97c46c7856f2"))
+	(global_label "GND" (shape passive) (at 127 204.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "a7b2dcd9-ebc3-5e34-8179-872d7228084e")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 127 204.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(symbol (lib_id "Device:R") (at 167.64 198.12 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "37f2becf-007c-5510-a962-3d2839a14cad")
-	(property "Reference" "R19" (at 254 194.31 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "47k" (at 254 196.85 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Footprint" "" (at 248.92 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Datasheet" "~" (at 248.92 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "감시 분압 상. 18V에서 3.16V" (at 248.92 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Reference" "R19" (at 172.72 194.31 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "47k" (at 172.72 196.85 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Footprint" "" (at 167.64 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Datasheet" "~" (at 167.64 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "감시 분압 상. 18V에서 3.16V" (at 167.64 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "1" (uuid "c560e4d2-ed27-5bda-aefe-047d528c2edd"))
 	(pin "2" (uuid "b457a226-8195-5a95-90a8-f287bdc6cfc1"))
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R19") (unit 1))))
 )
-	(wire (pts (xy 248.92 194.31) (xy 248.92 191.77)) (stroke (width 0) (type default)) (uuid "925fa403-b157-58fe-b33f-65a7bf4b0a28"))
-	(global_label "V9" (shape passive) (at 248.92 191.77 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "147c9f43-1263-5a62-88b6-4e5d67419c4d")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 248.92 191.77 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 248.92 201.93) (xy 248.92 204.47)) (stroke (width 0) (type default)) (uuid "e38568af-00ca-5baa-9067-8a4666361efa"))
-	(global_label "VMON" (shape passive) (at 248.92 204.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "00823730-4c22-5a86-96f6-b47a68cd40ea")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 248.92 204.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(symbol (lib_id "Device:R") (at 289.56 198.12 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+	(wire (pts (xy 167.64 194.31) (xy 167.64 191.77)) (stroke (width 0) (type default)) (uuid "925fa403-b157-58fe-b33f-65a7bf4b0a28"))
+	(global_label "V9" (shape passive) (at 167.64 191.77 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "147c9f43-1263-5a62-88b6-4e5d67419c4d")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 167.64 191.77 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 167.64 201.93) (xy 167.64 204.47)) (stroke (width 0) (type default)) (uuid "e38568af-00ca-5baa-9067-8a4666361efa"))
+	(global_label "VMON" (shape passive) (at 167.64 204.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "00823730-4c22-5a86-96f6-b47a68cd40ea")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 167.64 204.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(symbol (lib_id "Device:R") (at 208.28 198.12 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "5d15893e-0a37-5926-9139-561a24e8eca2")
-	(property "Reference" "R20" (at 294.64 194.31 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "10k" (at 294.64 196.85 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Footprint" "" (at 289.56 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Datasheet" "~" (at 289.56 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "감시 분압 하" (at 289.56 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Reference" "R20" (at 213.36 194.31 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "10k" (at 213.36 196.85 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Footprint" "" (at 208.28 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Datasheet" "~" (at 208.28 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "감시 분압 하" (at 208.28 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "1" (uuid "709c2ec9-3423-52eb-99e8-8f991b64fa9a"))
 	(pin "2" (uuid "d53eaf1d-34ce-5672-a169-0cebe1ca34da"))
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R20") (unit 1))))
 )
-	(wire (pts (xy 289.56 194.31) (xy 289.56 191.77)) (stroke (width 0) (type default)) (uuid "f34fa326-820b-5d1a-9e8e-b21b7ff64f96"))
-	(global_label "VMON" (shape passive) (at 289.56 191.77 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "747a57ae-ce9e-5412-b286-0b418ba3bab3")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 289.56 191.77 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 289.56 201.93) (xy 289.56 204.47)) (stroke (width 0) (type default)) (uuid "0edce1b8-9d78-58e3-b4e5-44acdf475f1f"))
-	(global_label "GND" (shape passive) (at 289.56 204.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "2b1885eb-3302-5ff9-b385-73c1a2c55dc5")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 289.56 204.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(symbol (lib_id "Device:C") (at 330.2 198.12 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+	(wire (pts (xy 208.28 194.31) (xy 208.28 191.77)) (stroke (width 0) (type default)) (uuid "f34fa326-820b-5d1a-9e8e-b21b7ff64f96"))
+	(global_label "VMON" (shape passive) (at 208.28 191.77 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "747a57ae-ce9e-5412-b286-0b418ba3bab3")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 208.28 191.77 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 208.28 201.93) (xy 208.28 204.47)) (stroke (width 0) (type default)) (uuid "0edce1b8-9d78-58e3-b4e5-44acdf475f1f"))
+	(global_label "GND" (shape passive) (at 208.28 204.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "2b1885eb-3302-5ff9-b385-73c1a2c55dc5")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 208.28 204.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(symbol (lib_id "Device:C") (at 248.92 198.12 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "aca85951-7145-5c8f-94b5-8377273e391c")
-	(property "Reference" "C14" (at 335.28 194.31 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "100n" (at 335.28 196.85 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Footprint" "" (at 330.2 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Datasheet" "~" (at 330.2 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "시정수 0.8ms" (at 330.2 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Reference" "C14" (at 254 194.31 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "100n" (at 254 196.85 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Footprint" "" (at 248.92 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Datasheet" "~" (at 248.92 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "시정수 0.8ms" (at 248.92 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "1" (uuid "bc0dd9c3-a36b-5d19-a2b1-d8487ffd435c"))
 	(pin "2" (uuid "0e77299c-8252-56df-99ba-727c7f0b47a7"))
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "C14") (unit 1))))
 )
-	(wire (pts (xy 330.2 194.31) (xy 330.2 191.77)) (stroke (width 0) (type default)) (uuid "062a4617-69a6-520b-8d29-d14a802a9b90"))
-	(global_label "VMON" (shape passive) (at 330.2 191.77 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "ae837a9e-03cf-5547-b2c1-50b37b785e34")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 330.2 191.77 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 330.2 201.93) (xy 330.2 204.47)) (stroke (width 0) (type default)) (uuid "90eacd6c-f601-5633-85bd-dc1556052297"))
-	(global_label "GND" (shape passive) (at 330.2 204.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "79d3d96e-5924-5be7-af67-c13445270e3b")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 330.2 204.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(symbol (lib_id "Device:R") (at 370.84 198.12 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+	(wire (pts (xy 248.92 194.31) (xy 248.92 191.77)) (stroke (width 0) (type default)) (uuid "062a4617-69a6-520b-8d29-d14a802a9b90"))
+	(global_label "VMON" (shape passive) (at 248.92 191.77 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "ae837a9e-03cf-5547-b2c1-50b37b785e34")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 248.92 191.77 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 248.92 201.93) (xy 248.92 204.47)) (stroke (width 0) (type default)) (uuid "90eacd6c-f601-5633-85bd-dc1556052297"))
+	(global_label "GND" (shape passive) (at 248.92 204.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "79d3d96e-5924-5be7-af67-c13445270e3b")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 248.92 204.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(symbol (lib_id "Device:R") (at 289.56 198.12 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "d53af431-4459-5759-986f-29ee30add129")
-	(property "Reference" "R21" (at 375.92 194.31 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "1k" (at 375.92 196.85 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Footprint" "" (at 370.84 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Datasheet" "~" (at 370.84 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "ADC 핀 직렬" (at 370.84 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Reference" "R21" (at 294.64 194.31 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "1k" (at 294.64 196.85 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Footprint" "" (at 289.56 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Datasheet" "~" (at 289.56 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "ADC 핀 직렬" (at 289.56 198.12 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "1" (uuid "66efa6a6-9b29-55e4-bd6e-4ee90a765c82"))
 	(pin "2" (uuid "bca0a36d-2e60-5861-a636-c79b9112fa12"))
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R21") (unit 1))))
 )
-	(wire (pts (xy 370.84 194.31) (xy 370.84 191.77)) (stroke (width 0) (type default)) (uuid "915d907b-2890-5542-9d14-ed13bbc8f007"))
-	(global_label "VMON" (shape passive) (at 370.84 191.77 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "25a0a297-3163-5b1f-a6a7-0d3f8cba792d")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 370.84 191.77 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 370.84 201.93) (xy 370.84 204.47)) (stroke (width 0) (type default)) (uuid "ca4d9640-f101-59ed-acce-915b1d734033"))
-	(global_label "T41_P39_A15_VMON" (shape passive) (at 370.84 204.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "833d5d25-780f-5111-a04e-182cca17f6a0")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 370.84 204.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 289.56 194.31) (xy 289.56 191.77)) (stroke (width 0) (type default)) (uuid "915d907b-2890-5542-9d14-ed13bbc8f007"))
+	(global_label "VMON" (shape passive) (at 289.56 191.77 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "25a0a297-3163-5b1f-a6a7-0d3f8cba792d")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 289.56 191.77 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 289.56 201.93) (xy 289.56 204.47)) (stroke (width 0) (type default)) (uuid "ca4d9640-f101-59ed-acce-915b1d734033"))
+	(global_label "SEED_A5_VMON" (shape passive) (at 289.56 204.47 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "833d5d25-780f-5111-a04e-182cca17f6a0")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 289.56 204.47 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(text "D. 입력 네트워크와 버퍼, 패드 (설계서 4.1절)" (exclude_from_sim no) (at 25.4 228.6 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "67594199-8c1f-56e3-b7c6-0ec00a5ff5f3"))
 	(symbol (lib_id "Connector_Audio:AudioJack2") (at 45.72 254 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "e6aa2db6-dc0f-56c6-a9c6-041268d24616")
@@ -5243,13 +5551,13 @@
 	(wire (pts (xy 276.86 254) (xy 279.4 254)) (stroke (width 0) (type default)) (uuid "20721e37-4cc9-575f-8a66-178f1521effc"))
 	(global_label "BUF_OUT" (shape passive) (at 279.4 254 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "ae37c88e-df74-5725-971d-1287dc1ed390")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 279.4 254 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(symbol (lib_id "Device:C") (at 330.2 254 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+	(symbol (lib_id "Device:C_Polarized") (at 330.2 254 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "bb7863c9-db3f-5071-abe8-e729a5a2fb16")
 	(property "Reference" "C2" (at 335.28 250.19 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "1u 필름" (at 335.28 252.73 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "10u 50V" (at 335.28 252.73 0) (effects (font (size 1.27 1.27)) (justify left)))
 	(property "Footprint" "" (at 330.2 254 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(property "Datasheet" "~" (at 330.2 254 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "패드 커플링. 2.8Hz" (at 330.2 254 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "패드 커플링. 2.3Hz. + 쪽이 버퍼" (at 330.2 254 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "1" (uuid "9fcc2f41-517f-584c-bfc2-a8bd56335f1b"))
 	(pin "2" (uuid "8728ba68-7a3b-5e90-8025-6a664ccc305b"))
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "C2") (unit 1))))
@@ -5263,7 +5571,7 @@
 	(symbol (lib_id "Device:R") (at 370.84 254 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "2a2ba204-63fa-5c19-9bb5-a647704aae54")
 	(property "Reference" "R4" (at 375.92 250.19 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "47k" (at 375.92 252.73 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "5.6k" (at 375.92 252.73 0) (effects (font (size 1.27 1.27)) (justify left)))
 	(property "Footprint" "" (at 370.84 254 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(property "Datasheet" "~" (at 370.84 254 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(property "Description" "패드 직렬" (at 370.84 254 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
@@ -5275,25 +5583,42 @@
 	(global_label "PAD_IN" (shape passive) (at 370.84 247.65 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "67a4b898-8741-5d9b-8e97-46ad533b9f20")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 370.84 247.65 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 370.84 257.81) (xy 370.84 260.35)) (stroke (width 0) (type default)) (uuid "d083c453-2e00-5cf2-90b7-5fef2b9e881d"))
-	(global_label "SHIELD_LINEIN_L" (shape passive) (at 370.84 260.35 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "87cc59ab-7477-5a96-9a89-a393e89d6075")
+	(global_label "SEED_AUDIO_IN1" (shape passive) (at 370.84 260.35 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "87cc59ab-7477-5a96-9a89-a393e89d6075")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 370.84 260.35 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(symbol (lib_id "Device:R") (at 411.48 254 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "44635a8a-1b3f-5663-88dd-7b502ab5a09d")
 	(property "Reference" "R5" (at 416.56 250.19 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "15k" (at 416.56 252.73 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "1.2k" (at 416.56 252.73 0) (effects (font (size 1.27 1.27)) (justify left)))
 	(property "Footprint" "" (at 411.48 254 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(property "Datasheet" "~" (at 411.48 254 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "패드 션트. 29k와 병렬로 -15.2dB" (at 411.48 254 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "패드 션트. -15.1dB, 출력 임피던스 1k" (at 411.48 254 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "1" (uuid "918467ac-8935-530a-b135-e123cf0a488c"))
 	(pin "2" (uuid "6e7bb52c-c24b-54b9-bc3c-7ea04f5debab"))
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R5") (unit 1))))
 )
 	(wire (pts (xy 411.48 250.19) (xy 411.48 247.65)) (stroke (width 0) (type default)) (uuid "a2081664-4077-5828-9506-afdcf6d0bf48"))
-	(global_label "SHIELD_LINEIN_L" (shape passive) (at 411.48 247.65 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "c51c7c71-9338-5bbe-afef-cbcc64a6a8a7")
+	(global_label "SEED_AUDIO_IN1" (shape passive) (at 411.48 247.65 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "c51c7c71-9338-5bbe-afef-cbcc64a6a8a7")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 411.48 247.65 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 411.48 257.81) (xy 411.48 260.35)) (stroke (width 0) (type default)) (uuid "93fb5a54-6bf2-5e6b-9801-19feeb3c6dbb"))
 	(global_label "GND" (shape passive) (at 411.48 260.35 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "eb153b23-412a-5f49-8b25-415f97ce577e")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 411.48 260.35 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(symbol (lib_id "Device:C") (at 452.12 254 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+	(uuid "dde9a02c-ce7f-585a-98c2-54813e25ee0b")
+	(property "Reference" "C23" (at 457.2 250.19 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "3.3n" (at 457.2 252.73 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Footprint" "" (at 452.12 254 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Datasheet" "~" (at 452.12 254 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "종단. 1k와 48kHz" (at 452.12 254 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(pin "1" (uuid "593afa68-5144-5bb7-9dee-74edceed2f50"))
+	(pin "2" (uuid "9ba10426-2e4e-549f-bcec-048153912b82"))
+	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "C23") (unit 1))))
+)
+	(wire (pts (xy 452.12 250.19) (xy 452.12 247.65)) (stroke (width 0) (type default)) (uuid "cc966b6f-df61-5a51-848d-3478db72f3a6"))
+	(global_label "SEED_AUDIO_IN1" (shape passive) (at 452.12 247.65 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "0e3574f5-447e-5c15-8b87-d4c8273dc686")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 452.12 247.65 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 452.12 257.81) (xy 452.12 260.35)) (stroke (width 0) (type default)) (uuid "e14d0759-e0c4-588a-93f2-0f623b54bcc0"))
+	(global_label "GND" (shape passive) (at 452.12 260.35 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "f344b10d-dced-51ed-bb46-18d65a8806d8")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 452.12 260.35 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(text "E. 출력단 (설계서 4.2절)" (exclude_from_sim no) (at 25.4 284.48 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "38bd741b-3663-5e44-a0aa-dfe9bebba103"))
 	(symbol (lib_id "Device:C") (at 45.72 309.88 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "f0f9194b-15a8-581a-aaac-abdb1ea6fa13")
@@ -5307,7 +5632,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "C3") (unit 1))))
 )
 	(wire (pts (xy 45.72 306.07) (xy 45.72 303.53)) (stroke (width 0) (type default)) (uuid "ec878e17-bebd-5668-ac9c-b154fdb96854"))
-	(global_label "SHIELD_LINEOUT_L" (shape passive) (at 45.72 303.53 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "f997b109-c2a7-5608-bab7-24da8a6abbe1")
+	(global_label "SEED_AUDIO_OUT1" (shape passive) (at 45.72 303.53 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "f997b109-c2a7-5608-bab7-24da8a6abbe1")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 45.72 303.53 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 45.72 313.69) (xy 45.72 316.23)) (stroke (width 0) (type default)) (uuid "c3e51980-b9fc-5ce3-98c7-24c85546875f"))
 	(global_label "OUT_IN" (shape passive) (at 45.72 316.23 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "d8f0b41d-1a8b-5289-9433-a6ac58ed0d4e")
@@ -5335,7 +5660,7 @@
 	(property "Value" "OPA2992" (at 152.4 308.61 0) (effects (font (size 1.27 1.27)) (justify left)))
 	(property "Footprint" "" (at 147.32 309.88 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(property "Datasheet" "~" (at 147.32 309.88 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "B: 비반전 +15.7dB" (at 147.32 309.88 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "B: 비반전 +15.1dB" (at 147.32 309.88 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "5" (uuid "feac4a97-d39d-5d80-a381-2e5ceee9c116"))
 	(pin "6" (uuid "721d8b03-bbdd-5bb2-8149-d957ca0a36f8"))
 	(pin "7" (uuid "30693c39-751d-5548-a7f2-9a5a1bf0d86b"))
@@ -5370,10 +5695,10 @@
 	(symbol (lib_id "Device:R") (at 248.92 309.88 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "6325285c-d2d5-5c4d-8402-0c6d008b12c2")
 	(property "Reference" "R7" (at 254 306.07 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "51k" (at 254 308.61 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "47k" (at 254 308.61 0) (effects (font (size 1.27 1.27)) (justify left)))
 	(property "Footprint" "" (at 248.92 309.88 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(property "Datasheet" "~" (at 248.92 309.88 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "피드백. 게인 1 + 51k/10k = 6.1" (at 248.92 309.88 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "피드백. 게인 1 + 47k/10k = 5.7" (at 248.92 309.88 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "1" (uuid "3232f3b3-7dd1-5161-8c61-8c6425051647"))
 	(pin "2" (uuid "c9ab923b-7157-5a3a-97c5-2012bff7b6ec"))
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R7") (unit 1))))
@@ -5578,7 +5903,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R17") (unit 1))))
 )
 	(wire (pts (xy 208.28 361.95) (xy 208.28 359.41)) (stroke (width 0) (type default)) (uuid "1563b104-905b-59d2-bfe0-41090ca609cd"))
-	(global_label "T41_P2_K1DRV" (shape passive) (at 208.28 359.41 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "55705e7b-900c-567d-a10d-4dcab2fd82cd")
+	(global_label "SEED_D0_K1DRV" (shape passive) (at 208.28 359.41 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "55705e7b-900c-567d-a10d-4dcab2fd82cd")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 208.28 359.41 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 208.28 369.57) (xy 208.28 372.11)) (stroke (width 0) (type default)) (uuid "d7351595-0a29-5afd-8a7f-6226ecf5e93f"))
 	(global_label "Q4_B" (shape passive) (at 208.28 372.11 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "59e3e1b7-d1b2-52fc-9d1f-b8fc67a7e05e")
@@ -5614,13 +5939,13 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "RV1") (unit 1))))
 )
 	(wire (pts (xy 45.72 417.83) (xy 45.72 415.29)) (stroke (width 0) (type default)) (uuid "18b0eb01-24e3-5bec-83cb-912e6577d8b6"))
-	(global_label "T41_3V3" (shape passive) (at 45.72 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "0a30d6c9-81a0-5405-ba00-4c019867c637")
+	(global_label "SEED_3V3A" (shape passive) (at 45.72 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "0a30d6c9-81a0-5405-ba00-4c019867c637")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 45.72 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 45.72 425.45) (xy 45.72 427.99)) (stroke (width 0) (type default)) (uuid "9716a736-2ff2-53e3-98f4-5eb63a85d21a"))
 	(global_label "GND" (shape passive) (at 45.72 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "269f96bd-1d32-5221-820c-c34f31156640")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 45.72 427.99 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 49.53 421.64) (xy 52.07 421.64)) (stroke (width 0) (type default)) (uuid "8922190c-8f86-52c4-be64-67cdea993cef"))
-	(global_label "T41_P24_A10_INPUT" (shape passive) (at 52.07 421.64 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "ee254c66-0544-5eee-8d8c-b26029f6eb4e")
+	(global_label "SEED_A0_INPUT" (shape passive) (at 52.07 421.64 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "ee254c66-0544-5eee-8d8c-b26029f6eb4e")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 52.07 421.64 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(symbol (lib_id "Device:R_Potentiometer") (at 86.36 421.64 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "26cac447-a884-57e8-91f5-ad38c5208580")
@@ -5635,13 +5960,13 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "RV2") (unit 1))))
 )
 	(wire (pts (xy 86.36 417.83) (xy 86.36 415.29)) (stroke (width 0) (type default)) (uuid "a811bae9-35c4-59a2-bcd5-e7a6860c3380"))
-	(global_label "T41_3V3" (shape passive) (at 86.36 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "042d2308-e85c-5440-8abe-85ea4b51d428")
+	(global_label "SEED_3V3A" (shape passive) (at 86.36 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "042d2308-e85c-5440-8abe-85ea4b51d428")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 86.36 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 86.36 425.45) (xy 86.36 427.99)) (stroke (width 0) (type default)) (uuid "ece68637-9824-52af-8c0e-263724a5e6f7"))
 	(global_label "GND" (shape passive) (at 86.36 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "d33db394-0b71-5080-a6a1-8f17b0972b80")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 86.36 427.99 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 90.17 421.64) (xy 92.71 421.64)) (stroke (width 0) (type default)) (uuid "3a33c6cd-36a5-57ae-ab46-0235674b0c28"))
-	(global_label "T41_P25_A11_RATIO" (shape passive) (at 92.71 421.64 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "037e1a7f-2aee-5676-9414-b1afc25182fc")
+	(global_label "SEED_A1_RATIO" (shape passive) (at 92.71 421.64 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "037e1a7f-2aee-5676-9414-b1afc25182fc")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 92.71 421.64 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(symbol (lib_id "Device:R_Potentiometer") (at 127 421.64 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "75e83a5e-30b0-59fc-82f7-540ba8a11f57")
@@ -5656,13 +5981,13 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "RV3") (unit 1))))
 )
 	(wire (pts (xy 127 417.83) (xy 127 415.29)) (stroke (width 0) (type default)) (uuid "a710d6a5-299f-5433-a911-02232c775ac3"))
-	(global_label "T41_3V3" (shape passive) (at 127 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "641e0190-a842-5e54-8a87-aff8a2b883dc")
+	(global_label "SEED_3V3A" (shape passive) (at 127 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "641e0190-a842-5e54-8a87-aff8a2b883dc")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 127 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 127 425.45) (xy 127 427.99)) (stroke (width 0) (type default)) (uuid "c7531db2-93db-52e0-869b-bcfe3b28e5ea"))
 	(global_label "GND" (shape passive) (at 127 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "98b6ca2c-2b74-5b0b-90ba-7ec62f70044e")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 127 427.99 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 130.81 421.64) (xy 133.35 421.64)) (stroke (width 0) (type default)) (uuid "b3e2f292-a4f7-5553-b82e-1ca0a1759d23"))
-	(global_label "T41_P26_A12_ATTREL" (shape passive) (at 133.35 421.64 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "d0de09d8-25a1-5e5b-94a0-1a7cfc6a4578")
+	(global_label "SEED_A2_ATTREL" (shape passive) (at 133.35 421.64 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "d0de09d8-25a1-5e5b-94a0-1a7cfc6a4578")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 133.35 421.64 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(symbol (lib_id "Device:R_Potentiometer") (at 167.64 421.64 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "05d67ac7-81f1-5eb7-a01e-333e27921114")
@@ -5677,13 +6002,13 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "RV4") (unit 1))))
 )
 	(wire (pts (xy 167.64 417.83) (xy 167.64 415.29)) (stroke (width 0) (type default)) (uuid "79da9b66-2907-5181-8cfe-fb54d8aea746"))
-	(global_label "T41_3V3" (shape passive) (at 167.64 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "ce7e608c-927e-507f-850e-78b594503e5b")
+	(global_label "SEED_3V3A" (shape passive) (at 167.64 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "ce7e608c-927e-507f-850e-78b594503e5b")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 167.64 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 167.64 425.45) (xy 167.64 427.99)) (stroke (width 0) (type default)) (uuid "1c0d7dce-aa0b-5129-b739-23407b6e99f3"))
 	(global_label "GND" (shape passive) (at 167.64 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "87b80625-cfc9-58b3-995a-9c3af3405e00")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 167.64 427.99 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 171.45 421.64) (xy 173.99 421.64)) (stroke (width 0) (type default)) (uuid "20643561-6082-5718-a361-2be9ff0f5cad"))
-	(global_label "T41_P27_A13_BLEND" (shape passive) (at 173.99 421.64 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "11d35744-46e5-5ab3-b1e5-bfe668272d4e")
+	(global_label "SEED_A3_BLEND" (shape passive) (at 173.99 421.64 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "11d35744-46e5-5ab3-b1e5-bfe668272d4e")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 173.99 421.64 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(symbol (lib_id "Device:R_Potentiometer") (at 208.28 421.64 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "65a93073-60cf-53cd-ae15-8efc54321eee")
@@ -5698,13 +6023,13 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "RV5") (unit 1))))
 )
 	(wire (pts (xy 208.28 417.83) (xy 208.28 415.29)) (stroke (width 0) (type default)) (uuid "13eee3a0-80b6-5c0f-89c7-8b6ff72daeed"))
-	(global_label "T41_3V3" (shape passive) (at 208.28 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "ad8e780c-3a25-5126-8209-a2b347cff532")
+	(global_label "SEED_3V3A" (shape passive) (at 208.28 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "ad8e780c-3a25-5126-8209-a2b347cff532")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 208.28 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 208.28 425.45) (xy 208.28 427.99)) (stroke (width 0) (type default)) (uuid "97bfb386-89ba-5063-a5c0-a1fd13394431"))
 	(global_label "GND" (shape passive) (at 208.28 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "b45d1349-bd45-5fe8-9d24-0fad5de155d8")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 208.28 427.99 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 212.09 421.64) (xy 214.63 421.64)) (stroke (width 0) (type default)) (uuid "fbb87552-f763-5ff5-9977-a59778253497"))
-	(global_label "T41_P38_A14_OUTPUT" (shape passive) (at 214.63 421.64 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "9e6d502a-36c8-5e67-a3b4-6293cc979aa3")
+	(global_label "SEED_A4_OUTPUT" (shape passive) (at 214.63 421.64 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "9e6d502a-36c8-5e67-a3b4-6293cc979aa3")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 214.63 421.64 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(symbol (lib_id "Device:C") (at 248.92 421.64 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "cdb77e20-2d69-50dd-b23f-899afa459f9b")
@@ -5718,7 +6043,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "C18") (unit 1))))
 )
 	(wire (pts (xy 248.92 417.83) (xy 248.92 415.29)) (stroke (width 0) (type default)) (uuid "6497f126-a34d-5f87-9f39-24bc93ba2aa8"))
-	(global_label "T41_P24_A10_INPUT" (shape passive) (at 248.92 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "4373ca6c-304f-5d8d-a114-a4534af927e6")
+	(global_label "SEED_A0_INPUT" (shape passive) (at 248.92 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "4373ca6c-304f-5d8d-a114-a4534af927e6")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 248.92 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 248.92 425.45) (xy 248.92 427.99)) (stroke (width 0) (type default)) (uuid "063750b2-6eb3-54f8-8259-afe5dfdf009f"))
 	(global_label "GND" (shape passive) (at 248.92 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "7449302b-d73c-5b78-938a-982c2b76223c")
@@ -5735,7 +6060,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "C19") (unit 1))))
 )
 	(wire (pts (xy 289.56 417.83) (xy 289.56 415.29)) (stroke (width 0) (type default)) (uuid "a9aeb05d-5a49-5759-825a-035d1c773b37"))
-	(global_label "T41_P25_A11_RATIO" (shape passive) (at 289.56 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "10b024c6-4972-5e4f-954a-9c733144a6ea")
+	(global_label "SEED_A1_RATIO" (shape passive) (at 289.56 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "10b024c6-4972-5e4f-954a-9c733144a6ea")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 289.56 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 289.56 425.45) (xy 289.56 427.99)) (stroke (width 0) (type default)) (uuid "39c1af85-6da7-52dc-bb75-6d360253d1b3"))
 	(global_label "GND" (shape passive) (at 289.56 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "22ee8c5a-ce53-5dad-8fc4-c5d1f2160cbc")
@@ -5752,7 +6077,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "C20") (unit 1))))
 )
 	(wire (pts (xy 330.2 417.83) (xy 330.2 415.29)) (stroke (width 0) (type default)) (uuid "df63d136-87e2-5d1c-ac5b-205992f78865"))
-	(global_label "T41_P26_A12_ATTREL" (shape passive) (at 330.2 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "61237bc9-05cd-5f4f-bfea-123c130afccd")
+	(global_label "SEED_A2_ATTREL" (shape passive) (at 330.2 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "61237bc9-05cd-5f4f-bfea-123c130afccd")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 330.2 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 330.2 425.45) (xy 330.2 427.99)) (stroke (width 0) (type default)) (uuid "f1f6da0b-a5eb-5a9e-a1e5-7e8d0451ed2e"))
 	(global_label "GND" (shape passive) (at 330.2 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "0618f844-3e19-583e-bc3b-79b44d78ea86")
@@ -5769,7 +6094,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "C21") (unit 1))))
 )
 	(wire (pts (xy 370.84 417.83) (xy 370.84 415.29)) (stroke (width 0) (type default)) (uuid "6cb43dab-07db-54b4-a00a-09174528c0a5"))
-	(global_label "T41_P27_A13_BLEND" (shape passive) (at 370.84 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "e961c32e-1b05-570b-b2e0-1e3e27247398")
+	(global_label "SEED_A3_BLEND" (shape passive) (at 370.84 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "e961c32e-1b05-570b-b2e0-1e3e27247398")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 370.84 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 370.84 425.45) (xy 370.84 427.99)) (stroke (width 0) (type default)) (uuid "ab511703-266f-592e-a036-9b3df7531b33"))
 	(global_label "GND" (shape passive) (at 370.84 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "053c0626-5619-5482-95f6-25f243f8bfb6")
@@ -5786,7 +6111,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "C22") (unit 1))))
 )
 	(wire (pts (xy 411.48 417.83) (xy 411.48 415.29)) (stroke (width 0) (type default)) (uuid "ef7cf9e5-754c-5348-8d77-9cab4aeca0ff"))
-	(global_label "T41_P38_A14_OUTPUT" (shape passive) (at 411.48 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "bf1909e4-4238-5de3-a63f-d61a584a420e")
+	(global_label "SEED_A4_OUTPUT" (shape passive) (at 411.48 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "bf1909e4-4238-5de3-a63f-d61a584a420e")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 411.48 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 411.48 425.45) (xy 411.48 427.99)) (stroke (width 0) (type default)) (uuid "d4e611c5-8a9c-57e9-8647-3ff04058588a"))
 	(global_label "GND" (shape passive) (at 411.48 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "6b640dd4-7a30-5291-8246-07539ce8cb5f")
@@ -5803,7 +6128,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "SW1") (unit 1))))
 )
 	(wire (pts (xy 447.04 421.64) (xy 444.5 421.64)) (stroke (width 0) (type default)) (uuid "9c4a8711-f043-5e4e-b889-c7841d56b411"))
-	(global_label "T41_P3_FSW" (shape passive) (at 444.5 421.64 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "158e0f2b-864a-57e9-9ba9-c906a18f9aac")
+	(global_label "SEED_D1_FSW" (shape passive) (at 444.5 421.64 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "158e0f2b-864a-57e9-9ba9-c906a18f9aac")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 444.5 421.64 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 457.2 421.64) (xy 459.74 421.64)) (stroke (width 0) (type default)) (uuid "b62e225a-5f4a-5575-8b05-205f5ffba0d5"))
 	(global_label "GND" (shape passive) (at 459.74 421.64 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "a8ecb24c-a695-5db0-a38e-d3c0a247ee06")
@@ -5820,10 +6145,10 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R22") (unit 1))))
 )
 	(wire (pts (xy 492.76 417.83) (xy 492.76 415.29)) (stroke (width 0) (type default)) (uuid "a3e6d8b7-3dbe-5853-900c-e075d4e81b58"))
-	(global_label "T41_3V3" (shape passive) (at 492.76 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "260244c8-abe1-52ee-a653-add0e2b3aee4")
+	(global_label "SEED_3V3D" (shape passive) (at 492.76 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "260244c8-abe1-52ee-a653-add0e2b3aee4")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 492.76 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 492.76 425.45) (xy 492.76 427.99)) (stroke (width 0) (type default)) (uuid "ad182f7c-c165-51ce-b21f-7be650ddc972"))
-	(global_label "T41_P3_FSW" (shape passive) (at 492.76 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "16e51d09-a76e-556c-9e37-52d4664b19db")
+	(global_label "SEED_D1_FSW" (shape passive) (at 492.76 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "16e51d09-a76e-556c-9e37-52d4664b19db")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 492.76 427.99 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(symbol (lib_id "Device:C") (at 533.4 421.64 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "4256f261-598a-5c20-80fa-b416ccdb9d77")
@@ -5837,7 +6162,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "C15") (unit 1))))
 )
 	(wire (pts (xy 533.4 417.83) (xy 533.4 415.29)) (stroke (width 0) (type default)) (uuid "35aefede-8dce-5ac0-b517-4383f2dad851"))
-	(global_label "T41_P3_FSW" (shape passive) (at 533.4 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "ea8aad46-3e3a-56e8-9638-1cc3e95b3c4a")
+	(global_label "SEED_D1_FSW" (shape passive) (at 533.4 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "ea8aad46-3e3a-56e8-9638-1cc3e95b3c4a")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 533.4 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 533.4 425.45) (xy 533.4 427.99)) (stroke (width 0) (type default)) (uuid "3179550a-0bd3-5795-9031-5a699702a933"))
 	(global_label "GND" (shape passive) (at 533.4 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "f9b77cf3-632d-5dc5-b157-10331129d8a5")
@@ -5854,7 +6179,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R23") (unit 1))))
 )
 	(wire (pts (xy 574.04 417.83) (xy 574.04 415.29)) (stroke (width 0) (type default)) (uuid "aaac6e45-aa7a-5ed6-b959-96d023142f17"))
-	(global_label "T41_P28_METER1" (shape passive) (at 574.04 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "101f429c-b335-587e-bd17-71449ab4f9b5")
+	(global_label "SEED_D2_METER1" (shape passive) (at 574.04 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "101f429c-b335-587e-bd17-71449ab4f9b5")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 574.04 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 574.04 425.45) (xy 574.04 427.99)) (stroke (width 0) (type default)) (uuid "819c3dfb-2377-5296-8e07-db42bcad9ad5"))
 	(global_label "LED1_A" (shape passive) (at 574.04 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "cefdb57e-2ead-539b-bd85-9a39372269cc")
@@ -5888,7 +6213,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R24") (unit 1))))
 )
 	(wire (pts (xy 655.32 417.83) (xy 655.32 415.29)) (stroke (width 0) (type default)) (uuid "a86e44d1-2c1f-563d-8bb1-58f41f454b4c"))
-	(global_label "T41_P29_METER2" (shape passive) (at 655.32 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "4bbb41e7-4ab5-5890-bf5e-d990e32d2ae6")
+	(global_label "SEED_D3_METER2" (shape passive) (at 655.32 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "4bbb41e7-4ab5-5890-bf5e-d990e32d2ae6")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 655.32 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 655.32 425.45) (xy 655.32 427.99)) (stroke (width 0) (type default)) (uuid "ca33a016-2428-5f94-abdd-c3e0ebbbc500"))
 	(global_label "LED2_A" (shape passive) (at 655.32 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "136e71c9-5a90-5101-8229-cdf3ac0901bc")
@@ -5922,7 +6247,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R25") (unit 1))))
 )
 	(wire (pts (xy 736.6 417.83) (xy 736.6 415.29)) (stroke (width 0) (type default)) (uuid "53579f41-7196-5dea-887b-fb7300e17770"))
-	(global_label "T41_P30_METER3" (shape passive) (at 736.6 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "b90f59c0-0742-5e29-971d-2c61520bef49")
+	(global_label "SEED_D4_METER3" (shape passive) (at 736.6 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "b90f59c0-0742-5e29-971d-2c61520bef49")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 736.6 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 736.6 425.45) (xy 736.6 427.99)) (stroke (width 0) (type default)) (uuid "27ba379d-2694-555e-bfd5-44e6b681cb61"))
 	(global_label "LED3_A" (shape passive) (at 736.6 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "500f6b63-c9a5-5ffe-8ad0-c58494af5a61")
@@ -5956,7 +6281,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R26") (unit 1))))
 )
 	(wire (pts (xy 817.88 417.83) (xy 817.88 415.29)) (stroke (width 0) (type default)) (uuid "315d5509-68c1-54ab-9c74-ca0f05599cef"))
-	(global_label "T41_P31_METER4" (shape passive) (at 817.88 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "43167c95-7167-5752-89a3-96c911c42640")
+	(global_label "SEED_D5_METER4" (shape passive) (at 817.88 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "43167c95-7167-5752-89a3-96c911c42640")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 817.88 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 817.88 425.45) (xy 817.88 427.99)) (stroke (width 0) (type default)) (uuid "616d48c1-40cf-57c4-9253-0674a6213545"))
 	(global_label "LED4_A" (shape passive) (at 817.88 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "405c7e07-dba7-5035-be95-da50bda45d58")
@@ -5990,7 +6315,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R27") (unit 1))))
 )
 	(wire (pts (xy 899.16 417.83) (xy 899.16 415.29)) (stroke (width 0) (type default)) (uuid "2f6119f2-45f2-56b7-92f4-9a42cb817068"))
-	(global_label "T41_P32_METER5" (shape passive) (at 899.16 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "532cd4b1-ce29-5072-ae04-dd9de65c095b")
+	(global_label "SEED_D6_METER5" (shape passive) (at 899.16 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "532cd4b1-ce29-5072-ae04-dd9de65c095b")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 899.16 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 899.16 425.45) (xy 899.16 427.99)) (stroke (width 0) (type default)) (uuid "603eac4e-ccb1-5c27-b789-56632bb71ad1"))
 	(global_label "LED5_A" (shape passive) (at 899.16 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "715c2f37-7644-5e30-af71-ce5464db1de8")
@@ -6024,7 +6349,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R28") (unit 1))))
 )
 	(wire (pts (xy 980.44 417.83) (xy 980.44 415.29)) (stroke (width 0) (type default)) (uuid "8d57d4d0-bfbe-5c34-aab1-70ddb5c858af"))
-	(global_label "T41_P33_METER6" (shape passive) (at 980.44 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "e5e3d3fc-4587-5809-9e5b-59d5255d5c5b")
+	(global_label "SEED_D7_METER6" (shape passive) (at 980.44 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "e5e3d3fc-4587-5809-9e5b-59d5255d5c5b")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 980.44 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 980.44 425.45) (xy 980.44 427.99)) (stroke (width 0) (type default)) (uuid "21faddbc-a244-5b84-8b3e-7316d4188115"))
 	(global_label "LED6_A" (shape passive) (at 980.44 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "7b2f0f71-d746-5715-a90f-63713b46cf85")
@@ -6058,7 +6383,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R29") (unit 1))))
 )
 	(wire (pts (xy 1061.72 417.83) (xy 1061.72 415.29)) (stroke (width 0) (type default)) (uuid "645d806d-3541-5fb2-9296-03703fd85674"))
-	(global_label "T41_P34_METER7" (shape passive) (at 1061.72 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "76fc9c7e-9c33-52bf-a2e9-2274377c9875")
+	(global_label "SEED_D8_METER7" (shape passive) (at 1061.72 415.29 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "76fc9c7e-9c33-52bf-a2e9-2274377c9875")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 1061.72 415.29 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 1061.72 425.45) (xy 1061.72 427.99)) (stroke (width 0) (type default)) (uuid "2050923f-4879-5455-816d-02bfe9004014"))
 	(global_label "LED7_A" (shape passive) (at 1061.72 427.99 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "39e536a7-ebd7-536e-8d35-6d088789cbbb")
@@ -6092,7 +6417,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R30") (unit 1))))
 )
 	(wire (pts (xy 45.72 458.47) (xy 45.72 455.93)) (stroke (width 0) (type default)) (uuid "9e65b382-3549-5775-8be4-b906c4c7c1f9"))
-	(global_label "T41_P35_METER8" (shape passive) (at 45.72 455.93 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "86f0c20b-d96b-5889-99d6-49ccfe6d6e5f")
+	(global_label "SEED_D9_METER8" (shape passive) (at 45.72 455.93 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "86f0c20b-d96b-5889-99d6-49ccfe6d6e5f")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 45.72 455.93 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 45.72 466.09) (xy 45.72 468.63)) (stroke (width 0) (type default)) (uuid "f9777669-db73-51a6-947f-8a15ca8c390e"))
 	(global_label "LED8_A" (shape passive) (at 45.72 468.63 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "98580c55-f2f4-564f-a40e-a34c3ab20e7e")
@@ -6126,7 +6451,7 @@
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "R31") (unit 1))))
 )
 	(wire (pts (xy 127 458.47) (xy 127 455.93)) (stroke (width 0) (type default)) (uuid "eaea5ce3-8e88-5077-9eeb-35693eb1f889"))
-	(global_label "T41_P36_LEDON" (shape passive) (at 127 455.93 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "5d543be8-a25c-52be-89ff-72da119d6dc6")
+	(global_label "SEED_D10_LEDON" (shape passive) (at 127 455.93 90) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "5d543be8-a25c-52be-89ff-72da119d6dc6")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 127 455.93 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(wire (pts (xy 127 466.09) (xy 127 468.63)) (stroke (width 0) (type default)) (uuid "bfc23150-5487-59bb-ab82-db577264c5ac"))
 	(global_label "LED9_A" (shape passive) (at 127 468.63 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "9c6ec3c7-6b35-52c1-ab88-64a376d35fb5")
@@ -6148,14 +6473,14 @@
 	(wire (pts (xy 171.45 462.28) (xy 173.99 462.28)) (stroke (width 0) (type default)) (uuid "8b6097fd-61dd-5415-b6cb-2d0812930cf8"))
 	(global_label "LED9_A" (shape passive) (at 173.99 462.28 0) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify left)) (uuid "4d48c734-c90d-5a09-8f67-cf8b0aef44b4")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 173.99 462.28 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(text "H. Teensy 4.1과 Audio Shield 연결 (설계서 4.3절). Shield의 I2S·I2C는 핀 번호 같은 것끼리 직결" (exclude_from_sim no) (at 25.4 492.76 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "960046ae-dea2-537a-aae6-15d2dec29201"))
-	(symbol (lib_id "Connector_Generic:Conn_01x20") (at 45.72 538.48 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+	(text "H. Daisy Seed3 소켓 (설계서 4.3절). 핀 번호는 Seed3 데이터시트 표 2와 같다" (exclude_from_sim no) (at 25.4 492.76 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "fed89604-c831-5d5e-b041-50037d2a45e2"))
+	(symbol (lib_id "Connector_Generic:Conn_01x40") (at 45.72 558.8 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "7df4113c-48c4-5c0a-853a-7b5a6e236b02")
-	(property "Reference" "J4" (at 50.8 534.67 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "Teensy 4.1 사용 핀" (at 50.8 537.21 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Footprint" "" (at 45.72 538.48 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Datasheet" "~" (at 45.72 538.48 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "커넥터 핀 번호는 표기용. Teensy 실제 핀은 넷 이름의 P 번호" (at 45.72 538.48 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Reference" "J4" (at 50.8 554.99 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "Daisy Seed3 2x20 소켓" (at 50.8 557.53 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Footprint" "" (at 45.72 558.8 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Datasheet" "~" (at 45.72 558.8 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "16 Audio In 1, 18 Audio Out 1, 20 AGND, 21 3V3A, 38 3V3D, 39 VIN, 40 DGND. 12~15(D11~D14)는 비움" (at 45.72 558.8 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "1" (uuid "31dceaaf-39eb-52ed-9a4c-0e9899ce64f3"))
 	(pin "2" (uuid "e83e7454-af14-5a91-a9d5-5d7df0eb63dc"))
 	(pin "3" (uuid "c906a0da-4cb0-5138-9fa1-2b853c482904"))
@@ -6176,154 +6501,181 @@
 	(pin "18" (uuid "d48c2c48-c017-591b-9166-09dd4ef81c4f"))
 	(pin "19" (uuid "9bbcb8be-e1d4-5b8a-9188-986a94a940f5"))
 	(pin "20" (uuid "948d374d-f688-570a-8773-305ff92a8b00"))
+	(pin "21" (uuid "f6accb26-2c01-5a63-9e86-b58a3ac6fd58"))
+	(pin "22" (uuid "7d26e161-0d67-5060-b731-2d457a60e13c"))
+	(pin "23" (uuid "9fc72b35-fd9c-5db6-9744-6a14212d16d2"))
+	(pin "24" (uuid "145c4099-53f1-5959-94d5-422e60f8e0c0"))
+	(pin "25" (uuid "95b2c1d6-2689-544f-a0cd-00bf21d1c8ed"))
+	(pin "26" (uuid "6d15346e-92aa-5469-9a08-0b67db972bf2"))
+	(pin "27" (uuid "f066ca77-b93b-591a-a078-9c59331bf619"))
+	(pin "28" (uuid "ef16cb9a-1643-5dfa-a6b4-47b0e6bc2bab"))
+	(pin "29" (uuid "f70dc415-7af9-5dc0-a3db-9a4b23ae61f2"))
+	(pin "30" (uuid "4ab5177b-d251-5e3a-9575-28fc04d68a2b"))
+	(pin "31" (uuid "371d7204-cb83-54a9-9e32-0e0d7e1f0f03"))
+	(pin "32" (uuid "0ade96bd-b725-5747-9f20-97ba229f60ec"))
+	(pin "33" (uuid "def39ee9-1446-532b-8fc4-72e7c964a826"))
+	(pin "34" (uuid "8218fca4-d682-595d-a5c4-eeba16893073"))
+	(pin "35" (uuid "803cd669-34e6-5159-9552-909e7a6da17f"))
+	(pin "36" (uuid "9146b661-9167-57c0-8b9f-b12419e93e04"))
+	(pin "37" (uuid "bf4cea6e-b18a-5fc0-b574-76ee49218c5f"))
+	(pin "38" (uuid "df6f6da3-e680-54b7-bec5-6feaea52babe"))
+	(pin "39" (uuid "bb5285af-3530-5dfb-a709-ac4daffefb37"))
+	(pin "40" (uuid "e2427605-5f69-536f-8e90-c98023dbffea"))
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "J4") (unit 1))))
 )
-	(wire (pts (xy 40.64 515.62) (xy 38.1 515.62)) (stroke (width 0) (type default)) (uuid "c16029df-dd79-542f-bd4d-c08b356563e2"))
-	(global_label "T41_VIN_5V" (shape passive) (at 38.1 515.62 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "0b4d1a22-45c1-55a5-92f6-e2d18859044f")
+	(wire (pts (xy 40.64 510.54) (xy 38.1 510.54)) (stroke (width 0) (type default)) (uuid "c16029df-dd79-542f-bd4d-c08b356563e2"))
+	(global_label "SEED_D0_K1DRV" (shape passive) (at 38.1 510.54 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "0b4d1a22-45c1-55a5-92f6-e2d18859044f")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 510.54 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 40.64 513.08) (xy 38.1 513.08)) (stroke (width 0) (type default)) (uuid "97d5e9db-c57e-503f-bebf-5422512637d0"))
+	(global_label "SEED_D1_FSW" (shape passive) (at 38.1 513.08 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "b2308009-2f5d-5739-9e2e-9cd32da3585e")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 513.08 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 40.64 515.62) (xy 38.1 515.62)) (stroke (width 0) (type default)) (uuid "c6e97ffc-6a4f-53b3-af3a-1e38cc513ea0"))
+	(global_label "SEED_D2_METER1" (shape passive) (at 38.1 515.62 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "b9af8066-3afe-5d43-91e3-de862eeb9ffb")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 515.62 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 518.16) (xy 38.1 518.16)) (stroke (width 0) (type default)) (uuid "97d5e9db-c57e-503f-bebf-5422512637d0"))
-	(global_label "T41_3V3" (shape passive) (at 38.1 518.16 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "b2308009-2f5d-5739-9e2e-9cd32da3585e")
+	(wire (pts (xy 40.64 518.16) (xy 38.1 518.16)) (stroke (width 0) (type default)) (uuid "ef0ae33a-8e23-500d-95d4-1e46ceace149"))
+	(global_label "SEED_D3_METER2" (shape passive) (at 38.1 518.16 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "7e5522a4-71ce-552b-b241-1422c95ec5fd")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 518.16 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 520.7) (xy 38.1 520.7)) (stroke (width 0) (type default)) (uuid "c6e97ffc-6a4f-53b3-af3a-1e38cc513ea0"))
-	(global_label "GND" (shape passive) (at 38.1 520.7 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "b9af8066-3afe-5d43-91e3-de862eeb9ffb")
+	(wire (pts (xy 40.64 520.7) (xy 38.1 520.7)) (stroke (width 0) (type default)) (uuid "7d5afe87-3028-503e-af33-e453403fc261"))
+	(global_label "SEED_D4_METER3" (shape passive) (at 38.1 520.7 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "b89dd07e-7769-56e0-ad3b-049c4b2756bf")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 520.7 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 523.24) (xy 38.1 523.24)) (stroke (width 0) (type default)) (uuid "ef0ae33a-8e23-500d-95d4-1e46ceace149"))
-	(global_label "T41_P2_K1DRV" (shape passive) (at 38.1 523.24 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "7e5522a4-71ce-552b-b241-1422c95ec5fd")
+	(wire (pts (xy 40.64 523.24) (xy 38.1 523.24)) (stroke (width 0) (type default)) (uuid "cac14f70-b870-590a-b880-c915edfd9a63"))
+	(global_label "SEED_D5_METER4" (shape passive) (at 38.1 523.24 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "dea3076d-4c92-5dd2-90a8-8ea671a5dd3a")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 523.24 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 525.78) (xy 38.1 525.78)) (stroke (width 0) (type default)) (uuid "7d5afe87-3028-503e-af33-e453403fc261"))
-	(global_label "T41_P3_FSW" (shape passive) (at 38.1 525.78 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "b89dd07e-7769-56e0-ad3b-049c4b2756bf")
+	(wire (pts (xy 40.64 525.78) (xy 38.1 525.78)) (stroke (width 0) (type default)) (uuid "ba52c604-3af1-5984-8e77-6d18e0eeeb57"))
+	(global_label "SEED_D6_METER5" (shape passive) (at 38.1 525.78 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "a50298c8-8083-5fb2-8447-eef3e22522db")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 525.78 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 528.32) (xy 38.1 528.32)) (stroke (width 0) (type default)) (uuid "cac14f70-b870-590a-b880-c915edfd9a63"))
-	(global_label "T41_P24_A10_INPUT" (shape passive) (at 38.1 528.32 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "dea3076d-4c92-5dd2-90a8-8ea671a5dd3a")
+	(wire (pts (xy 40.64 528.32) (xy 38.1 528.32)) (stroke (width 0) (type default)) (uuid "7bc016a6-0e86-5b4a-840a-0efb677b0f11"))
+	(global_label "SEED_D7_METER6" (shape passive) (at 38.1 528.32 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "fe94c096-0b41-5f2f-9275-41339dfdafa0")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 528.32 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 530.86) (xy 38.1 530.86)) (stroke (width 0) (type default)) (uuid "ba52c604-3af1-5984-8e77-6d18e0eeeb57"))
-	(global_label "T41_P25_A11_RATIO" (shape passive) (at 38.1 530.86 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "a50298c8-8083-5fb2-8447-eef3e22522db")
+	(wire (pts (xy 40.64 530.86) (xy 38.1 530.86)) (stroke (width 0) (type default)) (uuid "5e6d87c2-6a76-56f8-8c73-367b15cb7d94"))
+	(global_label "SEED_D8_METER7" (shape passive) (at 38.1 530.86 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "2ae1266b-22dd-52ab-8010-158ad97c9bc8")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 530.86 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 533.4) (xy 38.1 533.4)) (stroke (width 0) (type default)) (uuid "7bc016a6-0e86-5b4a-840a-0efb677b0f11"))
-	(global_label "T41_P26_A12_ATTREL" (shape passive) (at 38.1 533.4 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "fe94c096-0b41-5f2f-9275-41339dfdafa0")
+	(wire (pts (xy 40.64 533.4) (xy 38.1 533.4)) (stroke (width 0) (type default)) (uuid "ae6be14f-2955-506b-94a7-71cf805b654b"))
+	(global_label "SEED_D9_METER8" (shape passive) (at 38.1 533.4 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "ebdf3a7b-bd24-55cf-9c2e-0eec188da77c")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 533.4 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 535.94) (xy 38.1 535.94)) (stroke (width 0) (type default)) (uuid "5e6d87c2-6a76-56f8-8c73-367b15cb7d94"))
-	(global_label "T41_P27_A13_BLEND" (shape passive) (at 38.1 535.94 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "2ae1266b-22dd-52ab-8010-158ad97c9bc8")
+	(wire (pts (xy 40.64 535.94) (xy 38.1 535.94)) (stroke (width 0) (type default)) (uuid "0634ca79-7d8c-5d8b-bf8d-91d52b168b6f"))
+	(global_label "SEED_D10_LEDON" (shape passive) (at 38.1 535.94 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "ff5412fe-4f44-588c-a62c-5a8039600e5d")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 535.94 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 538.48) (xy 38.1 538.48)) (stroke (width 0) (type default)) (uuid "ae6be14f-2955-506b-94a7-71cf805b654b"))
-	(global_label "T41_P38_A14_OUTPUT" (shape passive) (at 38.1 538.48 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "ebdf3a7b-bd24-55cf-9c2e-0eec188da77c")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 538.48 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 541.02) (xy 38.1 541.02)) (stroke (width 0) (type default)) (uuid "0634ca79-7d8c-5d8b-bf8d-91d52b168b6f"))
-	(global_label "T41_P39_A15_VMON" (shape passive) (at 38.1 541.02 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "ff5412fe-4f44-588c-a62c-5a8039600e5d")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 541.02 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 543.56) (xy 38.1 543.56)) (stroke (width 0) (type default)) (uuid "2e05a0b9-e79f-5d15-a254-dc510c5e37ff"))
-	(global_label "T41_P28_METER1" (shape passive) (at 38.1 543.56 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "d2057362-c73b-5981-a1ae-4d248ed489d4")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 543.56 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 546.1) (xy 38.1 546.1)) (stroke (width 0) (type default)) (uuid "88a274db-6fb7-5036-9d14-919753c4ce0b"))
-	(global_label "T41_P29_METER2" (shape passive) (at 38.1 546.1 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "038d666b-8c0b-56c4-9d41-cd828c858c0e")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 546.1 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 548.64) (xy 38.1 548.64)) (stroke (width 0) (type default)) (uuid "81d7b79e-ab05-5e16-b046-88683cbb7b3b"))
-	(global_label "T41_P30_METER3" (shape passive) (at 38.1 548.64 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "35bce1b6-9fda-52dc-8219-98e3cf54bdb5")
+	(no_connect (at 40.64 538.48) (uuid "5f9fb4e0-dd11-5d6e-9bda-aa2a1db5630c"))
+	(no_connect (at 40.64 541.02) (uuid "a76d1510-22a4-57b7-9316-c25e451211d4"))
+	(no_connect (at 40.64 543.56) (uuid "22db9ede-a7df-588d-843c-69c017a35a23"))
+	(no_connect (at 40.64 546.1) (uuid "9d654f65-ec96-50c9-9ec0-0c69339ab840"))
+	(wire (pts (xy 40.64 548.64) (xy 38.1 548.64)) (stroke (width 0) (type default)) (uuid "fd9883fd-dd0b-5ab2-8786-9f2981fcaa34"))
+	(global_label "SEED_AUDIO_IN1" (shape passive) (at 38.1 548.64 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "7b2f7602-92ef-5d09-a6c2-c3cdbf8b62fe")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 548.64 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 551.18) (xy 38.1 551.18)) (stroke (width 0) (type default)) (uuid "dfa546b7-62f5-55c5-a407-45b54785e71f"))
-	(global_label "T41_P31_METER4" (shape passive) (at 38.1 551.18 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "55065176-25b3-51fe-8a40-2de6a256576c")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 551.18 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 553.72) (xy 38.1 553.72)) (stroke (width 0) (type default)) (uuid "fd9883fd-dd0b-5ab2-8786-9f2981fcaa34"))
-	(global_label "T41_P32_METER5" (shape passive) (at 38.1 553.72 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "7b2f7602-92ef-5d09-a6c2-c3cdbf8b62fe")
+	(no_connect (at 40.64 551.18) (uuid "3e39cae9-6c67-5ae4-852b-6a55ffc3b798"))
+	(wire (pts (xy 40.64 553.72) (xy 38.1 553.72)) (stroke (width 0) (type default)) (uuid "851a9b02-9af7-5918-a95f-5811083f04dc"))
+	(global_label "SEED_AUDIO_OUT1" (shape passive) (at 38.1 553.72 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "451e6528-6f49-5d4e-8e85-897916997cb8")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 553.72 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 556.26) (xy 38.1 556.26)) (stroke (width 0) (type default)) (uuid "c2682ef9-cc19-580b-bb47-cd730d9eb4e3"))
-	(global_label "T41_P33_METER6" (shape passive) (at 38.1 556.26 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "d9902ec4-0e68-51db-9874-5493a46a2b0d")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 556.26 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 558.8) (xy 38.1 558.8)) (stroke (width 0) (type default)) (uuid "851a9b02-9af7-5918-a95f-5811083f04dc"))
-	(global_label "T41_P34_METER7" (shape passive) (at 38.1 558.8 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "451e6528-6f49-5d4e-8e85-897916997cb8")
+	(no_connect (at 40.64 556.26) (uuid "2c095bb2-fde7-5457-93f6-8c147faa3e1e"))
+	(wire (pts (xy 40.64 558.8) (xy 38.1 558.8)) (stroke (width 0) (type default)) (uuid "293f2f8c-68fb-5222-85ed-7a36a8b8c46a"))
+	(global_label "GND" (shape passive) (at 38.1 558.8 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "7519e633-8b44-5c6e-bd23-cd72fc2e8167")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 558.8 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 561.34) (xy 38.1 561.34)) (stroke (width 0) (type default)) (uuid "60db6c2e-7f7b-503e-bc58-ec1b8bd5864a"))
-	(global_label "T41_P35_METER8" (shape passive) (at 38.1 561.34 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "f69286b1-99fe-52e4-8951-3fce7cf74f77")
+	(wire (pts (xy 40.64 561.34) (xy 38.1 561.34)) (stroke (width 0) (type default)) (uuid "d9febabc-bb9c-5ac7-8ca8-43801e8d9c43"))
+	(global_label "SEED_3V3A" (shape passive) (at 38.1 561.34 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "5b6b435f-7e42-5f03-9184-844f7fe0a5b6")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 561.34 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 40.64 563.88) (xy 38.1 563.88)) (stroke (width 0) (type default)) (uuid "293f2f8c-68fb-5222-85ed-7a36a8b8c46a"))
-	(global_label "T41_P36_LEDON" (shape passive) (at 38.1 563.88 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "7519e633-8b44-5c6e-bd23-cd72fc2e8167")
+	(wire (pts (xy 40.64 563.88) (xy 38.1 563.88)) (stroke (width 0) (type default)) (uuid "28d40ad9-8596-5923-8fb9-9a2a61242334"))
+	(global_label "SEED_A0_INPUT" (shape passive) (at 38.1 563.88 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "bfdac3a6-7cbd-5c53-a71f-99d28de3f818")
 	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 563.88 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(symbol (lib_id "Connector_Generic:Conn_01x03") (at 86.36 518.16 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
-	(uuid "93514766-0d3d-5cbd-be7e-ea0edf18c53a")
-	(property "Reference" "J5" (at 91.44 514.35 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "Audio Shield Rev D 라인 패드" (at 91.44 516.89 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Footprint" "" (at 86.36 518.16 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Datasheet" "~" (at 86.36 518.16 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "" (at 86.36 518.16 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(pin "1" (uuid "01d6fb43-0e5a-5b2b-9040-894821241748"))
-	(pin "2" (uuid "2ee4ab8f-e878-5129-9e34-be441c9cb7ce"))
-	(pin "3" (uuid "778e4ed9-324f-566d-95fd-bcff84e425c3"))
-	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "J5") (unit 1))))
-)
-	(wire (pts (xy 81.28 515.62) (xy 78.74 515.62)) (stroke (width 0) (type default)) (uuid "23f7ca97-a002-51e5-9e48-4bb3a54601e2"))
-	(global_label "SHIELD_LINEIN_L" (shape passive) (at 78.74 515.62 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "fc1562f7-60d8-5ce5-95ba-e78ba7ce638b")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 78.74 515.62 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 81.28 518.16) (xy 78.74 518.16)) (stroke (width 0) (type default)) (uuid "765907a9-ca7d-5883-9af2-c2ba8117086c"))
-	(global_label "SHIELD_LINEOUT_L" (shape passive) (at 78.74 518.16 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "38f117aa-947e-5125-ba63-a204dcd04530")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 78.74 518.16 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(wire (pts (xy 81.28 520.7) (xy 78.74 520.7)) (stroke (width 0) (type default)) (uuid "4f2c513e-2b49-5f8b-8aaf-708b1947d66e"))
-	(global_label "GND" (shape passive) (at 78.74 520.7 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "00ac06a5-c3b4-58ea-b9ae-3ed6916a159a")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 78.74 520.7 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(text "I. ERC용 전원 플래그" (exclude_from_sim no) (at 25.4 589.28 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "8f6ece3b-dc00-5dc3-872c-c29dd0562a1c"))
-	(symbol (lib_id "power:PWR_FLAG") (at 45.72 614.68 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+	(wire (pts (xy 40.64 566.42) (xy 38.1 566.42)) (stroke (width 0) (type default)) (uuid "a060178c-b469-5a77-a492-75d25ea31479"))
+	(global_label "SEED_A1_RATIO" (shape passive) (at 38.1 566.42 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "4f566ef2-520f-57d2-b1eb-622a987093e5")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 566.42 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 40.64 568.96) (xy 38.1 568.96)) (stroke (width 0) (type default)) (uuid "a661fd84-b6b4-55fb-a593-79ffe0996811"))
+	(global_label "SEED_A2_ATTREL" (shape passive) (at 38.1 568.96 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "747655ad-7251-543c-af07-6b916953d16d")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 568.96 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 40.64 571.5) (xy 38.1 571.5)) (stroke (width 0) (type default)) (uuid "a1b1f6d0-7205-5da8-a2be-616d5202220f"))
+	(global_label "SEED_A3_BLEND" (shape passive) (at 38.1 571.5 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "015f6da6-9f8d-59ca-bee4-874b56c47eb6")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 571.5 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 40.64 574.04) (xy 38.1 574.04)) (stroke (width 0) (type default)) (uuid "f0086743-2025-5ba7-a5cd-a8d3e74473e1"))
+	(global_label "SEED_A4_OUTPUT" (shape passive) (at 38.1 574.04 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "76dd9a3b-0801-582c-961f-bf4ddef47498")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 574.04 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 40.64 576.58) (xy 38.1 576.58)) (stroke (width 0) (type default)) (uuid "c7032f57-14a2-5f46-b516-4323f8699533"))
+	(global_label "SEED_A5_VMON" (shape passive) (at 38.1 576.58 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "0152a95c-268d-5ede-84a9-7714fd30cf41")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 576.58 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(no_connect (at 40.64 579.12) (uuid "f5109b88-8191-586b-9f97-fc384e7d68a1"))
+	(no_connect (at 40.64 581.66) (uuid "1ee67306-7ada-5446-b699-2d08621c5e62"))
+	(no_connect (at 40.64 584.2) (uuid "184b9554-468d-5a83-afd7-beab7a58ab4d"))
+	(no_connect (at 40.64 586.74) (uuid "526ff6b1-c3e2-52ab-9186-0d22230c0f37"))
+	(no_connect (at 40.64 589.28) (uuid "54568e86-2744-5c3c-a8ad-c5bf7966fdf5"))
+	(no_connect (at 40.64 591.82) (uuid "61ca0a0f-f393-51e5-898d-fe8a8b674acb"))
+	(no_connect (at 40.64 594.36) (uuid "aaa7a174-764c-5dbc-b839-0536039c11d8"))
+	(no_connect (at 40.64 596.9) (uuid "7162dc3c-8959-5f5b-bfcb-6093f7e2da7a"))
+	(no_connect (at 40.64 599.44) (uuid "634f4f1e-16c6-55dd-b203-c83683be71c9"))
+	(no_connect (at 40.64 601.98) (uuid "0100a896-cdcc-5439-b1a5-1a6b7c063e7e"))
+	(wire (pts (xy 40.64 604.52) (xy 38.1 604.52)) (stroke (width 0) (type default)) (uuid "b0ba7ddb-80bd-57a0-8b89-b5791dc1c917"))
+	(global_label "SEED_3V3D" (shape passive) (at 38.1 604.52 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "1b5691cb-687b-5670-82f3-a94f2e922c11")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 604.52 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 40.64 607.06) (xy 38.1 607.06)) (stroke (width 0) (type default)) (uuid "9df9f6f4-8926-55b6-938a-dc46a79e47f0"))
+	(global_label "SEED_VIN" (shape passive) (at 38.1 607.06 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "8e318aba-c79f-51a9-a0fb-04499282f9d7")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 607.06 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 40.64 609.6) (xy 38.1 609.6)) (stroke (width 0) (type default)) (uuid "bb879e83-1f5c-57bb-b8a9-bed6c0fea969"))
+	(global_label "GND" (shape passive) (at 38.1 609.6 180) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "14b2a00e-ace7-5d30-bc53-812796e142b2")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 38.1 609.6 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(text "I. ERC용 전원 플래그. GND는 U2 VOUT(전원 출력 핀)이 구동하므로 플래그를 두지 않는다" (exclude_from_sim no) (at 25.4 629.92 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "e90e30ba-c8b3-5eb5-8584-4a1f40bb26c3"))
+	(symbol (lib_id "power:PWR_FLAG") (at 45.72 655.32 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "470df2d5-8400-563c-b935-5fc80968542f")
-	(property "Reference" "PF1" (at 50.8 610.87 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "PWR_FLAG" (at 50.8 613.41 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Footprint" "" (at 45.72 614.68 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Datasheet" "~" (at 45.72 614.68 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "" (at 45.72 614.68 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Reference" "PF1" (at 50.8 651.51 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "PWR_FLAG" (at 50.8 654.05 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Footprint" "" (at 45.72 655.32 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Datasheet" "~" (at 45.72 655.32 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "" (at 45.72 655.32 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "1" (uuid "c8752e25-6755-53ae-93fc-2192cab5d6e8"))
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "PF1") (unit 1))))
 )
-	(wire (pts (xy 45.72 614.68) (xy 45.72 617.22)) (stroke (width 0) (type default)) (uuid "f2ff16e7-8abb-5c98-9772-a8694296b725"))
-	(global_label "VIN_RAW" (shape passive) (at 45.72 617.22 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "ad537a62-7165-5ea3-af0b-a1383697ae43")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 45.72 617.22 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(symbol (lib_id "power:PWR_FLAG") (at 86.36 614.68 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+	(wire (pts (xy 45.72 655.32) (xy 45.72 657.86)) (stroke (width 0) (type default)) (uuid "f2ff16e7-8abb-5c98-9772-a8694296b725"))
+	(global_label "VIN_RAW" (shape passive) (at 45.72 657.86 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "ad537a62-7165-5ea3-af0b-a1383697ae43")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 45.72 657.86 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(symbol (lib_id "power:PWR_FLAG") (at 86.36 655.32 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "96781556-98ca-5aa8-9ee7-21528c109ef9")
-	(property "Reference" "PF2" (at 91.44 610.87 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "PWR_FLAG" (at 91.44 613.41 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Footprint" "" (at 86.36 614.68 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Datasheet" "~" (at 86.36 614.68 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "" (at 86.36 614.68 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Reference" "PF2" (at 91.44 651.51 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "PWR_FLAG" (at 91.44 654.05 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Footprint" "" (at 86.36 655.32 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Datasheet" "~" (at 86.36 655.32 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "" (at 86.36 655.32 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "1" (uuid "31cb6980-1377-5c8d-9c91-5c1f5f83bfe3"))
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "PF2") (unit 1))))
 )
-	(wire (pts (xy 86.36 614.68) (xy 86.36 617.22)) (stroke (width 0) (type default)) (uuid "9b00418f-e47d-532f-ae3c-008e313aa6d3"))
-	(global_label "V9" (shape passive) (at 86.36 617.22 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "7fa01078-6be5-5eb4-bd8b-d4c3a7629305")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 86.36 617.22 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(symbol (lib_id "power:PWR_FLAG") (at 127 614.68 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+	(wire (pts (xy 86.36 655.32) (xy 86.36 657.86)) (stroke (width 0) (type default)) (uuid "9b00418f-e47d-532f-ae3c-008e313aa6d3"))
+	(global_label "V9" (shape passive) (at 86.36 657.86 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "7fa01078-6be5-5eb4-bd8b-d4c3a7629305")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 86.36 657.86 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(symbol (lib_id "power:PWR_FLAG") (at 127 655.32 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "584bbf59-dd9d-5519-ac96-167a46a35ff1")
-	(property "Reference" "PF3" (at 132.08 610.87 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "PWR_FLAG" (at 132.08 613.41 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Footprint" "" (at 127 614.68 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Datasheet" "~" (at 127 614.68 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "" (at 127 614.68 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Reference" "PF3" (at 132.08 651.51 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "PWR_FLAG" (at 132.08 654.05 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Footprint" "" (at 127 655.32 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Datasheet" "~" (at 127 655.32 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "" (at 127 655.32 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "1" (uuid "26d12008-c304-54c1-8076-42d9c78f04c8"))
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "PF3") (unit 1))))
 )
-	(wire (pts (xy 127 614.68) (xy 127 617.22)) (stroke (width 0) (type default)) (uuid "ef3df914-decf-5230-a626-13bc1141df97"))
-	(global_label "VRAIL" (shape passive) (at 127 617.22 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "611af722-239e-5357-964b-a2e2e3e480e9")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 127 617.22 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(symbol (lib_id "power:PWR_FLAG") (at 167.64 614.68 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+	(wire (pts (xy 127 655.32) (xy 127 657.86)) (stroke (width 0) (type default)) (uuid "ef3df914-decf-5230-a626-13bc1141df97"))
+	(global_label "VRAIL" (shape passive) (at 127 657.86 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "611af722-239e-5357-964b-a2e2e3e480e9")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 127 657.86 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(symbol (lib_id "power:PWR_FLAG") (at 167.64 655.32 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
 	(uuid "db7329df-e3cc-58cb-962f-a44da393c075")
-	(property "Reference" "PF4" (at 172.72 610.87 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "PWR_FLAG" (at 172.72 613.41 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Footprint" "" (at 167.64 614.68 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Datasheet" "~" (at 167.64 614.68 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "" (at 167.64 614.68 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Reference" "PF4" (at 172.72 651.51 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "PWR_FLAG" (at 172.72 654.05 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Footprint" "" (at 167.64 655.32 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Datasheet" "~" (at 167.64 655.32 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "" (at 167.64 655.32 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
 	(pin "1" (uuid "4e1b1dbe-629a-5a90-a65f-1094c424609d"))
 	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "PF4") (unit 1))))
 )
-	(wire (pts (xy 167.64 614.68) (xy 167.64 617.22)) (stroke (width 0) (type default)) (uuid "c351d2b7-7c2b-5a02-b36f-736ad7a023ff"))
-	(global_label "T41_3V3" (shape passive) (at 167.64 617.22 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "84bf2b68-204d-5b37-b9de-02c98a4a3373")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 167.64 617.22 0) (effects (font (size 1.27 1.27)) (hide yes))))
-	(symbol (lib_id "power:PWR_FLAG") (at 208.28 614.68 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
-	(uuid "bfcaa915-83f2-5190-9537-bbf1d9922a65")
-	(property "Reference" "PF5" (at 213.36 610.87 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Value" "PWR_FLAG" (at 213.36 613.41 0) (effects (font (size 1.27 1.27)) (justify left)))
-	(property "Footprint" "" (at 208.28 614.68 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Datasheet" "~" (at 208.28 614.68 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(property "Description" "" (at 208.28 614.68 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
-	(pin "1" (uuid "cc35d2dd-d056-5f4b-a779-361745470069"))
-	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "PF5") (unit 1))))
+	(wire (pts (xy 167.64 655.32) (xy 167.64 657.86)) (stroke (width 0) (type default)) (uuid "c351d2b7-7c2b-5a02-b36f-736ad7a023ff"))
+	(global_label "SEED_3V3A" (shape passive) (at 167.64 657.86 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "84bf2b68-204d-5b37-b9de-02c98a4a3373")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 167.64 657.86 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(symbol (lib_id "power:PWR_FLAG") (at 208.28 655.32 0) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+	(uuid "698b56a8-402c-52c2-9e8d-7fdeb2903aa0")
+	(property "Reference" "PF6" (at 213.36 651.51 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Value" "PWR_FLAG" (at 213.36 654.05 0) (effects (font (size 1.27 1.27)) (justify left)))
+	(property "Footprint" "" (at 208.28 655.32 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Datasheet" "~" (at 208.28 655.32 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(property "Description" "" (at 208.28 655.32 0) (effects (font (size 1.27 1.27)) (justify left) (hide yes)))
+	(pin "1" (uuid "90384606-7fce-56ab-b2b3-c1f425a9ddf4"))
+	(instances (project "bass-compressor" (path "/529d5b52-56a4-5a7e-8c35-e46dba931baa" (reference "PF6") (unit 1))))
 )
-	(wire (pts (xy 208.28 614.68) (xy 208.28 617.22)) (stroke (width 0) (type default)) (uuid "145d8902-e0fd-5ca5-b86d-b027bdb21254"))
-	(global_label "GND" (shape passive) (at 208.28 617.22 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "bc2f6db1-b500-5940-9977-3e0f9946568f")
-	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 208.28 617.22 0) (effects (font (size 1.27 1.27)) (hide yes))))
+	(wire (pts (xy 208.28 655.32) (xy 208.28 657.86)) (stroke (width 0) (type default)) (uuid "b2da2832-3165-5465-b67b-f81987af0397"))
+	(global_label "SEED_3V3D" (shape passive) (at 208.28 657.86 270) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify right)) (uuid "dbc41e5f-4eeb-5db0-84be-cbead1cdcc8b")
+	(property "Intersheetrefs" "${INTERSHEET_REFS}" (at 208.28 657.86 0) (effects (font (size 1.27 1.27)) (hide yes))))
 	(sheet_instances (path "/" (page "1")))
 )

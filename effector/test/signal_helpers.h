@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <vector>
 
-constexpr float kTestSampleRateHz = 44100.0f;
+constexpr float kTestSampleRateHz = 48000.0f;
 
 inline std::vector<float> makeSine(float frequencyHz, float amplitude,
                                    std::size_t sampleCount) {

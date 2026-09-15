@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** DigiKey 1차 주문 품번을 확정하고, Teensy 4.1과 Audio Shield로 디지털 경로(컴프레서 펌웨어)를 만들어 설계서 1단계 측정(M2, T5, T7, T8, T9, T15)을 통과시킨다.
+**Goal:** Seed3와 DigiKey 1차 주문 품번을 확정하고, Daisy Seed3로 디지털 경로(컴프레서 펌웨어)를 만들어 설계서 1단계 측정(M2, T5, T7, T8, T9, T15)을 통과시킨다.
 
-**Architecture:** 신호 처리 로직은 Arduino 헤더가 없는 코어 라이브러리(`effector/lib/effector_core`)에 두고 PC에서 CMake와 g++로 테스트한다. Teensy 펌웨어(`effector/src`)는 OpenAudio F32 오디오 블록 하나가 코어를 호출하는 얇은 층이고, 1단계에는 노브 대신 시리얼 명령으로 파라미터를 넣는다.
+**Architecture:** 신호 처리 로직과 시리얼 콘솔은 플랫폼 헤더가 없는 코어 라이브러리(`effector/lib/effector_core`)에 두고 PC에서 CMake와 g++로 테스트한다. Seed3 펌웨어(`effector/src/main.cpp`)는 libDaisy 오디오 콜백이 코어를 부르고 USB CDC를 콘솔에 잇는 얇은 층이고, 1단계에는 노브 대신 시리얼 명령으로 파라미터를 넣는다.
 
-**Tech Stack:** C++17, CMake 3.16 이상, g++ (네이티브 테스트), PlatformIO Core 6.2와 `teensy` 플랫폼 6.0.0(Arduino 프레임워크), OpenAudio_ArduinoLibrary 커밋 1dbecf1, Teensy Audio 라이브러리(SGTL5000 제어), Audacity(측정)
+**Tech Stack:** C++17, CMake 3.16 이상, g++ (네이티브 테스트), libDaisy(서브모듈, 커밋 265aae3)와 arm-none-eabi-gcc, make, dfu-util(Seed3 빌드·업로드), Audacity(측정)
 
 **Spec:** [bass-effector-design.md](bass-effector-design.md), 단계표는 [bass-effector.md](bass-effector.md)
 
@@ -14,15 +14,15 @@
 
 - 설계 기준은 설계서다. 수치와 규칙은 설계서 절 번호로 인용한다
 - 1단계 범위: 계획서 단계 1(M2, T5, T7, T8, T9, T15). 아날로그 입출력단, K1 릴레이, 노브, LED 하드웨어는 넣지 않는다
-- 샘플레이트 `AUDIO_SAMPLE_RATE_EXACT`(Teensy 4 코어에서 44100Hz), 오디오 블록 32샘플
-- `lib/effector_core`는 Arduino·OpenAudio 헤더를 포함하지 않는다
+- 샘플레이트 48000Hz, 오디오 블록 48샘플. libDaisy 기본값이고 44.1kHz는 없다
+- `lib/effector_core`는 libDaisy·STM32 헤더를 포함하지 않는다
 - 네이티브 빌드: C++17, `-Wall -Wextra -Werror`
 - 변수·함수 이름은 줄여 쓰지 않는다. 단위(`Db`, `Hz`, `Seconds`)와 id는 허용
 - 커밋 메시지는 `[Tag] 한국어 요약`, Co-Authored-By 트레일러 없음, 푸시하지 않는다
 - md 문서는 em dash·en dash·스마트 따옴표를 쓰지 않는다
-- PlatformIO는 Ubuntu에 `~/.platformio/penv`로 설치돼 있고 PATH에는 없다. `~/.platformio/penv/bin/pio`로 실행한다. 집 Windows의 PlatformIO와 Audacity 설치는 사용자가 한다
-- Audio Shield LINEIN에 +2.2dBu(2.83Vpp)를 넘는 신호를 넣지 않는다. M2 교정 전에는 스칼렛 출력 레벨을 -20dBFS 이하로 둔다
-- 초기값 상수(PGA 최대 6단계, 조용함 -50dBFS·20ms, 정렬 2블록, 드라이브 최대 30dB, 미터 경계, 노브 범위)는 M1, T13, T16 결과로 조정한다
+- Seed3 빌드는 `effector/`에서 `make`, 업로드는 `make program-dfu`. 서브모듈 받기와 libDaisy 빌드는 `effector/README.md`. 집 Windows의 툴체인과 Audacity 설치는 사용자가 한다
+- Seed3 Audio In에 1Vrms(+2.2dBu)를 넘는 신호를 넣지 않는다. M2 교정 전에는 스칼렛 출력 레벨을 -20dBFS 이하로 둔다
+- 초기값 상수(드라이브 최대 30dB, 미터 경계, 노브 범위)는 M1, T16 결과로 조정한다
 
 ## 선행 조건
 
@@ -33,37 +33,40 @@
 | 경로 | 책임 |
 |---|---|
 | `effector/CMakeLists.txt` | 네이티브 테스트와 도구 빌드 |
-| `effector/platformio.ini` | Teensy 4.1 빌드 |
+| `effector/Makefile` | Seed3 빌드와 DFU 업로드. libDaisy core Makefile 포함 |
+| `effector/lib/libDaisy/` | libDaisy 서브모듈(고정 커밋) |
 | `effector/README.md` | 빌드·업로드·테스트 명령 |
 | `effector/lib/effector_core/src/dc_blocker.{h,cpp}` | 1차 DC 제거 필터 |
 | `effector/lib/effector_core/src/compressor.{h,cpp}` | RMS 검출 컴프레서, 사이드체인 HPF |
-| `effector/lib/effector_core/src/pga_controller.{h,cpp}` | 코덱 PGA 단계와 보상 게인 |
 | `effector/lib/effector_core/src/meter.{h,cpp}` | 감쇠 미터 8칸과 클립 점멸 |
 | `effector/lib/effector_core/src/parameter_mapping.{h,cpp}` | 노브 값 → 파라미터 |
 | `effector/test/check.h`, `test_main.cpp`, `signal_helpers.h` | 테스트 하네스와 신호 생성 |
 | `effector/test/test_*.cpp` | 코어 단위 테스트 |
 | `effector/test/reference/openaudio_compressor.h` | T9 대조군(OpenAudio 식 이식) |
 | `effector/tools/static_gain.cpp` | 실기기 T9 대조값 계산 |
-| `effector/src/effector_processor.{h,cpp}` | OpenAudio F32 블록. 코어를 한 블록에서 호출 |
-| `effector/src/codec_control.h` | SGTL5000 ADC 제로 크로스 끄기 |
-| `effector/src/serial_console.{h,cpp}` | 1단계 시리얼 명령 |
-| `effector/src/main.cpp` | 오디오 그래프와 초기화 |
+| `effector/lib/effector_core/src/effector_processor.{h,cpp}` | DC 제거, 프리게인, 컴프레서, Blend, Output을 한 블록에서 |
+| `effector/lib/effector_core/src/serial_console.{h,cpp}` | 1단계 시리얼 명령. `ConsoleHost`로 플랫폼을 분리 |
+| `effector/src/main.cpp` | Seed3 층. libDaisy 오디오 콜백, USB CDC 링 버퍼, 콘솔 호스트 |
 | `effector/measurements/stage1.md` | 1단계 측정 기록 |
 
 ---
 
-### Task 1: DigiKey 1차 주문 품번 확정
+### Task 1: Seed3와 DigiKey 1차 주문 품번 확정
 
 **Files:**
 - Modify: `devices/bass-effector.md` (부품 절 표)
 
 **Interfaces:**
-- Consumes: 설계서 3.5절(전원 보호), 4.1절(블록도), 5.4절(릴레이)
-- Produces: 계획서 부품표의 DigiKey 행 품번과 수량. 사용자가 이 표로 주문한다
+- Consumes: 설계서 3.5절(전원 보호), 4.1절(블록도), 4.3절(Seed3), 5.4절(릴레이)
+- Produces: 계획서 부품표의 daisy.audio·DigiKey 행 품번과 수량. 사용자가 이 표로 주문한다
 
 - [ ] **Step 1: 보유품 확인**
 
-`inventory.md` 2절(전원)과 7절(배선)에서 Micro-B USB 데이터 케이블과 점퍼선·브레드보드 보유를 확인한다. Micro-B 케이블 보유가 "확인 필요"면 사용자에게 묻고, 없으면 아래 표에 케이블 행을 추가한다.
+`inventory.md` 2절(전원)과 7절(배선)에서 USB-C 데이터 케이블과 점퍼선·브레드보드 보유를 확인한다. USB-C 케이블 보유가 "확인 필요"면 사용자에게 묻고, 없으면 아래 표에 케이블 행을 추가한다.
+
+- [ ] **Step 1a: Seed3 주문**
+
+daisy.audio에서 Seed3 1개를 주문한다(미국 발송, 배송지 한국 선택 가능). 배송비와 통관 비용은 결제 화면에서 확인해 사용자에게 알린다. 핀 헤더가 동봉되는지 상품 페이지에서 확인하고, 없으면 아래 표의 헤더 행을 산다. 배송이 가장 오래 걸리므로 DigiKey보다 먼저 넣는다.
 
 - [ ] **Step 2: 후보 품번 재고·사양 확인**
 
@@ -71,9 +74,8 @@
 
 | 기능 | 후보 품번 | 수량 | 기준 |
 |---|---|---|---|
-| MCU | SparkFun 16996 또는 20360 | 1 | Teensy 4.1 헤더판, 재고 있음 |
-| 코덱 | SparkFun 15845 | 1 | Audio Adapter Rev D |
-| 헤더 | Chip Quik HDR100IMP40M-G-V-TH | 1 | 2.54mm 스트레이트, Shield 14핀 두 줄로 잘라 쓸 수 있는 길이 |
+| 소켓 | 2.54mm 20핀 암 소켓 | 2 | Seed3를 기판에 꽂는 소켓 |
+| 헤더 | Chip Quik HDR100IMP40M-G-V-TH | 1 | 2.54mm 스트레이트 40핀. Seed3에 헤더가 동봉되지 않을 때만 |
 | op-amp | TI OPA2992IDR | 2 | SOIC-8 |
 | SOIC 변환 기판 | SparkFun BOB-13655 | 1팩 | SOIC-8을 DIP-8 핀 간격으로. 4개입 |
 | 차지 펌프 | TI LT1054CP | 2 | PDIP-8 |
@@ -258,7 +260,7 @@ int main() {
 #include <cstddef>
 #include <vector>
 
-constexpr float kTestSampleRateHz = 44100.0f;
+constexpr float kTestSampleRateHz = 48000.0f;
 
 inline std::vector<float> makeSine(float frequencyHz, float amplitude,
                                    std::size_t sampleCount) {
@@ -787,7 +789,7 @@ int main(int argumentCount, char** arguments) {
         std::fprintf(stderr, "usage: static_gain threshold ratio attack release toneDbfs\n");
         return 2;
     }
-    const float sampleRateHz = 44100.0f;
+    const float sampleRateHz = 48000.0f;
     CompressorSettings settings;
     settings.thresholdDbfs = std::strtof(arguments[1], nullptr);
     settings.ratio = std::strtof(arguments[2], nullptr);
@@ -835,213 +837,11 @@ git commit -m "[Feat] 이펙터 컴프레서와 OpenAudio 대조 테스트"
 
 ---
 
-### Task 4: PgaController
+### Task 4: PgaController (삭제)
 
-**Files:**
-- Create: `effector/test/test_pga_controller.cpp`
-- Create: `effector/lib/effector_core/src/pga_controller.h`, `effector/lib/effector_core/src/pga_controller.cpp`
-
-**Interfaces:**
-- Consumes: Task 2 하네스
-- Produces: `PgaController::Config { int maxStep; float quietLevelDbfs; int quietHoldBlocks; float clipLevelDbfs; int alignmentBlocks; }`
-- Produces: `PgaController(const Config&)`, `void processBlock(float desiredTotalGainDb, float blockPeakDbfs)`, `int pgaStep() const`, `bool takeStepChange()`, `float compensationDb() const`, `static constexpr float kStepDb = 1.5f`
-
-설계서 6.3절 규칙을 옮긴 것이다. 입력 드라이브 전체는 웻 경로에서 디지털 프리게인으로 걸고, PGA는 ADC 앞 아날로그 게인으로 노이즈만 줄인다. 그래서 보상은 PGA 게인만큼 되돌리는 값이다. 올리기와 내리기 모두 조용한 구간에서만 옮기고, 클립이면 즉시 한 단계 내린 뒤 노브가 바뀌기 전까지 그 단계를 상한으로 둔다(같은 소리에서 올렸다 내렸다 반복하는 것을 막는다).
-
-- [ ] **Step 1: 실패하는 테스트 작성**
-
-`effector/test/test_pga_controller.cpp`:
-
-```cpp
-#include "check.h"
-#include "pga_controller.h"
-
-namespace {
-
-PgaController::Config testConfig() {
-    return {12, -50.0f, 5, -0.1f, 2};
-}
-
-void runBlocks(PgaController& controller, int count, float desiredDb, float peakDbfs) {
-    for (int block = 0; block < count; ++block) {
-        controller.processBlock(desiredDb, peakDbfs);
-    }
-}
-
-}  // namespace
-
-TEST_CASE("PGA waits for a quiet hold before moving") {
-    PgaController controller(testConfig());
-    runBlocks(controller, 100, 9.0f, -20.0f);
-    CHECK(controller.pgaStep() == 0);
-    runBlocks(controller, 4, 9.0f, -60.0f);
-    CHECK(controller.pgaStep() == 0);
-    runBlocks(controller, 1, 9.0f, -60.0f);
-    CHECK(controller.pgaStep() == 6);
-    CHECK(controller.takeStepChange());
-    CHECK(!controller.takeStepChange());
-}
-
-TEST_CASE("PGA never exceeds the maximum step") {
-    PgaController controller(testConfig());
-    runBlocks(controller, 10, 40.0f, -60.0f);
-    CHECK(controller.pgaStep() == 12);
-}
-
-TEST_CASE("Clip lowers PGA immediately and caps it until the knob moves") {
-    PgaController controller(testConfig());
-    runBlocks(controller, 10, 9.0f, -60.0f);
-    CHECK(controller.pgaStep() == 6);
-    controller.processBlock(9.0f, 0.0f);
-    CHECK(controller.pgaStep() == 5);
-    runBlocks(controller, 20, 9.0f, -60.0f);
-    CHECK(controller.pgaStep() == 5);
-    runBlocks(controller, 10, 7.5f, -60.0f);
-    CHECK(controller.pgaStep() == 5);
-    runBlocks(controller, 10, 10.5f, -60.0f);
-    CHECK(controller.pgaStep() == 7);
-}
-
-TEST_CASE("Compensation follows the step after the alignment delay") {
-    PgaController controller(testConfig());
-    runBlocks(controller, 10, 9.0f, -60.0f);
-    runBlocks(controller, 3, 9.0f, -60.0f);
-    CHECK_NEAR(controller.compensationDb(), -9.0, 1e-6);
-
-    PgaController delayed(testConfig());
-    runBlocks(delayed, 4, 9.0f, -60.0f);
-    delayed.processBlock(9.0f, -60.0f);
-    CHECK(delayed.pgaStep() == 6);
-    CHECK_NEAR(delayed.compensationDb(), 0.0, 1e-6);
-    delayed.processBlock(9.0f, -60.0f);
-    CHECK_NEAR(delayed.compensationDb(), 0.0, 1e-6);
-    delayed.processBlock(9.0f, -60.0f);
-    CHECK_NEAR(delayed.compensationDb(), -9.0, 1e-6);
-}
-```
-
-- [ ] **Step 2: 실패 확인**
-
-Run: `cmake --build effector/build`
-Expected: `pga_controller.h: No such file or directory` 컴파일 오류
-
-- [ ] **Step 3: 구현**
-
-`effector/lib/effector_core/src/pga_controller.h`:
-
-```cpp
-#pragma once
-
-#include <vector>
-
-// 코덱 아날로그 입력 게인(PGA) 단계를 정한다.
-// - 올리기·내리기 모두 입력이 조용한 구간에서만 원하는 단계로 옮긴다
-// - ADC 클립이면 즉시 한 단계 내리고, 노브가 움직이기 전까지 그 단계를 상한으로 둔다
-// - 보상 게인은 alignmentBlocks 블록 전의 단계로 계산해 아날로그 변경이 ADC 출력에
-//   나타나는 시점과 맞춘다
-class PgaController {
-public:
-    static constexpr float kStepDb = 1.5f;
-
-    struct Config {
-        int maxStep;
-        float quietLevelDbfs;
-        int quietHoldBlocks;
-        float clipLevelDbfs;
-        int alignmentBlocks;
-    };
-
-    explicit PgaController(const Config& config);
-
-    void processBlock(float desiredTotalGainDb, float blockPeakDbfs);
-    int pgaStep() const { return step_; }
-    bool takeStepChange();
-    float compensationDb() const;
-
-private:
-    void setStep(int step);
-
-    Config config_;
-    int step_ = 0;
-    int ceilingStep_;
-    int lastDesiredStep_ = -1;
-    int quietBlocks_ = 0;
-    bool stepChanged_ = false;
-    std::vector<int> stepHistory_;
-    std::size_t historyIndex_ = 0;
-};
-```
-
-`effector/lib/effector_core/src/pga_controller.cpp`:
-
-```cpp
-#include "pga_controller.h"
-
-#include <algorithm>
-#include <cmath>
-
-PgaController::PgaController(const Config& config)
-    : config_(config),
-      ceilingStep_(config.maxStep),
-      stepHistory_(static_cast<std::size_t>(config.alignmentBlocks) + 1, 0) {}
-
-void PgaController::processBlock(float desiredTotalGainDb, float blockPeakDbfs) {
-    const int desiredStep = std::clamp(
-        static_cast<int>(std::floor(desiredTotalGainDb / kStepDb + 1.0e-4f)), 0, config_.maxStep);
-    if (desiredStep != lastDesiredStep_) {
-        ceilingStep_ = config_.maxStep;
-        lastDesiredStep_ = desiredStep;
-    }
-
-    if (blockPeakDbfs >= config_.clipLevelDbfs && step_ > 0) {
-        setStep(step_ - 1);
-        ceilingStep_ = step_;
-        quietBlocks_ = 0;
-    } else if (blockPeakDbfs < config_.quietLevelDbfs) {
-        ++quietBlocks_;
-        const int targetStep = std::min(desiredStep, ceilingStep_);
-        if (quietBlocks_ >= config_.quietHoldBlocks && targetStep != step_) {
-            setStep(targetStep);
-        }
-    } else {
-        quietBlocks_ = 0;
-    }
-
-    historyIndex_ = (historyIndex_ + 1) % stepHistory_.size();
-    stepHistory_[historyIndex_] = step_;
-}
-
-bool PgaController::takeStepChange() {
-    const bool changed = stepChanged_;
-    stepChanged_ = false;
-    return changed;
-}
-
-float PgaController::compensationDb() const {
-    // historyIndex_ 다음 칸이 가장 오래된 값, 즉 alignmentBlocks 블록 전 단계다
-    const std::size_t oldestIndex = (historyIndex_ + 1) % stepHistory_.size();
-    return -kStepDb * static_cast<float>(stepHistory_[oldestIndex]);
-}
-
-void PgaController::setStep(int step) {
-    if (step != step_) {
-        step_ = step;
-        stepChanged_ = true;
-    }
-}
-```
-
-- [ ] **Step 4: 통과 확인**
-
-Run: `cmake --build effector/build && ./effector/build/native_tests`
-Expected: `PASS PGA ...` 두 줄, `PASS Clip lowers PGA ...`, `PASS Compensation follows ...`, `12 tests, 0 failed`
-
-- [ ] **Step 5: 커밋**
-
-```bash
-git add effector/test/test_pga_controller.cpp effector/lib/effector_core/src/pga_controller.h effector/lib/effector_core/src/pga_controller.cpp
-git commit -m "[Feat] 이펙터 코덱 PGA 단계 제어"
-```
+Seed3의 TAC5242는 핀 제어 코덱이라 소프트웨어 입력 게인이 없다(설계서 4.3절). Teensy 기준으로 만들었던
+`pga_controller`와 그 테스트는 2026-09-15에 지웠고 Input 노브는 디지털 프리게인만 쓴다. 번호는 뒤 작업의 참조를
+유지하려고 남긴다.
 
 ---
 
@@ -1336,481 +1136,52 @@ git commit -m "[Feat] 이펙터 노브 파라미터 매핑"
 
 ---
 
-### Task 7: Teensy 펌웨어
+### Task 7: Seed3 펌웨어
 
 **Files:**
-- Create: `effector/platformio.ini`
-- Create: `effector/src/effector_processor.h`, `effector/src/effector_processor.cpp`
-- Create: `effector/src/codec_control.h`
-- Create: `effector/src/serial_console.h`, `effector/src/serial_console.cpp`
-- Create: `effector/src/main.cpp`
-- Create: `effector/README.md`
-- Modify: `README.md` (폴더 규칙 표)
+- Create: `effector/Makefile`, `effector/src/main.cpp`
+- Create: `effector/lib/effector_core/src/effector_processor.h`, `effector/lib/effector_core/src/effector_processor.cpp`
+- Create: `effector/lib/effector_core/src/serial_console.h`, `effector/lib/effector_core/src/serial_console.cpp`
+- Create: `effector/test/test_effector_processor.cpp`, `effector/test/test_serial_console.cpp`
+- Submodule: `effector/lib/libDaisy` (커밋 265aae3)
+- Modify: `effector/README.md`, `README.md` (폴더 규칙 표)
 
 **Interfaces:**
-- Consumes: Task 2~6의 코어 전부
-- Produces: 시리얼 명령 `input|ratio|attrel|blend|output <0..1>`, `threshold <dBFS>`, `sidechain <Hz>`, `trim <dB>`, `pga <step|-1>`, `effect <0|1>`, `tone <Hz> <dBFS>`, `tone 0`, `status`
-- Produces: `status` 출력 형식 `gainDb=<f> peakDbfs=<f> pgaStep=<d> meter=0x<XX> drive=<f> ratio=<f>`
+- Consumes: Task 2, 3, 5, 6의 코어
+- Produces: `EffectorProcessor(Settings{sampleRateHz, blockSamples})`, `process(input, output, count)`, `setParameters`, `setTestTone`, `currentGainDb`, `lastBlockPeakDbfs`, `meterBits`
+- Produces: `ConsoleHost`(write, applyParameters, setTestTone, resetToBootloader)와 `SerialConsole::feed(bytes, count)`
+- Produces: 시리얼 명령 `input|ratio|attrel|blend|output <0..1>`, `threshold <dBFS>`, `sidechain <Hz>`, `trim <dB>`, `effect <0|1>`, `tone <Hz> <dBFS>`, `tone 0`, `status`, `dfu`
+- Produces: `status` 출력 형식 `gainDb=<f> peakDbfs=<f> meter=0x<XX> drive=<f> ratio=<f>`
 
 알아둘 것:
-- 이 코드는 Ubuntu에서 PlatformIO로 빌드를 확인했다(경고 0, FLASH 코드 약 86KB, RAM1 변수 약 44KB). 실기기 동작은 Task 8에서 처음 확인한다
-- SGTL5000 `modify()`는 protected라 `EffectorCodec`이 상속해서 CHIP_ANA_CTRL(0x0024) bit 1을 끈다. Teensy Audio 라이브러리 `enable()`은 이 비트를 켠다
-- `pga <step>`은 T5 측정용 수동 고정이다. `pga -1`이면 자동 규칙(Task 4)으로 돌아간다
-- PGA 단계 변경은 오디오 인터럽트 안에서 정하고, I2C 쓰기(`lineInLevel`)는 `loop()`에서 한다
+- 프로세서와 콘솔은 코어로 옮겨 네이티브 테스트가 있다. Seed3 층은 `main.cpp` 하나다
+- 오디오 콜백은 입력 채널 0을 처리해 출력 두 채널에 같이 낸다. 파라미터 적용과 테스트 톤은 `__disable_irq`로 콜백과 겹치지 않게 복사한다
+- USB CDC 수신은 인터럽트에서 링 버퍼(256B)에 넣고 메인 루프가 꺼내 `feed`한다. 출력은 `TransmitInternal`
+- `dfu`는 `System::ResetToBootloader()`로 STM DFU에 들어간다(설계서 3.6절)
+- Ubuntu에서 `make`로 빌드를 확인했다(FLASH 106,736B, 128KB의 81%, 우리 코드 경고 0). 실기기 동작은 Task 8에서 처음 확인한다
+- 내부 플래시가 차면 `APP_TYPE = BOOT_QSPI`로 바꾼다(`effector/README.md`)
 
-- [ ] **Step 1: 파일 작성**
+- [x] **Step 1: 코어 이전과 테스트**
 
-`effector/platformio.ini`:
+Teensy 층의 프로세서·콘솔을 코어로 옮기고 PGA를 뺐다. 콘솔은 `ConsoleHost` 인터페이스로 출력·적용·톤·DFU를 플랫폼에 넘긴다. 테스트: `test_effector_processor.cpp`(이펙트 꺼짐 유니티, 트림, 테스트 톤과 피크, 압축 정적 게인, 블렌드 0), `test_serial_console.cpp`(노브 명령 매핑, 미지 명령, CR LF와 빈 줄, 분할 입력, 사이드체인 클램프, tone·dfu 전달).
 
-```ini
-; Teensy 4.1 + Audio Shield Rev D 펌웨어. 네이티브 테스트는 CMake로 따로 돌린다.
-[env:teensy41]
-platform = teensy@6.0.0
-board = teensy41
-framework = arduino
-build_unflags = -std=gnu++14
-build_flags = -std=gnu++17
-lib_deps =
-    https://github.com/chipaudette/OpenAudio_ArduinoLibrary.git#1dbecf11ca7db700f3f25b2e8f2ed383962a684b
-```
+- [x] **Step 2: 네이티브 테스트**
 
-`effector/src/effector_processor.h`:
+Run: `cmake -S effector -B effector/build -DCMAKE_BUILD_TYPE=Release && cmake --build effector/build && ./effector/build/native_tests`
+Expected: `26 tests, 0 failed`
 
-```cpp
-#pragma once
+- [x] **Step 3: Seed3 층과 빌드**
 
-#include <OpenAudio_ArduinoLibrary.h>
+`src/main.cpp`와 `Makefile`을 쓰고 libDaisy를 서브모듈로 넣는다.
 
-#include <cstdint>
-
-#include "compressor.h"
-#include "dc_blocker.h"
-#include "meter.h"
-#include "pga_controller.h"
-
-struct EffectorParameters {
-    float inputDriveDb = 0.0f;
-    CompressorSettings compressor;
-    float blend = 1.0f;
-    float outputGainDb = 0.0f;
-    float unityTrimDb = 0.0f;
-    bool effectEnabled = true;
-    int manualPgaStep = -1;  // 0 이상이면 자동 규칙 대신 이 단계로 고정(T5 측정용)
-};
-
-// DC 제거, PGA 보상, 컴프레서, Blend, Output을 한 블록에서 처리한다(설계서 6.2절).
-class EffectorProcessor : public AudioStream_F32 {
-public:
-    explicit EffectorProcessor(const AudioSettings_F32& settings);
-
-    // 오디오 인터럽트를 막은 상태(AudioNoInterrupts)에서 부른다
-    void setParameters(const EffectorParameters& parameters) { parameters_ = parameters; }
-    void setTestTone(float frequencyHz, float amplitude);
-    bool takePgaStepChange(int& step);
-
-    float currentGainDb() const { return compressor_.currentGainDb(); }
-    float lastBlockPeakDbfs() const { return lastBlockPeakDbfs_; }
-    std::uint8_t meterBits() const { return meterBits_; }
-    int pgaStep() const { return codecStep_; }
-
-    void update() override;
-
-private:
-    static constexpr int kMaximumBlockSamples = 128;
-
-    audio_block_f32_t* inputQueue_[1];
-    float sampleRateHz_;
-    float blockSeconds_;
-    EffectorParameters parameters_;
-    DcBlocker dcBlocker_;
-    Compressor compressor_;
-    PgaController pga_;
-    Meter meter_;
-    float effectMix_ = 1.0f;
-    float dry_[kMaximumBlockSamples];
-    float wet_[kMaximumBlockSamples];
-    float testToneFrequencyHz_ = 0.0f;
-    float testToneAmplitude_ = 0.0f;
-    double testTonePhase_ = 0.0;
-    float lastBlockPeakDbfs_ = -120.0f;
-    std::uint8_t meterBits_ = 0;
-    int codecStep_ = 0;
-    bool codecStepChanged_ = false;
-};
-```
-
-`effector/src/effector_processor.cpp`:
-
-```cpp
-#include "effector_processor.h"
-
-#include <algorithm>
-#include <cmath>
-
-#include "parameter_mapping.h"
-
-namespace {
-
-constexpr float kDcBlockerCutoffHz = 5.0f;
-constexpr int kPgaMaximumStepBeforeMeasurement = 6;  // +9dB. M1 결과로 조정
-constexpr float kQuietLevelDbfs = -50.0f;              // T13에서 조정
-constexpr float kQuietHoldSeconds = 0.02f;             // T13에서 조정
-constexpr float kClipLevelDbfs = -0.1f;
-constexpr int kPgaAlignmentBlocks = 2;                 // T13에서 측정해 조정
-constexpr float kEffectRampSeconds = 0.02f;
-constexpr float kClipBlinkSeconds = 0.4f;
-constexpr float kClipBlinkHalfPeriodSeconds = 0.05f;
-
-int secondsToBlocks(float seconds, float blockSeconds) {
-    return std::max(1, static_cast<int>(std::ceil(seconds / blockSeconds)));
-}
-
-}  // namespace
-
-EffectorProcessor::EffectorProcessor(const AudioSettings_F32& settings)
-    : AudioStream_F32(1, inputQueue_),
-      sampleRateHz_(settings.sample_rate_Hz),
-      blockSeconds_(settings.audio_block_samples / settings.sample_rate_Hz),
-      dcBlocker_(settings.sample_rate_Hz, kDcBlockerCutoffHz),
-      compressor_(settings.sample_rate_Hz),
-      pga_({kPgaMaximumStepBeforeMeasurement, kQuietLevelDbfs,
-            secondsToBlocks(kQuietHoldSeconds, blockSeconds_), kClipLevelDbfs,
-            kPgaAlignmentBlocks}),
-      meter_({{1.0f, 2.0f, 3.0f, 5.0f, 7.0f, 10.0f, 14.0f, 20.0f},
-              kClipLevelDbfs,
-              secondsToBlocks(kClipBlinkSeconds, blockSeconds_),
-              secondsToBlocks(kClipBlinkHalfPeriodSeconds, blockSeconds_)}) {}
-
-void EffectorProcessor::setTestTone(float frequencyHz, float amplitude) {
-    testToneFrequencyHz_ = frequencyHz;
-    testToneAmplitude_ = amplitude;
-}
-
-bool EffectorProcessor::takePgaStepChange(int& step) {
-    if (!codecStepChanged_) {
-        return false;
-    }
-    codecStepChanged_ = false;
-    step = codecStep_;
-    return true;
-}
-
-void EffectorProcessor::update() {
-    audio_block_f32_t* block = receiveWritable_f32();
-    if (block == nullptr) {
-        return;
-    }
-    const int length = std::min(block->length, kMaximumBlockSamples);
-    float* samples = block->data;
-
-    if (testToneAmplitude_ > 0.0f) {
-        const double phaseStep = 2.0 * M_PI * testToneFrequencyHz_ / sampleRateHz_;
-        for (int index = 0; index < length; ++index) {
-            samples[index] = testToneAmplitude_ * static_cast<float>(std::sin(testTonePhase_));
-            testTonePhase_ = std::fmod(testTonePhase_ + phaseStep, 2.0 * M_PI);
-        }
-    }
-
-    float peak = 0.0f;
-    for (int index = 0; index < length; ++index) {
-        peak = std::max(peak, std::fabs(samples[index]));
-    }
-    lastBlockPeakDbfs_ = 20.0f * std::log10(std::max(peak, 1.0e-6f));
-
-    pga_.processBlock(parameters_.inputDriveDb, lastBlockPeakDbfs_);
-    const bool manualPga = parameters_.manualPgaStep >= 0;
-    const int step = manualPga ? parameters_.manualPgaStep : pga_.pgaStep();
-    if (step != codecStep_) {
-        codecStep_ = step;
-        codecStepChanged_ = true;
-    }
-    const float compensationDb =
-        manualPga ? -PgaController::kStepDb * static_cast<float>(step) : pga_.compensationDb();
-    compressor_.configure(parameters_.compressor);
-
-    const float compensationGain = parameter_mapping::decibelsToGain(compensationDb);
-    const float preGain = parameter_mapping::decibelsToGain(parameters_.inputDriveDb);
-    dcBlocker_.process(samples, samples, static_cast<std::size_t>(length));
-    for (int index = 0; index < length; ++index) {
-        dry_[index] = samples[index] * compensationGain;
-        wet_[index] = dry_[index] * preGain;
-    }
-    compressor_.process(wet_, wet_, static_cast<std::size_t>(length));
-
-    const float targetMix = parameters_.effectEnabled ? 1.0f : 0.0f;
-    const float rampStep = blockSeconds_ / kEffectRampSeconds;
-    effectMix_ = targetMix > effectMix_ ? std::min(targetMix, effectMix_ + rampStep)
-                                        : std::max(targetMix, effectMix_ - rampStep);
-    const float wetWeight = parameters_.blend * effectMix_;
-    const float wetRestore = 1.0f / preGain;
-    const float outputGain = parameter_mapping::decibelsToGain(
-        effectMix_ * parameters_.outputGainDb + parameters_.unityTrimDb);
-    for (int index = 0; index < length; ++index) {
-        samples[index] = outputGain * ((1.0f - wetWeight) * dry_[index] +
-                                       wetWeight * wet_[index] * wetRestore);
-    }
-
-    meterBits_ = meter_.processBlock(-compressor_.currentGainDb(), lastBlockPeakDbfs_);
-    transmit(block);
-    release(block);
-}
-```
-
-`effector/src/codec_control.h`:
-
-```cpp
-#pragma once
-
-#include <Audio.h>
-
-// SGTL5000 레지스터 쓰기(modify)가 protected라 상속해서 쓴다.
-class EffectorCodec : public AudioControlSGTL5000 {
-public:
-    // CHIP_ANA_CTRL(0x0024) bit 1 EN_ZCD_ADC. 라이브러리 enable()이 켜 두므로 끈다(설계서 6.2절)
-    void disableAdcZeroCross() { modify(kChipAnalogControl, 0, kAdcZeroCrossBit); }
-
-private:
-    static constexpr unsigned int kChipAnalogControl = 0x0024;
-    static constexpr unsigned int kAdcZeroCrossBit = 1u << 1;
-};
-```
-
-`effector/src/serial_console.h`:
-
-```cpp
-#pragma once
-
-#include <Arduino.h>
-
-#include "effector_processor.h"
-
-// 1단계에는 노브가 없어 시리얼 명령으로 파라미터를 넣는다.
-class SerialConsole {
-public:
-    SerialConsole(EffectorProcessor& processor, EffectorParameters& parameters);
-    void poll();
-
-private:
-    void handleLine(const char* line);
-    void applyParameters();
-    void printStatus();
-
-    EffectorProcessor& processor_;
-    EffectorParameters& parameters_;
-    char buffer_[64];
-    int bufferLength_ = 0;
-};
-```
-
-`effector/src/serial_console.cpp`:
-
-```cpp
-#include "serial_console.h"
-
-#include <cmath>
-#include <cstdio>
-#include <cstring>
-
-#include "parameter_mapping.h"
-
-namespace {
-constexpr float kMaximumInputDriveDb = 30.0f;  // T16 청음으로 조정
-}  // namespace
-
-SerialConsole::SerialConsole(EffectorProcessor& processor, EffectorParameters& parameters)
-    : processor_(processor), parameters_(parameters) {}
-
-void SerialConsole::poll() {
-    while (Serial.available() > 0) {
-        const int character = Serial.read();
-        if (character == '\n' || character == '\r') {
-            if (bufferLength_ > 0) {
-                buffer_[bufferLength_] = '\0';
-                handleLine(buffer_);
-                bufferLength_ = 0;
-            }
-        } else if (bufferLength_ < static_cast<int>(sizeof(buffer_)) - 1) {
-            buffer_[bufferLength_++] = static_cast<char>(character);
-        }
-    }
-}
-
-void SerialConsole::handleLine(const char* line) {
-    using namespace parameter_mapping;
-    char command[16] = {0};
-    float first = 0.0f;
-    float second = 0.0f;
-    const int fields = std::sscanf(line, "%15s %f %f", command, &first, &second);
-    if (fields < 1) {
-        return;
-    }
-    if (std::strcmp(command, "input") == 0 && fields >= 2) {
-        parameters_.inputDriveDb = inputDriveDbFromKnob(first, kMaximumInputDriveDb);
-    } else if (std::strcmp(command, "ratio") == 0 && fields >= 2) {
-        parameters_.compressor.ratio = ratioFromKnob(first);
-    } else if (std::strcmp(command, "attrel") == 0 && fields >= 2) {
-        const AttackRelease times = attackReleaseFromKnob(first);
-        parameters_.compressor.attackSeconds = times.attackSeconds;
-        parameters_.compressor.releaseSeconds = times.releaseSeconds;
-    } else if (std::strcmp(command, "blend") == 0 && fields >= 2) {
-        parameters_.blend = clampKnob(first);
-    } else if (std::strcmp(command, "output") == 0 && fields >= 2) {
-        parameters_.outputGainDb = outputGainDbFromKnob(first);
-    } else if (std::strcmp(command, "threshold") == 0 && fields >= 2) {
-        parameters_.compressor.thresholdDbfs = first;
-    } else if (std::strcmp(command, "sidechain") == 0 && fields >= 2) {
-        parameters_.compressor.sidechainHighPassHz = first;
-    } else if (std::strcmp(command, "trim") == 0 && fields >= 2) {
-        parameters_.unityTrimDb = first;
-    } else if (std::strcmp(command, "pga") == 0 && fields >= 2) {
-        parameters_.manualPgaStep = static_cast<int>(first);
-    } else if (std::strcmp(command, "effect") == 0 && fields >= 2) {
-        parameters_.effectEnabled = first > 0.5f;
-    } else if (std::strcmp(command, "tone") == 0) {
-        AudioNoInterrupts();
-        processor_.setTestTone(first, fields >= 3 ? decibelsToGain(second) : 0.0f);
-        AudioInterrupts();
-    } else if (std::strcmp(command, "status") == 0) {
-        printStatus();
-        return;
-    } else {
-        Serial.println("commands: input|ratio|attrel|blend|output <0..1>, threshold <dBFS>, "
-                       "sidechain <Hz>, trim <dB>, pga <step|-1>, effect <0|1>, tone <Hz> <dBFS>, tone 0, status");
-        return;
-    }
-    applyParameters();
-    printStatus();
-}
-
-void SerialConsole::applyParameters() {
-    AudioNoInterrupts();
-    processor_.setParameters(parameters_);
-    AudioInterrupts();
-}
-
-void SerialConsole::printStatus() {
-    AudioNoInterrupts();
-    const float gainDb = processor_.currentGainDb();
-    const float peakDbfs = processor_.lastBlockPeakDbfs();
-    const int pgaStep = processor_.pgaStep();
-    const unsigned meterBits = processor_.meterBits();
-    AudioInterrupts();
-    char message[160];
-    std::snprintf(message, sizeof message,
-                  "gainDb=%.2f peakDbfs=%.2f pgaStep=%d meter=0x%02X drive=%.1f ratio=%.2f",
-                  gainDb, peakDbfs, pgaStep, meterBits, parameters_.inputDriveDb,
-                  parameters_.compressor.ratio);
-    Serial.println(message);
-}
-```
-
-`effector/src/main.cpp`:
-
-```cpp
-#include <Audio.h>
-#include <OpenAudio_ArduinoLibrary.h>
-
-#include "codec_control.h"
-#include "effector_processor.h"
-#include "serial_console.h"
-
-namespace {
-constexpr int kBlockSamples = 32;
-}  // namespace
-
-AudioSettings_F32 audioSettings(AUDIO_SAMPLE_RATE_EXACT, kBlockSamples);
-AudioInputI2S_F32 audioInput(audioSettings);
-EffectorProcessor processor(audioSettings);
-AudioOutputI2S_F32 audioOutput(audioSettings);
-AudioConnection_F32 inputToProcessor(audioInput, 0, processor, 0);
-AudioConnection_F32 processorToLeft(processor, 0, audioOutput, 0);
-AudioConnection_F32 processorToRight(processor, 0, audioOutput, 1);
-
-EffectorCodec codec;
-EffectorParameters parameters;
-SerialConsole console(processor, parameters);
-
-void setup() {
-    Serial.begin(115200);
-    AudioMemory(8);
-    AudioMemory_F32(24, audioSettings);
-
-    codec.enable();
-    codec.inputSelect(AUDIO_INPUT_LINEIN);
-    codec.lineInLevel(0);
-    codec.lineOutLevel(17);  // 2.53Vpp, 설계서 4.2절
-    codec.adcHighPassFilterDisable();
-    codec.disableAdcZeroCross();
-
-    AudioNoInterrupts();
-    processor.setParameters(parameters);
-    AudioInterrupts();
-    Serial.println("effector stage 1 ready. type status");
-}
-
-void loop() {
-    console.poll();
-    int step = 0;
-    AudioNoInterrupts();
-    const bool changed = processor.takePgaStepChange(step);
-    AudioInterrupts();
-    if (changed) {
-        codec.lineInLevel(static_cast<uint8_t>(step));
-    }
-}
-```
-
-`effector/README.md`:
-
-```markdown
-# 베이스 컴프레서 펌웨어
-
-설계는 [../devices/bass-effector-design.md](../devices/bass-effector-design.md), 단계는
-[../devices/bass-effector.md](../devices/bass-effector.md)에 있다.
-
-## 네이티브 테스트
-
-PlatformIO 없이 CMake와 g++로 돌린다.
-
-    cmake -S effector -B effector/build -DCMAKE_BUILD_TYPE=Release
-    cmake --build effector/build
-    ./effector/build/native_tests
-
-## Teensy 빌드와 업로드
-
-PlatformIO로 한다. Ubuntu에서는 `~/.platformio/penv/bin/pio`, 집 Windows에서는 설치한 `pio`를 쓴다.
-업로드와 측정은 보드와 스칼렛이 있는 곳에서 한다. 명령은 `effector/`에서 실행한다.
-
-    pio run -e teensy41
-    pio run -e teensy41 -t upload
-    pio device monitor -b 115200
-
-## 시리얼 명령
-
-`status`를 입력하면 명령 목록과 현재 상태가 나온다.
-```
-
-루트 `README.md` 폴더 규칙 표에서 `nrf52840/` 행 바로 아래에 추가:
-
-```markdown
-| `effector/` | 베이스 컴프레서 펌웨어. 코어는 CMake로 네이티브 테스트, 보드 빌드는 PlatformIO |
-```
-
-- [ ] **Step 2: 네이티브 테스트 회귀 확인**
-
-Run: `cmake --build effector/build && ./effector/build/native_tests`
-Expected: `19 tests, 0 failed`
-
-- [ ] **Step 3: Teensy 빌드**
-
-Run: `cd effector && ~/.platformio/penv/bin/pio run -e teensy41` (집 Windows에서는 `pio run -e teensy41`)
-Expected: `[SUCCESS]`, `warning:` 0건. 첫 빌드는 플랫폼·툴체인·라이브러리를 내려받는다. 실패하면 오류 메시지를 그대로 기록하고 원인을 고친 뒤 다시 빌드한다
+Run: `git submodule update --init --recursive --depth 1 && make -C effector/lib/libDaisy -j && cd effector && make`
+Expected: `build/effector.bin`이 생기고 링커의 메모리 사용 표에서 FLASH가 128KB 아래
 
 - [ ] **Step 4: 커밋**
 
 ```bash
-git add effector/platformio.ini effector/src effector/README.md README.md
-git commit -m "[Feat] 이펙터 1단계 Teensy 펌웨어와 시리얼 콘솔"
+git add effector devices README.md .gitmodules
+git commit -m "[Feat] 이펙터 보드를 Daisy Seed3로 전환: 설계·회로·부품표·libDaisy 펌웨어"
 ```
 
 ---
@@ -1823,44 +1194,40 @@ git commit -m "[Feat] 이펙터 1단계 Teensy 펌웨어와 시리얼 콘솔"
 **Interfaces:**
 - Consumes: Task 1 부품, Task 7 펌웨어
 
-- [ ] **Step 1: Shield 헤더 납땜**
+- [ ] **Step 1: Seed3 헤더**
 
-HDR100IMP40M-G-V-TH를 14핀 두 줄로 잘라 Audio Shield Rev D 양쪽 핀 열에 납땜한다. Shield와 Teensy는 쌓지 않고 브레드보드에 나란히 꽂는다(설계서 5.3절).
+핀 헤더가 동봉되지 않았으면 40핀을 20핀 두 줄로 잘라 Seed3 아래쪽에 납땜한다. 브레드보드 가운데 홈에 걸쳐 꽂는다. 핀 번호는 데이터시트 표 2(회로 설계 8절)다.
 
-- [ ] **Step 2: Teensy와 Shield 배선**
+- [ ] **Step 2: 오디오 잭 배선**
 
-같은 번호끼리 잇는다. 선은 짧게 한다(설계서 4.3절).
+Switchcraft 12A 두 개를 잭 A(입력), 잭 B(출력)로 쓴다.
 
-| 신호 | Teensy 핀 | Shield 핀 |
-|---|---|---|
-| I2S TX (DIN) | 7 | 7 |
-| I2S RX (DOUT) | 8 | 8 |
-| LRCLK | 20 | 20 |
-| BCLK | 21 | 21 |
-| MCLK | 23 | 23 |
-| I2C SDA | 18 | 18 |
-| I2C SCL | 19 | 19 |
-| 3.3V | 3.3V | 3.3V |
-| GND | GND | GND |
+| 연결 | 배선 |
+|---|---|
+| 잭 A 팁 | 1kΩ 직렬 → Seed3 핀 16(Audio In 1). 모듈 안에서 AC 커플링된다 |
+| 잭 B 팁 | Seed3 핀 18(Audio Out 1) → 10µF 50V(+ 쪽이 모듈) → 잭 B 팁. 잭 B 팁에서 10kΩ을 GND로 |
+| 슬리브 둘 | 핀 20(AGND)과 핀 40(DGND)을 이은 GND |
 
-- [ ] **Step 3: 오디오 잭 배선**
+모듈 출력의 DC 전위가 공개되지 않아 커플링 C를 둔다(회로 설계 5절 C3와 같은 역할). 1단계에는 패드가 없으므로 잭 A에 1Vrms(+2.2dBu)를 넘는 신호를 넣지 않는다(Global Constraints).
 
-Switchcraft 12A 두 개를 잭 A(입력), 잭 B(출력)로 쓴다. 잭 A 팁은 Shield 라인 입력 L 패드(PJRC 회로도의 LINEINL), 잭 B 팁은 라인 출력 L 패드(LINEOUTL), 두 슬리브는 GND 패드에 잇는다.
+- [ ] **Step 3: 업로드와 콘솔 확인**
 
-- [ ] **Step 4: 업로드와 콘솔 확인**
+Seed3를 USB-C로 PC에 연결한다(1단계는 USB 전원만, VIN은 비운다). BOOT를 누른 채 RESET을 눌렀다 떼면 DFU 모드다.
 
-Teensy를 USB로 PC에 연결한다(1단계에는 VIN·VUSB 패드를 끊지 않는다).
+Run: `cd effector && make program-dfu`
+Expected: dfu-util이 `File downloaded successfully`를 찍고 Seed3가 재시작한다. `screen /dev/ttyACM0`로 붙으면 `effector stage 1 ready. type status`, `status` 입력 시 `gainDb=0.00 ... meter=0x00 ...` 형식 한 줄
 
-Run: `cd effector && pio run -e teensy41 -t upload && pio device monitor -b 115200`
-Expected: `effector stage 1 ready. type status`. `status` 입력 시 `gainDb=0.00 ... pgaStep=0 ...` 형식 한 줄. `AudioOutputI2S_F32: *** WARNING ***: audio_block says len = ...` 블록 길이 경고가 찍히지 않는다
-
-- [ ] **Step 5: 첫 소리**
+- [ ] **Step 4: 첫 소리**
 
 1. 스칼렛 라인아웃 L → TS 케이블 → 잭 A. 잭 B → TS 케이블 → 스칼렛 입력 2(LINE 모드, 게인 최소)
 2. Audacity에서 1kHz, 진폭 0.05(약 -26dBFS 피크) 사인을 10초 재생하면서 입력 2를 녹음한다
 3. 콘솔에서 `effect 0`을 입력한다
 
-Expected: 녹음에 1kHz가 보이고, `status`의 `peakDbfs`가 사인 재생 중 올라간다. 소리가 없으면 Step 2 배선과 `codec.enable()` 반환을 먼저 확인한다
+Expected: 녹음에 1kHz가 보이고, `status`의 `peakDbfs`가 사인 재생 중 올라간다. 소리가 없으면 Step 2 배선과 `dmesg`의 CDC 인식(장치는 뜨는데 소리만 없는지)을 먼저 확인한다
+
+- [ ] **Step 5: 콘솔 DFU 진입**
+
+콘솔에서 `dfu`를 입력한다. 장치가 DFU로 다시 열거되면(`dfu-util -l`에 0483:df11) `make program-dfu`로 다시 올린다. 설계서 T14의 업로드 항목을 여기서 미리 확인한다.
 
 ---
 
@@ -1868,7 +1235,7 @@ Expected: 녹음에 1kHz가 보이고, `status`의 `peakDbfs`가 사인 재생 �
 
 **Files:**
 - Create: `effector/measurements/stage1.md`
-- Modify: `devices/bass-effector-design.md` (T7 결과에 따라 코덱 교체 판단이 필요할 때만, 사용자 확인 뒤)
+- Modify: `devices/bass-effector-design.md` (T7 미달 시 대응 판단이 필요할 때만, 사용자 확인 뒤)
 
 **Interfaces:**
 - Consumes: Task 3 `static_gain`, Task 7 시리얼 명령, Task 8 결선
@@ -1890,9 +1257,9 @@ Expected: 녹음에 1kHz가 보이고, `status`의 `peakDbfs`가 사인 재생 �
 | 항목 | 값 |
 |---|---|
 | 펌웨어 커밋 | |
-| Teensy 변종 | |
+| Seed3 개체(구매일) | |
 | 스칼렛 입력 모드·게인 | |
-| I2S 배선 길이(cm) | |
+| 브레드보드 배선 길이(cm) | |
 
 ## M1 보유 베이스 피크
 
@@ -1906,14 +1273,14 @@ Expected: 녹음에 1kHz가 보이고, `status`의 `peakDbfs`가 사인 재생 �
 | 출력 상수 K_out (dBu - dBFS) | | | | |
 | 입력 상수 K_in (dBu - dBFS) | | | | |
 
-## T5 입력 풀스케일 (코덱 단독)
+## T5 입력 풀스케일 (모듈 단독)
 
-| PGA 단계 | 기대 dBu | 측정 dBu | 차이 dB | 판정 |
+| Input 노브 | 기대 dBu | 측정 dBu | 차이 dB | 판정 |
 |---|---|---|---|---|
 
 ## T7 바닥 노이즈
 
-| 조건 | PGA | 125~8000Hz 다이내믹 레인지 dB | 20Hz~20kHz dB | 판정 |
+| 조건 | Input | 125~8000Hz 다이내믹 레인지 dB | 20Hz~20kHz dB | 판정 |
 |---|---|---|---|---|
 
 ## T8 왕복 지연
@@ -1941,46 +1308,45 @@ Expected: 녹음에 1kHz가 보이고, `status`의 `peakDbfs`가 사인 재생 �
 3. `K_out = 20·log10(Vrms / 0.775) - (재생 RMS dBFS)`. 진폭 0.5 사인의 RMS는 -9.03dBFS다
 4. TS 케이블로 라인아웃 L을 입력 2(LINE, 게인 최소)에 루프백하고 같은 사인을 녹음해 RMS dBFS를 읽는다. `K_in = (재생 RMS dBFS + K_out) - (녹음 RMS dBFS)`
 
-Expected: 기록 파일 M2 표 3회분. 이후 스칼렛 출력으로 Shield에 넣는 레벨은 `K_out`으로 계산해 +2.2dBu 이하로만 쓴다
+Expected: 기록 파일 M2 표 3회분. 이후 스칼렛 출력으로 Seed3에 넣는 레벨은 `K_out`으로 계산해 +2.2dBu 이하로만 쓴다
 
-- [ ] **Step 3: T5 입력 풀스케일과 PGA 계단**
+- [ ] **Step 3: T5 입력 풀스케일 (모듈 단독)**
 
 1. 콘솔 `effect 0`, `input 0`
-2. 단계 0, 2, 4, 6, 8마다 `pga <단계>`를 입력한다
-3. 1kHz 사인을 -40dBFS부터 0.5dB씩 올리며 `status`의 `peakDbfs`가 -0.1 이상이 되는 첫 재생 레벨을 찾는다. 그 레벨의 입력 dBu = 재생 RMS dBFS + K_out. 코덱 풀스케일 2.83Vpp 사인이 RMS 기준 +2.2dBu라 같은 RMS 기준으로 비교한다
-4. 기대값: 2.2 - 1.5 × 단계 (dBu, 코덱 단독)
-5. `pga -1`로 되돌린다
+2. 1kHz 사인을 -40dBFS부터 0.5dB씩 올리며 `status`의 `peakDbfs`가 -0.1 이상이 되는 첫 재생 레벨을 찾는다. 그 레벨의 입력 dBu = 재생 RMS dBFS + K_out. 모듈 풀스케일 1Vrms 사인이 +2.2dBu라 같은 RMS 기준으로 비교한다
+3. `input 1`(+30dB)로 바꿔 2를 반복한다. `peakDbfs`는 ADC 값이라 같은 레벨에서 넘어야 한다
+4. `input 0`으로 되돌린다
 
-판정: 각 단계 기대값 ±1dB, 인접 측정 단계(2단계 간격) 차이 3.0 ±0.4dB. 단계 6(+9dB)이 코덱 단독 -6.8dBu ±1dB면 설계서 T5의 코덱 단독 기준 통과. 스칼렛 TS 출력 최대(약 +9.5dBu, M2에서 확인)를 넘는 단계는 측정하지 않는다
+판정: 기대값 +2.2dBu ±1dB(설계서 T5의 모듈 단독 기준). Input 위치에 따라 0.2dB 이상 다르면 프리게인이 ADC 앞으로 새는 것이므로 펌웨어를 본다. 패드 비율은 2단계에서 잰다
 
 - [ ] **Step 4: T7 바닥 노이즈**
 
 1. 스칼렛 입력 2 게인을 올려 루프백 케이블만 연결한 상태의 자체 바닥을 10초 녹음한다(값 N_scarlett, 게인 위치 기록)
-2. 같은 게인에서 잭 A에 팁·슬리브를 단락한 플러그를 꽂고, 콘솔 `effect 0`, `pga <단계>`(0, 6, 12)로 잭 B 출력을 10초 녹음한다(값 N_total)
+2. 같은 게인에서 잭 A에 팁·슬리브를 단락한 플러그를 꽂고, 콘솔 `effect 0`에서 `input 0`과 `input 1` 각각 잭 B 출력을 10초 녹음한다(값 N_total)
 3. 각 녹음을 Audacity 고역 통과 125Hz와 저역 통과 8000Hz 필터(48dB/oct)를 건 것과 안 건 것 두 가지로 RMS를 읽는다
-4. 코덱 노이즈 `N_codec = 10·log10(10^(N_total/10) - 10^(N_scarlett/10))` (dBFS를 K_in으로 dBu 환산한 뒤 계산)
-5. 다이내믹 레인지 = 입력 풀스케일 dBu(T5 측정값) - N_codec dBu
+4. 모듈 노이즈 `N_module = 10·log10(10^(N_total/10) - 10^(N_scarlett/10))` (dBFS를 K_in으로 dBu 환산한 뒤 계산). `input 1` 녹음은 30dB를 빼서 입력 기준으로 맞춘다
+5. 다이내믹 레인지 = 입력 풀스케일 dBu(T5 측정값) - N_module dBu
 6. 단락 플러그 대신 베이스를 연결하고 줄을 손으로 뮤트한 조건으로 2~5를 반복한다
 
-판정: 125~8000Hz 다이내믹 레인지 75dB 이상. 미달이면 사용자에게 보고하고 설계서 4.3절 코덱 교체 검토를 제안한다. N_total이 N_scarlett보다 3dB 이상 크지 않으면 스칼렛 게인을 더 올려 다시 잰다
+판정: 125~8000Hz 다이내믹 레인지 100dB 이상(설계서 4.4절). `input 0`과 `input 1`의 입력 기준 값이 같아야 한다. 미달이면 사용자에게 보고하고 배선·접지를 먼저 본다. N_total이 N_scarlett보다 3dB 이상 크지 않으면 스칼렛 게인을 더 올려 다시 잰다
 
 - [ ] **Step 5: T8 왕복 지연**
 
 1. Audacity에서 1초 간격 클릭 트랙(짧은 펄스 5개)을 만든다
 2. 스칼렛 라인아웃 L → 입력 2 루프백 케이블로 재생·녹음하고 첫 클릭 시작 샘플 위치를 기록한다
-3. 같은 설정으로 잭 A → Teensy → 잭 B 경로(콘솔 `effect 1`, `blend 1`, `ratio 0`)를 재생·녹음하고 첫 클릭 위치를 기록한다
-4. 지연 ms = (Teensy 경로 위치 - 루프백 위치) / 44100 × 1000 (Audacity 프로젝트 레이트 44100Hz 기준)
+3. 같은 설정으로 잭 A → Seed3 → 잭 B 경로(콘솔 `effect 1`, `blend 1`, `ratio 0`)를 재생·녹음하고 첫 클릭 위치를 기록한다
+4. 지연 ms = (Seed3 경로 위치 - 루프백 위치) / 48000 × 1000 (Audacity 프로젝트 레이트를 48000Hz로 맞춘다)
 
 Expected: 기록만 한다. 판정은 T16이다
 
 - [ ] **Step 6: T9 실기기 게인**
 
-1. 콘솔 `input 0`, `pga 0`, `threshold -20`, `ratio 0.4628`(20^0.4628 ≈ 4.0), `attrel 1`(어택 20ms, 릴리즈 50ms), `blend 1`, `effect 1`
+1. 콘솔 `input 0`, `threshold -20`, `ratio 0.4628`(20^0.4628 ≈ 4.0), `attrel 1`(어택 20ms, 릴리즈 50ms), `blend 1`, `effect 1`
 2. 톤 레벨 -30, -20, -10, -6dBFS마다 `tone 1000 <레벨>`을 입력하고 3초 뒤 `status`를 5번 읽어 `gainDb` 평균을 낸다
 3. PC에서 같은 설정의 대조값을 계산한다: `./effector/build/static_gain -20 4.0 0.02 0.05 <레벨>`
 4. `tone 0`으로 끈다
 
-판정: 각 레벨 차이 0.1dB 이하. 내부 톤은 ADC 앞에서 넣지 않고 블록 입력을 대체하므로 코덱 경로를 거치지 않는다
+판정: 각 레벨 차이 0.1dB 이하. 내부 톤은 ADC 앞에서 넣지 않고 블록 입력을 대체하므로 모듈 경로를 거치지 않는다
 
 - [ ] **Step 7: T15 클립 표시**
 

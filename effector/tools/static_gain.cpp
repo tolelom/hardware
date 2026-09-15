@@ -12,7 +12,7 @@ int main(int argumentCount, char** arguments) {
         std::fprintf(stderr, "usage: static_gain threshold ratio attack release toneDbfs\n");
         return 2;
     }
-    const float sampleRateHz = 44100.0f;
+    const float sampleRateHz = 48000.0f;
     CompressorSettings settings;
     settings.thresholdDbfs = std::strtof(arguments[1], nullptr);
     settings.ratio = std::strtof(arguments[2], nullptr);
