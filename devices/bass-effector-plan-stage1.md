@@ -87,7 +87,7 @@ daisy.audio에서 Seed3 1개를 주문한다(미국 발송, 배송지 한국 선
 | 쇼트키 | Taiwan Semiconductor Corporation 1N5819 | 4 | 1A, 40V, 스루홀 |
 | 소신호 다이오드 | onsemi 1N4148 | 4 | 스루홀 |
 | 벌크 커패시터 | Panasonic EEU-FR1E102 | 2 | 1000µF, 25V 이상 |
-| 레일·Vbias 커패시터 | Panasonic EEU-FR1V101 | 4 | 100µF, 35V 이상. 12V 어댑터에서 레일 약 23V |
+| 레일·Vbias·VIN 필터 커패시터 | Panasonic EEU-FR1V101 | 5 | 100µF, 35V 이상. 12V 어댑터에서 레일 약 23V. 1개 여분 |
 | 펌프·커플링 커패시터 | Panasonic FR 시리즈, 품번 검색 | 6 | 10µF, 50V |
 | 1단계 연결 잭 | Switchcraft 12A | 2 | 6.35mm TS |
 
