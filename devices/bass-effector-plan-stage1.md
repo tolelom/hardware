@@ -74,7 +74,7 @@ daisy.audio에서 Seed3 1개를 주문한다(미국 발송, 배송지 한국 선
 
 | 기능 | 후보 품번 | 수량 | 기준 |
 |---|---|---|---|
-| 소켓 | 2.54mm 20핀 암 소켓 | 2 | Seed3를 기판에 꽂는 소켓 |
+| 소켓 | Sullins PPPC201LFBN-RC | 2 | 2.54mm 20핀 암 소켓, 스루홀. Seed3를 기판에 꽂는다 |
 | 헤더 | Chip Quik HDR100IMP40M-G-V-TH | 1 | 2.54mm 스트레이트 40핀. Seed3에 헤더가 동봉되지 않을 때만 |
 | op-amp | TI OPA2992IDR | 2 | SOIC-8 |
 | SOIC 변환 기판 | SparkFun BOB-13655 | 1팩 | SOIC-8을 DIP-8 핀 간격으로. 4개입 |

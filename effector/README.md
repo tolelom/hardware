@@ -13,6 +13,7 @@
 | `test/` | 네이티브 테스트 |
 | `tools/static_gain.cpp` | 실기기 T9 대조값 계산 |
 | `hardware/` | KiCad 회로도와 생성기, 넷리스트 |
+| `hardware/spice/` | ngspice 시뮬레이션. 결과는 회로 설계 문서 12절 |
 
 ## 회로도
 

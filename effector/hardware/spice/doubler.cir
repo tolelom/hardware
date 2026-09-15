@@ -1,0 +1,24 @@
+* 블록 B: LT1054 동작 모델 더블러. 25kHz 스위치(온저항 25옴)가 CAP+를 0/9V로 흔든다. 부하 2.8k(약 6mA)
+V9 v9 0 9
+Vosc osc 0 PULSE(0 1 0 100n 100n 20u 40u)
+Boscn oscn 0 V = 1 - V(osc)
+S1 v9 cap osc 0 SWM
+S2 cap 0 oscn 0 SWM
+.model SWM SW (RON=25 ROFF=1e9 VT=0.5 VH=0.1)
+.model DS D (IS=1e-8 N=1.05 RS=0.05)
+C8 pumpx cap 10u
+D1 v9 pumpx DS
+D2 pumpx vrr DS
+C9 vrr 0 100u
+R16 vrr vrail 10
+C10 vrail 0 100u
+Rload vrail 0 2800
+.tran 0.5u 300m
+.control
+run
+meas tran rail_avg AVG v(vrail) from=250m to=300m
+meas tran rail_pp PP v(vrail) from=290m to=300m
+meas tran raw_pp PP v(vrr) from=290m to=300m
+meas tran t_90 WHEN v(vrail)=15.2 RISE=1
+.endc
+.end

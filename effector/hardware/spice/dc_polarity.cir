@@ -1,0 +1,41 @@
+* 극성 커패시터의 DC 전위 확인. 레일 16.6V(더블러 시뮬레이션 평균), 모듈 출력 DC 1.65V, 입력 잭 무신호
+.include opamp_rr.inc
+Vrail vrail 0 16.6
+R11 vrail vbias 10k
+R12 vbias 0 10k
+* 블록 D
+R1 in_a 0 2.2meg
+R2 in_a in_b 10k
+C1 in_b in_c 100n
+R3 in_c vbias 1.8meg
+X1 in_c buf_out buf_out vrail 0 opamp_rr
+C2 buf_out pad_in 10u
+R4 pad_in seed_in 3.3k
+R5 seed_in 0 820
+Rcodec seed_in 0 5k
+* 블록 E
+Vseed seed 0 1.65
+C3 seed outin 1u
+R6 outin vbias 100k
+X2 outin fb u1b vrail 0 opamp_rr
+R7 u1b fb 47k
+R8 fb fbc 10k
+C4 fbc 0 10u
+R9 u1b outr 100
+C5 outr outc 10u
+R10 outc 0 100k
+.op
+.control
+run
+echo C2  + buf_out  - pad_in
+print v(buf_out) v(pad_in)
+echo C4  + fbc  - GND
+print v(fbc)
+echo C5  + outr  - outc
+print v(outr) v(outc)
+echo C6  + vbias  - GND
+print v(vbias)
+echo C3(film) seed vs outin
+print v(seed) v(outin)
+.endc
+.end

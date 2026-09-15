@@ -1,0 +1,28 @@
+* 부팅 과도: 레일이 20ms에 걸쳐 0에서 16.9V로, 모듈 출력 DC 1.65V가 100ms에 서는 경우 OUT_C(K1 NO 접점 쪽) 잔류 전압
+.include opamp_rr.inc
+Vrail vrail 0 PWL(0 0 20m 16.9)
+R11 vrail vbias 10k
+R12 vbias 0 10k
+C6 vbias 0 100u
+Vseed seed 0 PWL(0 0 100m 1.65)
+C3 seed outin 1u
+R6 outin vbias 100k
+X1 outin fb u1b vrail 0 opamp_rr
+R7 u1b fb 47k
+R8 fb fbc 10k
+C4 fbc 0 10u
+R9 u1b outr 100
+C5 outr outc 10u
+R10 outc 0 100k
+.tran 1m 15
+.control
+run
+meas tran outc_max MAX v(outc)
+meas tran t_100mv WHEN v(outc)=0.1 FALL=LAST
+meas tran t_10mv WHEN v(outc)=0.01 FALL=LAST
+meas tran t_1mv WHEN v(outc)=0.001 FALL=LAST
+meas tran t_60dbu WHEN v(outc)=0.00078 FALL=LAST
+meas tran v_5s FIND v(outc) AT=5
+meas tran v_10s FIND v(outc) AT=10
+.endc
+.end

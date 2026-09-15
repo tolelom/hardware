@@ -41,10 +41,10 @@ gen_schematic.py가 만든다. 손으로 고치지 않는다. 값의 근거는
 | C1 | 100n 필름 | 1=IN_B, 2=IN_C | 입력 커플링. R3와 0.9Hz |
 | R3 | 1.8M | 1=IN_C, 2=VBIAS | R_bias. R1과 병렬 약 1M |
 | U1A | OPA2992 | 3=IN_C, 2=BUF_OUT, 1=BUF_OUT | A: 유니티 버퍼 |
-| C2 | 10u 50V | 1=BUF_OUT, 2=PAD_IN | 패드 커플링. 2.3Hz. + 쪽이 버퍼 |
-| R4 | 5.6k | 1=PAD_IN, 2=SEED_AUDIO_IN1 | 패드 직렬 |
-| R5 | 1.2k | 1=SEED_AUDIO_IN1, 2=GND | 패드 션트. -15.1dB, 출력 임피던스 1k |
-| C23 | 3.3n | 1=SEED_AUDIO_IN1, 2=GND | 종단. 1k와 48kHz |
+| C2 | 10u 50V | 1=BUF_OUT, 2=PAD_IN | 패드 커플링. 4Hz. + 쪽이 버퍼 |
+| R4 | 3.3k | 1=PAD_IN, 2=SEED_AUDIO_IN1 | 패드 직렬 |
+| R5 | 820R | 1=SEED_AUDIO_IN1, 2=GND | 패드 션트. 코덱 5k 포함 -15.1dB |
+| C23 | 4.7n | 1=SEED_AUDIO_IN1, 2=GND | 종단. 580Ω과 58kHz |
 | C3 | 1u 필름 | 1=SEED_AUDIO_OUT1, 2=OUT_IN | R6와 1.6Hz |
 | R6 | 100k | 1=OUT_IN, 2=VBIAS | 출력단 + 입력 바이어스 |
 | U1B | OPA2992 | 5=OUT_IN, 6=FB, 7=U1B_OUT | B: 비반전 +15.1dB |
