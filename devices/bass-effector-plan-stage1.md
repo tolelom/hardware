@@ -75,16 +75,18 @@
 | 코덱 | SparkFun 15845 | 1 | Audio Adapter Rev D |
 | 헤더 | Chip Quik HDR100IMP40M-G-V-TH | 1 | 2.54mm 스트레이트, Shield 14핀 두 줄로 잘라 쓸 수 있는 길이 |
 | op-amp | TI OPA2992IDR | 2 | SOIC-8 |
-| SOIC 변환 기판 | SparkFun BOB-13655 | 2 | SOIC-8을 DIP-8 핀 간격으로 |
+| SOIC 변환 기판 | SparkFun BOB-13655 | 1팩 | SOIC-8을 DIP-8 핀 간격으로. 4개입 |
 | 차지 펌프 | TI LT1054CP | 2 | PDIP-8 |
-| 릴레이 | Panasonic TQ2-9V | 2 | 논래칭 DPDT, 9V 코일 |
-| P-MOSFET | Infineon IRF9540NPBF | 2 | VGS 정격 ±20V 이상, VDS 절댓값 30V 이상, TO-220 |
+| 릴레이 | Panasonic TQ2-9V | 2 | 논래칭 DPDT, 9V 코일. 1개 여분 |
+| P-MOSFET | Infineon IRF9540NPBF | 3 | VGS 정격 ±20V 이상, VDS 절댓값 30V 이상, TO-220. 백투백으로 2개를 쓰고 1개 여분 |
 | 12V 제너 | onsemi 1N4742A | 2 | 12V, 1W, 스루홀 |
-| NPN | onsemi 2N3904BU | 4 | TO-92 |
-| 쇼트키 | onsemi 1N5819 | 4 | 1A, 40V, 스루홀 |
+| PNP | onsemi 2N3906BU | 2 | TO-92. 과전압 차단 구동 |
+| NPN | onsemi 2N3904BU | 2 | TO-92. K1 구동 |
+| 쇼트키 | Taiwan Semiconductor Corporation 1N5819 | 4 | 1A, 40V, 스루홀 |
 | 소신호 다이오드 | onsemi 1N4148 | 4 | 스루홀 |
 | 벌크 커패시터 | Panasonic EEU-FR1E102 | 2 | 1000µF, 25V 이상 |
-| 레일 커패시터 | Panasonic EEU-FR1E101 | 2 | 100µF, 25V 이상 |
+| 레일·Vbias 커패시터 | Panasonic EEU-FR1V101 | 4 | 100µF, 35V 이상. 12V 어댑터에서 레일 약 23V |
+| 펌프·커플링 커패시터 | Panasonic FR 시리즈, 품번 검색 | 6 | 10µF, 50V |
 | 1단계 연결 잭 | Switchcraft 12A | 2 | 6.35mm TS |
 
 - [ ] **Step 3: 합계 확인**
