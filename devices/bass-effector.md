@@ -82,11 +82,11 @@ PSRAM(8MB)을 쓴다.
 | op-amp 2개 | OPA2992IDR, SOIC-8. 1개는 여분 | DigiKey |
 | 차지 펌프 2개 | LT1054CP, PDIP-8. 1개는 여분 | DigiKey |
 | 9V 어댑터 | 정전압 9V 센터 마이너스 2.1mm, 500mA 이상. 보유한 것은 9V 건전지뿐이라 2단계 T1부터 필요하다. DigiKey 벽 어댑터는 대부분 센터 플러스라 페달파츠에서 산다 | 페달파츠 |
-| 저항·필름·세라믹 커패시터, DIP-8 소켓 | 값과 수량은 회로 설계 9절, 품번은 1단계 계획 Task 1 표. 저항은 Yageo MFR-25(3.3Ω만 CFR-25 탄소피막), 필름은 WIMA 100nF와 KEMET 1µF, 세라믹은 TDK FG28이고 C23 4.7nF는 C0G. 저항은 값마다 여분 2개, 커패시터는 여분 1개. 서랍 저항은 값 미확인이라 셈에 넣지 않는다 | DigiKey |
+| 저항·필름·세라믹 커패시터, DIP-8 소켓 | 값과 수량은 회로 설계 9절, 품번은 1단계 계획 Task 1 표. 저항은 Yageo MFR-25(3.3Ω만 CFR-25 탄소피막), 필름은 TDK B32529, 세라믹 100nF는 Vishay K 계열이고 C23 4.7nF는 TDK FG28 C0G. 저항은 값마다 여분 2개, 커패시터는 여분 1개. 서랍 저항은 값 미확인이라 셈에 넣지 않는다 | DigiKey |
 | 릴레이 | TQ2-9V 2개(1개 여분). 논래칭 DPDT, 코일 579Ω(약 15.5mA, 문서 기준) | DigiKey |
 | 전원 보호 | P-MOSFET Infineon IRF9540NPBF(Vgs 정격 ±20V, Vds 100V, TO-220) 3개. 백투백으로 2개를 쓰고(설계서 3.5절) 1개 여분. 과전압 차단용 12V 제너 onsemi 1N4742A 2개와 구동 PNP onsemi 2N3906BU 2개(회로 설계에서 NPN 대신 PNP로 확정, 1개 여분) | DigiKey |
 | 다이오드·트랜지스터 | 더블러용 쇼트키 Taiwan Semiconductor Corporation 1N5819(40V, 1A, DO-41) 4개, K1 플라이백 onsemi 1N4148 4개, K1 구동 NPN onsemi 2N3904BU 2개(1개 여분). 쇼트키 원래 후보 onsemi 1N5819는 주문 불가라 대체 | DigiKey |
-| 전해 커패시터 | 벌크 Panasonic EEU-FR1E102(1000µF, 25V) 2개(1개 여분). 레일·Vbias·VIN 필터용 100µF는 12V 어댑터 대비로 35V(Panasonic FR 시리즈 EEU-FR1V101, 재고 확인) 5개(1개 여분). 10µF 50V Panasonic EEU-FR1H100 6개(1개 여분). 원래 후보였던 100µF 25V EEU-FR1E101B는 뺀다 | DigiKey |
+| 전해 커패시터 | 벌크 Panasonic EEU-FR1E102(1000µF, 25V) 2개(1개 여분). 레일·Vbias·VIN 필터용 100µF는 12V 어댑터 대비로 35V Panasonic EEU-FC1V101 5개(1개 여분, FR1V101이 백오더라 대체). 10µF 50V Panasonic EEU-FR1H100 10개(6개 소요, 10개 단가). 원래 후보였던 100µF 25V EEU-FR1E101B는 뺀다 | DigiKey |
 | 포텐셔미터 5개 | Alpha 16mm 싱글 B10K 솔더 타입 | 페달파츠 |
 | 노브 5개 | 푸시핏 | 페달파츠 |
 | 풋스위치 | 모멘터리 2P | 페달파츠 |
