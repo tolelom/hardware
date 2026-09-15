@@ -3,7 +3,7 @@
 설계서: [bass-effector-design.md](bass-effector-design.md). 계획서: [bass-effector.md](bass-effector.md)
 회로도 파일: [effector/hardware/bass-compressor.kicad_sch](../effector/hardware/bass-compressor.kicad_sch)
 넷리스트(자동 생성): [effector/hardware/netlist.md](../effector/hardware/netlist.md)
-최종 갱신: 2026-09-14
+최종 갱신: 2026-09-15
 
 설계서 4.1절 블록도의 각 블록을 부품 값과 결선으로 푼다. 값의 근거를 블록마다 한 줄씩 적는다.
 지정자와 결선의 기준은 `effector/hardware/gen_schematic.py`의 PARTS 표이고, 이 문서는 그 값이 왜
@@ -123,6 +123,11 @@ OUT 잭 팁 ─ K1 21(COM2)
 헤드룸: Vbias 8.45V ± 7.96V 피크 = 0.49~16.41V. 레일 16.9V에서 위아래 0.49V. OPA2992 스윙 0.22~0.3V(2kΩ)
 안이지만 여유가 작다. 어댑터가 8.7V 아래면 T4 유니티 트림으로 출력 목표를 낮춘다.
 
+기동 대기: C5는 R9 + R10으로 충전돼 시정수 약 1s이고, Vbias도 C6으로 시정수 0.5s에 걸쳐 오른다. 둘을
+합친 OUT_C 잔류 전압은 2 × 8.45V × e^(-t/1s) 꼴로 줄어 T11 무음 기준 -60dBu(0.78mV)에 약 10s에 닿는다.
+버퍼드 모드 부팅에서 K1을 켜기 전 대기는 이 값 이상으로 두고 T11에서 확인한다. 대기 중에는 K1이 꺼져 있어
+신호가 트루 바이패스로 지나간다.
+
 ## 6. K1 릴레이와 구동 (블록 F)
 
 | 부품 | 값 | 근거 |
@@ -154,7 +159,7 @@ Shield가 쓰는 핀(6, 7, 8, 10~13, 15, 18~21, 23)은 비운다. 회로도의 J
 
 | Teensy 핀 | 넷 | 용도 |
 |---|---|---|
-| VIN | T41_VIN_5V | 7805 출력. VIN·VUSB 패드는 4단계에서 끊는다(설계서 3.6절) |
+| VIN | T41_VIN_5V | 7805 출력. VIN·VUSB 패드는 2단계에서 7805를 VIN에 처음 잇기 전에 끊는다(설계서 3.6절) |
 | 3.3V | T41_3V3 | 노브, 풀업. LED는 GPIO에서 |
 | GND | GND | |
 | 2 | T41_P2_K1DRV | K1 구동 |
@@ -194,7 +199,7 @@ LT1054 1, OPA2992 1, TQ2-9V 1, 1000µF 25V 1. DigiKey 1차에 추가할 것과 �
 | | 10Ω | 1 | R16 |
 | 필름 커패시터 63V 이상 | 100nF | 1 | C1 |
 | | 1µF | 2 | C2, C3 |
-| 세라믹 커패시터 50V | 100nF | 11 | C11, C12, C14, C15, C17, C18~C22 |
+| 세라믹 커패시터 50V | 100nF | 10 | C11, C12, C14, C15, C17, C18~C22 |
 | 전해 커패시터 | 10µF 50V | 5 | C4, C5, C8, C13, C16 |
 | | 100µF 35V | 3 | C6, C9, C10 |
 | PNP | 2N3906 | 1 | Q3 |
