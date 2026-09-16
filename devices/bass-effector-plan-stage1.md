@@ -90,7 +90,7 @@ daisy.audio에서 Seed3 2개를 주문했다(2026-09-15). 핀 헤더 동봉 여�
 | 쇼트키 | Taiwan Semiconductor Corporation 1N5819 | 4 | 1A, 40V, 스루홀 |
 | 소신호 다이오드 | onsemi 1N4148 | 4 | 스루홀 |
 | 벌크 커패시터 | Panasonic EEU-FR1E102 | 2 | 1000µF, 25V 이상 |
-| 레일·Vbias·VIN 필터 커패시터 | Panasonic EEU-FC1V101 | 8 | 100µF, 35V 이상. 12V 어댑터에서 레일 약 23V. 한 대에 4개. EEU-FR1V101은 백오더(입고 예정 2026-10-14)라 FC 계열로 대체 |
+| 레일·Vbias·VIN 필터 커패시터 | Panasonic EEU-FC1V101 | 10 | 100µF, 35V 이상. 12V 어댑터에서 레일 약 23V. 한 대에 4개. 8개보다 10개가 싸다. EEU-FR1V101은 백오더(입고 예정 2026-10-14)라 FC 계열로 대체 |
 | 펌프·커플링 커패시터 | Panasonic EEU-FR1H100 | 10 | 10µF, 50V. 한 대에 4개. 8개보다 10개가 싸다 |
 | 패드 커플링 커패시터 | Panasonic EEU-FR1H470 | 2 | 47µF, 50V. C2. 한 대에 1개 |
 | 1단계 연결 잭 | Switchcraft 12A | 2 | 6.35mm TS |
@@ -104,7 +104,7 @@ daisy.audio에서 Seed3 2개를 주문했다(2026-09-15). 핀 헤더 동봉 여�
 | 저항 2.2k | Yageo MFR-25FBF52-2K2 | 3 | |
 | 저항 1k | Yageo MFR-25FBF52-1K | 3 | |
 | 저항 820Ω | Yageo MFR-25FBF52-820R | 3 | |
-| 저항 470Ω | Yageo MFR-25FBF52-470R | 21 | 한 대에 9개 |
+| 저항 470Ω | Yageo MFR-25FBF52-470R | 25 | 한 대에 9개. 21개보다 25개가 싸다 |
 | 저항 100Ω | Yageo MFR-25FBF52-100R | 3 | |
 | 저항 10Ω | Yageo MFR-25FBF52-10R | 3 | |
 | 저항 3.3Ω | Yageo CFR-25JB-52-3R3 | 3 | 탄소피막 5%. MFR-25 계열에 3.3Ω이 없다. R32는 VIN 필터라 허용오차가 결과를 바꾸지 않는다 |

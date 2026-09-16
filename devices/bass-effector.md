@@ -86,7 +86,7 @@ PSRAM(8MB)을 쓴다.
 | 릴레이 | TQ2-9V 2개(한 대에 1개). 논래칭 DPDT, 코일 579Ω(약 15.5mA, 문서 기준) | DigiKey |
 | 전원 보호 | P-MOSFET Infineon IRF9540NPBF(Vgs 정격 ±20V, Vds 100V, TO-220) 4개. 한 대에 백투백 2개(설계서 3.5절). 과전압 차단용 12V 제너 onsemi 1N4742A 2개와 구동 PNP onsemi 2N3906BU 2개(회로 설계에서 NPN 대신 PNP로 확정). 게이트 보호 15V 제너 onsemi 1N4744A 2개(2026-09-15 검토에서 추가). 모두 한 대에 1개 | DigiKey |
 | 다이오드·트랜지스터 | 더블러용 쇼트키 Taiwan Semiconductor Corporation 1N5819(40V, 1A, DO-41) 4개, K1 플라이백 onsemi 1N4148 4개, K1 구동 NPN onsemi 2N3904BU 2개. 한 대에 쇼트키 2, 1N4148 1, NPN 1. 쇼트키 원래 후보 onsemi 1N5819는 주문 불가라 대체 | DigiKey |
-| 전해 커패시터 | 벌크 Panasonic EEU-FR1E102(1000µF, 25V) 2개. 레일·Vbias·VIN 필터용 100µF는 12V 어댑터 대비로 35V Panasonic EEU-FC1V101 8개(FR1V101이 백오더라 대체). 10µF 50V Panasonic EEU-FR1H100 10개(8개보다 10개가 싸다)와 패드 커플링용 47µF 50V Panasonic EEU-FR1H470 2개. 한 대에 1000µF 1, 100µF 4, 10µF 4, 47µF 1. 원래 후보였던 100µF 25V EEU-FR1E101B는 뺀다 | DigiKey |
+| 전해 커패시터 | 벌크 Panasonic EEU-FR1E102(1000µF, 25V) 2개. 레일·Vbias·VIN 필터용 100µF는 12V 어댑터 대비로 35V Panasonic EEU-FC1V101 10개(FR1V101이 백오더라 대체. 8개보다 10개가 싸다). 10µF 50V Panasonic EEU-FR1H100 10개(8개보다 10개가 싸다)와 패드 커플링용 47µF 50V Panasonic EEU-FR1H470 2개. 한 대에 1000µF 1, 100µF 4, 10µF 4, 47µF 1. 원래 후보였던 100µF 25V EEU-FR1E101B는 뺀다 | DigiKey |
 | 포텐셔미터 5개 | Alpha 16mm 싱글 B10K 'ㄱ' DIP 타입(패널 안쪽에서 기판까지 12mm, 페달파츠 표기). 목록에 16mm 솔더 러그 B10K가 없어 전선으로 배선한다 | 페달파츠 |
 | 노브 5개 | 푸시핏 | 페달파츠 |
 | 풋스위치 | 모멘터리 SPST 노멀 오픈(2핀), 소프트 터치. 후보는 페달파츠 모멘터리 2P, 치수가 상품 페이지에 없다 | 페달파츠 |
