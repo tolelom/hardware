@@ -210,7 +210,7 @@ BLOCKS = [
         Part("R3", "Device", "R", "1.8M", {"1": "IN_C", "2": "VBIAS"}, note="R_bias. R1과 병렬 약 1M"),
         Part("U1", "Amplifier_Operational", "TL072", "OPA2992", {"3": "IN_C", "2": "BUF_OUT", "1": "BUF_OUT"},
              unit=1, note="A: 유니티 버퍼"),
-        Part("C2", "Device", "C_Polarized", "10u 50V", {"1": "BUF_OUT", "2": "PAD_IN"}, note="패드 커플링. 4Hz. + 쪽이 버퍼"),
+        Part("C2", "Device", "C_Polarized", "47u 50V", {"1": "BUF_OUT", "2": "PAD_IN"}, note="패드 커플링. 0.85Hz. + 쪽이 버퍼"),
         Part("R4", "Device", "R", "3.3k", {"1": "PAD_IN", "2": "SEED_AUDIO_IN1"}, note="패드 직렬"),
         Part("R5", "Device", "R", "820R", {"1": "SEED_AUDIO_IN1", "2": "GND"}, note="패드 션트. 코덱 5k 포함 -15.1dB"),
         Part("C23", "Device", "C", "4.7n", {"1": "SEED_AUDIO_IN1", "2": "GND"}, note="종단. 580Ω과 58kHz"),

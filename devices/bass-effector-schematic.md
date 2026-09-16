@@ -3,7 +3,7 @@
 설계서: [bass-effector-design.md](bass-effector-design.md). 계획서: [bass-effector.md](bass-effector.md)
 회로도 파일: [effector/hardware/bass-compressor.kicad_sch](../effector/hardware/bass-compressor.kicad_sch)
 넷리스트(자동 생성): [effector/hardware/netlist.md](../effector/hardware/netlist.md)
-최종 갱신: 2026-09-15
+최종 갱신: 2026-09-16
 
 설계서 4.1절 블록도의 각 블록을 부품 값과 결선으로 푼다. 값의 근거를 블록마다 한 줄씩 적는다.
 지정자와 결선의 기준은 `effector/hardware/gen_schematic.py`의 PARTS 표이고, 이 문서는 그 값이 왜
@@ -103,7 +103,7 @@ Seed3 ADC는 16비트다. 12비트로 읽어도 1LSB = 0.8mV = 입력 4.6mV이�
 ```
 IN 잭 팁 ─ K1 11(COM1)   K1 14(NO1) = IN_A ─ R2 10k ─ C1 100nF ─ IN_C ─ U1A(+)   U1A 출력 = BUF_OUT ─ U1A(-)
 IN_A ─ R1 2.2M ─ GND     IN_C ─ R3 1.8M ─ VBIAS
-BUF_OUT ─ C2 10µF(+) ─ R4 3.3k ─ SEED_AUDIO_IN1 ─ R5 820Ω, C23 4.7nF ─ GND    SEED_AUDIO_IN1 ─ J4 16
+BUF_OUT ─ C2 47µF(+) ─ R4 3.3k ─ SEED_AUDIO_IN1 ─ R5 820Ω, C23 4.7nF ─ GND    SEED_AUDIO_IN1 ─ J4 16
 ```
 
 | 부품 | 값 | 근거 |
@@ -113,7 +113,7 @@ BUF_OUT ─ C2 10µF(+) ─ R4 3.3k ─ SEED_AUDIO_IN1 ─ R5 820Ω, C23 4.7nF �
 | C1 | 100nF 필름 | R3와 차단 0.9Hz. 설계서 "10Hz 이하". 기동 시 R1 + R3 = 4M으로 충전, 시정수 0.4s |
 | R3 | 1.8M | R_bias. 입력 임피던스 = R1 ∥ (R2 + R3) = 2.2M ∥ 1.81M = 0.99M |
 | U1A | OPA2992 A | 유니티 버퍼. 출력을 - 입력에 직결 |
-| C2 | 10µF 50V | 패드 커플링. 부하 R4 + (R5 ∥ 5k) = 4.0k와 차단 4.0Hz, 20Hz에서 -0.17dB. + 쪽이 BUF_OUT(Vbias 전위), 반대쪽은 R4·R5로 0V |
+| C2 | 47µF 50V | 패드 커플링. 부하 R4 + (R5 ∥ 5k) = 4.0k와 차단 0.85Hz, 20Hz에서 -0.01dB. 20Hz에서 커패시터 양단에 신호의 4.2%, 41Hz에서 2.1%가 걸린다. + 쪽이 BUF_OUT(Vbias 전위), 반대쪽은 R4·R5로 0V |
 | R4, R5 | 3.3k, 820Ω | 패드. 코덱 입력 임피던스 5kΩ ±20%(TAC5242 데이터시트, 모듈은 커플링 C만 더한다고 본다)를 포함해 (820 ∥ 5k) / (3.3k + 820 ∥ 5k) = 0.176 = -15.1dB. 4k~6k에서 -15.3~-14.9dB. 입력 풀스케일 = 1Vrms / 0.176 = 5.68Vrms = +17.3dBu. U1A 부하 4.0k는 OPA2992 정격(2kΩ) 안 |
 | C23 | 4.7nF | 종단. 패드 출력 임피던스 580Ω(R4 ∥ R5 ∥ 5k)과 차단 58kHz. 20kHz에서 -0.5dB라 T3 기준 안이고, 유니티 트림이 흡수한다 |
 
@@ -222,7 +222,8 @@ LT1054 1, OPA2992 1, TQ2-9V 1, 1000µF 25V 1. Seed3는 daisy.audio 직판이다.
 | | 1µF | 1 | C3 |
 | 세라믹 커패시터 50V | 100nF | 9 | C12, C14, C15, C17, C18~C22 |
 | | 4.7nF | 1 | C23 |
-| 전해 커패시터 | 10µF 50V | 5 | C2, C4, C5, C8, C16 |
+| 전해 커패시터 | 10µF 50V | 4 | C4, C5, C8, C16 |
+| | 47µF 50V | 1 | C2 |
 | | 100µF 35V | 4 | C6, C9, C10, C11 |
 | PNP | 2N3906 | 1 | Q3 |
 | DIP-8 소켓 | | 2 | U2, U1 변환 기판 |
@@ -258,8 +259,9 @@ Connector, Connector_Audio, Connector_Generic, Switch, power)를 받은 폴더�
 - LED 저항을 1k에서 470Ω으로 내렸다. 설계서 부품표는 페달파츠 주문이라 값만 여기서 정한다
 - 레일·Vbias 전해 커패시터를 25V에서 35V로 올렸다. 12V 어댑터 대비
 - 출력단 게인을 +14.8dB 대신 E24 값으로 +15.1dB로 잡았다. 유니티 트림이 흡수한다
-- 패드 커플링을 필름 1µF에서 전해 10µF로 바꿨다. 모듈 입력 임피던스가 미공개라 패드를 저임피던스로 잡으면서
-  차단 주파수를 지키려면 용량이 필요하다
+- 패드 커플링을 필름 1µF에서 전해 47µF로 바꿨다. 모듈 입력 임피던스가 미공개라 패드를 저임피던스로 잡으면서
+  차단 주파수를 지키려면 용량이 필요하다. 47µF에서 차단이 0.85Hz라 20Hz에서 커패시터 양단에 걸리는
+  신호가 4.2%다
 - 출력단 피드백 하단(R8)을 Vbias가 아니라 C4를 거쳐 GND에 둔다. Vbias 노드에 신호 전류가 흐르지 않게
 
 
@@ -281,12 +283,12 @@ Connector, Connector_Audio, Connector_Generic, Switch, power)를 받은 폴더�
 | 부팅: OUT_C 잔류 -60dBu 도달 | 9.4s(최대 5.9V at 0.46s) | 약 10s(5절) | 맞음 |
 | 극성 C의 DC 전위 (C2, C4, C5, C6, C8, C9) | 모두 + 쪽이 8.3V 이상 높음 | 표의 극성 | 맞음 |
 | 출력단 계단 응답, 케이블 0 / 1nF / 4.7nF (TI 모델) | 과도 2% 이내, 용량이 늘어도 커지지 않음 | R9 100Ω 격리 | 안정 |
-| 주파수 응답 20Hz, 코덱 HPF 1Hz / 12Hz | -0.5dB / -1.9dB | T3 ±1dB | 1Hz면 통과, 12Hz면 미달 |
+| 주파수 응답 20Hz, 코덱 HPF 1Hz / 12Hz | -0.4dB / -1.7dB | T3 ±1dB | 1Hz면 통과, 12Hz면 미달 |
 | 주파수 응답 20kHz | -0.5dB (C23) | T3 ±1dB | 맞음 |
 
 보호 회로에서 입력 3V 이하에서는 Vgs가 문턱(3.7V)에 못 미쳐 V9가 0V다. 9V 어댑터에서는 해당 없다.
 
-20Hz 응답에서 우리 몫은 -0.5dB(C2 4Hz -0.17, DSP DC 차단 5Hz -0.26이 대부분)이고 나머지는 코덱 HPF다. 모듈이
+20Hz 응답에서 우리 몫은 -0.4dB(DSP DC 차단 5Hz -0.26이 대부분)이고 나머지는 코덱 HPF다. 모듈이
 12Hz를 골랐으면 T3가 20Hz에서 미달하고 31Hz(5현 B)에서 -0.8dB다. 그 경우 DSP에서 같은 차단 주파수의 1차
 저역 셸프로 되돌리는 선택지가 있다(설계서 8절).
 

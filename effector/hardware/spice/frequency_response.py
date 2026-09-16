@@ -32,7 +32,7 @@ PAD_OUTPUT_OHM = parallel(3300, parallel(820, CODEC_INPUT_OHM))
 
 STAGES = {
     "C1 R2+R3": lambda f: high_pass(f, 1 / (2 * math.pi * 1.81e6 * 100e-9)),
-    "C2 패드": lambda f: high_pass(f, 1 / (2 * math.pi * PAD_LOAD_OHM * 10e-6)),
+    "C2 패드": lambda f: high_pass(f, 1 / (2 * math.pi * PAD_LOAD_OHM * 47e-6)),
     "C23 종단": lambda f: low_pass(f, 1 / (2 * math.pi * PAD_OUTPUT_OHM * 4.7e-9)),
     "DSP DC 5Hz": lambda f: high_pass(f, 5.0),
     "C3 R6": lambda f: high_pass(f, 1 / (2 * math.pi * 100e3 * 1e-6)),
