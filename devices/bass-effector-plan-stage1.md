@@ -78,41 +78,41 @@ daisy.audio에서 Seed3 2개를 주문했다(2026-09-15). 핀 헤더 동봉 여�
 |---|---|---|---|
 | 소켓 | Sullins PPPC201LFBN-RC | 4 | 2.54mm 20핀 암 소켓, 스루홀. Seed3를 기판에 꽂는다. 한 대에 2개 |
 | 헤더 | Chip Quik HDR100IMP40M-G-V-TH | 3 | 2.54mm 스트레이트 40핀. 1개는 변환 기판 2장의 다리용(16핀), 2개는 Seed3 2개용이다. BOB-13655와 Seed3 모두 헤더 동봉 여부가 상품 페이지에 없어 동봉을 전제하지 않는다 |
-| op-amp | TI OPA2992IDR | 2 | SOIC-8. 한 대에 1개 |
+| op-amp | TI OPA2992IDR | 3 | SOIC-8. 한 대에 1개, 예비 1개. SOIC를 변환 기판에 손납땜하는 유일한 부품이라 예비를 둔다 |
 | SOIC 변환 기판 | SparkFun BOB-13655 | 1팩 | SOIC-8을 DIP-8 핀 간격으로. 4개입이라 2대분에 2장이 남는다 |
 | 차지 펌프 | TI LT1054CP | 2 | PDIP-8. 한 대에 1개 |
 | 릴레이 | Panasonic TQ2-9V | 2 | 논래칭 DPDT, 9V 코일. 한 대에 1개 |
 | P-MOSFET | Infineon IRF9540NPBF | 4 | VGS 정격 ±20V 이상, VDS 절댓값 30V 이상, TO-220. 한 대에 백투백 2개 |
 | 12V 제너 | onsemi 1N4742A | 2 | 12V, 1W, 스루홀 |
 | 15V 제너 | onsemi 1N4744A | 2 | 15V, 1W, 스루홀. Q1·Q2 게이트 보호 D14. 한 대에 1개 |
-| PNP | onsemi 2N3906BU | 2 | TO-92. 과전압 차단 구동 |
-| NPN | onsemi 2N3904BU | 2 | TO-92. K1 구동 |
-| 쇼트키 | Taiwan Semiconductor Corporation 1N5819 | 4 | 1A, 40V, 스루홀 |
-| 소신호 다이오드 | onsemi 1N4148 | 4 | 스루홀 |
+| PNP | onsemi 2N3906BU | 10 | TO-92. 과전압 차단 구동. 한 대에 1개. 10개 단가가 1개의 61%다 |
+| NPN | onsemi 2N3904BU | 10 | TO-92. K1 구동. 한 대에 1개. 10개 단가가 1개의 62%다 |
+| 쇼트키 | Taiwan Semiconductor Corporation 1N5819 | 10 | 1A, 40V, 스루홀. 한 대에 2개 |
+| 소신호 다이오드 | onsemi 1N4148 | 10 | 스루홀. 한 대에 1개 |
 | 벌크 커패시터 | Panasonic EEU-FR1E102 | 2 | 1000µF, 25V 이상 |
 | 레일·Vbias·VIN 필터 커패시터 | Panasonic EEU-FC1V101 | 10 | 100µF, 35V 이상. 12V 어댑터에서 레일 약 23V. 한 대에 4개. 8개보다 10개가 싸다. EEU-FR1V101은 백오더(입고 예정 2026-10-14)라 FC 계열로 대체 |
 | 펌프·커플링 커패시터 | Panasonic EEU-FR1H100 | 10 | 10µF, 50V. 한 대에 4개. 8개보다 10개가 싸다 |
 | 패드 커플링 커패시터 | Panasonic EEU-FR1H470 | 2 | 47µF, 50V. C2. 한 대에 1개 |
 | 1단계 연결 잭 | Switchcraft 12A | 2 | 6.35mm TS |
-| 저항 2.2M | Yageo MFR-25FBF52-2M2 | 3 | 1/4W 금속피막 1%. 저항 행은 회로 설계 9절 사용 수의 2배 이상(한 번만 쓰는 값은 3개) |
-| 저항 1.8M | Yageo MFR-25FBF52-1M8 | 3 | |
-| 저항 100k | Yageo MFR-25FBF52-100K | 10 | 한 대에 3개. 10개 단가가 더 싸다 |
-| 저항 47k | Yageo MFR-25FBF52-47K | 10 | 한 대에 2개. 10개 값이 4개 값과 거의 같다 |
-| 저항 10k | Yageo MFR-25FBF52-10K | 20 | 한 대에 8개 |
-| 저항 4.7k | Yageo MFR-25FBF52-4K7 | 3 | |
-| 저항 3.3k | Yageo MFR-25FBF52-3K3 | 3 | |
-| 저항 2.2k | Yageo MFR-25FBF52-2K2 | 3 | |
-| 저항 1k | Yageo MFR-25FBF52-1K | 3 | |
-| 저항 820Ω | Yageo MFR-25FBF52-820R | 3 | |
+| 저항 2.2M | Yageo MFR-25FBF52-2M2 | 10 | 1/4W 금속피막 1%. 저항 행은 10개 또는 25개 구간으로 맞춘다. 구간 단가가 1개의 40% 안팎이라 예비 개당 ₩25 수준이다 |
+| 저항 1.8M | Yageo MFR-25FBF52-1M8 | 10 | |
+| 저항 100k | Yageo MFR-25FBF52-100K | 25 | 한 대에 3개 |
+| 저항 47k | Yageo MFR-25FBF52-47K | 25 | 한 대에 2개 |
+| 저항 10k | Yageo MFR-25FBF52-10K | 25 | 한 대에 8개. 20개와 25개의 차이가 ₩43이다 |
+| 저항 4.7k | Yageo MFR-25FBF52-4K7 | 10 | |
+| 저항 3.3k | Yageo MFR-25FBF52-3K3 | 10 | |
+| 저항 2.2k | Yageo MFR-25FBF52-2K2 | 10 | |
+| 저항 1k | Yageo MFR-25FBF52-1K | 10 | |
+| 저항 820Ω | Yageo MFR-25FBF52-820R | 10 | |
 | 저항 470Ω | Yageo MFR-25FBF52-470R | 25 | 한 대에 9개. 21개보다 25개가 싸다 |
-| 저항 100Ω | Yageo MFR-25FBF52-100R | 3 | |
-| 저항 10Ω | Yageo MFR-25FBF52-10R | 3 | |
-| 저항 3.3Ω | Yageo CFR-25JB-52-3R3 | 3 | 탄소피막 5%. MFR-25 계열에 3.3Ω이 없다. R32는 VIN 필터라 허용오차가 결과를 바꾸지 않는다 |
+| 저항 100Ω | Yageo MFR-25FBF52-100R | 10 | |
+| 저항 10Ω | Yageo MFR-25FBF52-10R | 10 | |
+| 저항 3.3Ω | Yageo CFR-25JB-52-3R3 | 10 | 탄소피막 5%. MFR-25 계열에 3.3Ω이 없다. R32는 VIN 필터라 허용오차가 결과를 바꾸지 않는다 |
 | 필름 100nF | TDK B32529C0104J000 | 2 | 63V PET 5%. C1 |
 | 필름 1µF | TDK B32529C0105J000 | 2 | 63V PET 5%. C3. WIMA MKS2 1µF는 단종 표시거나 마켓플레이스 품목이다 |
 | 세라믹 100nF | Vishay K104K15X7RF53L2 | 20 | 50V X7R. 디커플링과 노브 필터. 한 대에 9개 |
 | 세라믹 4.7nF | TDK FG28C0G1H472JNT06 | 2 | 50V C0G. C23은 코덱 입력 신호 경로라 전압에 따라 용량이 변하는 X7R을 쓰지 않는다 |
-| DIP-8 소켓 | TE 1-2199298-2 | 4 | 오픈 프레임. 한 대에 U2와 변환 기판용 2개. 머신드 소켓은 변환 기판의 각형 헤더 핀을 받으면 접점이 벌어져 피한다 |
+| DIP-8 소켓 | TE 1-2199298-2 | 10 | 오픈 프레임. 한 대에 U2와 변환 기판용 2개. 머신드 소켓은 변환 기판의 각형 헤더 핀을 받으면 접점이 벌어져 피한다 |
 
 - [x] **Step 3: 합계 확인**
 

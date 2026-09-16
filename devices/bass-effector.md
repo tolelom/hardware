@@ -79,13 +79,13 @@ PSRAM(8MB)을 쓴다.
 |---|---|---|
 | 보드 | Daisy Seed3. MCU, 코덱(TAC5242), SDRAM, USB-C가 한 모듈. 미국 발송, 배송비와 통관은 주문 시 확인 | daisy.audio |
 | 소켓·헤더 | Seed3용 2.54mm 20핀 암 소켓 Sullins PPPC201LFBN-RC 4개(금도금, 스루홀, 한 대에 2개). 40핀 수 헤더 Chip Quik HDR100IMP40M-G-V-TH 3개: 변환 기판 다리용 1개, Seed3 2개용 2개. 어느 쪽도 상품 페이지에 헤더 동봉 여부가 없어 동봉을 전제하지 않는다 | DigiKey |
-| op-amp | OPA2992IDR 2개, SOIC-8. 한 대에 1개 | DigiKey |
+| op-amp | OPA2992IDR 3개, SOIC-8. 한 대에 1개, 예비 1개. SOIC를 변환 기판에 손납땜하는 유일한 부품이다 | DigiKey |
 | 차지 펌프 | LT1054CP 2개, PDIP-8. 한 대에 1개 | DigiKey |
 | 9V 어댑터 | 정전압 9V 센터 마이너스 2.1mm, 500mA 이상. 보유한 것은 9V 건전지뿐이라 2단계 T1부터 필요하다. DigiKey 벽 어댑터는 대부분 센터 플러스이고 페달파츠에는 어댑터가 없다(2026-09-15 확인). 악기점의 이펙터용 센터 마이너스 정전압 9V 1A 제품을 산다 | 악기점 |
-| 저항·필름·세라믹 커패시터, DIP-8 소켓 | 값과 수량은 회로 설계 9절, 품번은 1단계 계획 Task 1 표. 저항은 Yageo MFR-25(3.3Ω만 CFR-25 탄소피막), 필름은 TDK B32529, 세라믹 100nF는 Vishay K 계열이고 C23 4.7nF는 TDK FG28 C0G. 수량은 2대분. 서랍 저항은 값 미확인이라 셈에 넣지 않는다 | DigiKey |
+| 저항·필름·세라믹 커패시터, DIP-8 소켓 | 값과 수량은 회로 설계 9절, 품번은 1단계 계획 Task 1 표. 저항은 Yageo MFR-25(3.3Ω만 CFR-25 탄소피막), 필름은 TDK B32529, 세라믹 100nF는 Vishay K 계열이고 C23 4.7nF는 TDK FG28 C0G. 수량은 2대분에 예비를 더해 10개 또는 25개 가격 구간으로 맞췄다. 저항은 구간 단가가 1개 단가의 40% 안팎이라 예비 개당 ₩25 수준이다. 서랍 저항은 값 미확인이라 셈에 넣지 않는다 | DigiKey |
 | 릴레이 | TQ2-9V 2개(한 대에 1개). 논래칭 DPDT, 코일 579Ω(약 15.5mA, 문서 기준) | DigiKey |
-| 전원 보호 | P-MOSFET Infineon IRF9540NPBF(Vgs 정격 ±20V, Vds 100V, TO-220) 4개. 한 대에 백투백 2개(설계서 3.5절). 과전압 차단용 12V 제너 onsemi 1N4742A 2개와 구동 PNP onsemi 2N3906BU 2개(회로 설계에서 NPN 대신 PNP로 확정). 게이트 보호 15V 제너 onsemi 1N4744A 2개(2026-09-15 검토에서 추가). 모두 한 대에 1개 | DigiKey |
-| 다이오드·트랜지스터 | 더블러용 쇼트키 Taiwan Semiconductor Corporation 1N5819(40V, 1A, DO-41) 4개, K1 플라이백 onsemi 1N4148 4개, K1 구동 NPN onsemi 2N3904BU 2개. 한 대에 쇼트키 2, 1N4148 1, NPN 1. 쇼트키 원래 후보 onsemi 1N5819는 주문 불가라 대체 | DigiKey |
+| 전원 보호 | P-MOSFET Infineon IRF9540NPBF(Vgs 정격 ±20V, Vds 100V, TO-220) 4개. 한 대에 백투백 2개(설계서 3.5절). 과전압 차단용 12V 제너 onsemi 1N4742A 2개와 구동 PNP onsemi 2N3906BU 10개(회로 설계에서 NPN 대신 PNP로 확정). 게이트 보호 15V 제너 onsemi 1N4744A 2개(2026-09-15 검토에서 추가). 모두 한 대에 1개 | DigiKey |
+| 다이오드·트랜지스터 | 더블러용 쇼트키 Taiwan Semiconductor Corporation 1N5819(40V, 1A, DO-41) 10개, K1 플라이백 onsemi 1N4148 10개, K1 구동 NPN onsemi 2N3904BU 10개. 한 대에 쇼트키 2, 1N4148 1, NPN 1. 쇼트키 원래 후보 onsemi 1N5819는 주문 불가라 대체 | DigiKey |
 | 전해 커패시터 | 벌크 Panasonic EEU-FR1E102(1000µF, 25V) 2개. 레일·Vbias·VIN 필터용 100µF는 12V 어댑터 대비로 35V Panasonic EEU-FC1V101 10개(FR1V101이 백오더라 대체. 8개보다 10개가 싸다). 10µF 50V Panasonic EEU-FR1H100 10개(8개보다 10개가 싸다)와 패드 커플링용 47µF 50V Panasonic EEU-FR1H470 2개. 한 대에 1000µF 1, 100µF 4, 10µF 4, 47µF 1. 원래 후보였던 100µF 25V EEU-FR1E101B는 뺀다 | DigiKey |
 | 포텐셔미터 5개 | Alpha 16mm 싱글 B10K 'ㄱ' DIP 타입(패널 안쪽에서 기판까지 12mm, 페달파츠 표기). 목록에 16mm 솔더 러그 B10K가 없어 전선으로 배선한다 | 페달파츠 |
 | 노브 5개 | 푸시핏 | 페달파츠 |
