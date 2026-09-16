@@ -9,7 +9,7 @@
 |---|---|
 | `lib/effector_core/` | 신호 처리와 시리얼 콘솔. 플랫폼 헤더가 없어 PC에서 테스트한다 |
 | `src/main.cpp` | Daisy Seed3 층. libDaisy 오디오 콜백과 USB CDC |
-| `lib/libDaisy/` | libDaisy 서브모듈(고정 커밋) |
+| `lib/libDaisy/` | libDaisy 서브모듈. 고정 커밋 265aae3e(v8.1.0에서 19커밋 뒤), 하위 서브모듈 6개 포함 약 309MB |
 | `test/` | 네이티브 테스트 |
 | `tools/static_gain.cpp` | 실기기 T9 대조값 계산 |
 | `hardware/` | KiCad 회로도와 생성기, 넷리스트 |
