@@ -9,12 +9,21 @@ add_library(effector_core STATIC ${CORE_SOURCES})
 target_include_directories(effector_core PUBLIC lib/effector_core/src)
 target_compile_options(effector_core PRIVATE -Wall -Wextra -Werror)
 
+add_library(render_tools STATIC tools/wav_file.cpp tools/render_pipeline.cpp)
+target_include_directories(render_tools PUBLIC tools)
+target_link_libraries(render_tools PUBLIC effector_core)
+target_compile_options(render_tools PRIVATE -Wall -Wextra -Werror)
+
 file(GLOB TEST_SOURCES CONFIGURE_DEPENDS test/*.cpp)
 add_executable(native_tests ${TEST_SOURCES})
 target_include_directories(native_tests PRIVATE test)
-target_link_libraries(native_tests PRIVATE effector_core)
+target_link_libraries(native_tests PRIVATE effector_core render_tools)
 target_compile_options(native_tests PRIVATE -Wall -Wextra -Werror)
 
 add_executable(static_gain tools/static_gain.cpp)
 target_link_libraries(static_gain PRIVATE effector_core)
 target_compile_options(static_gain PRIVATE -Wall -Wextra -Werror)
+
+add_executable(offline_render tools/offline_render.cpp)
+target_link_libraries(offline_render PRIVATE render_tools)
+target_compile_options(offline_render PRIVATE -Wall -Wextra -Werror)

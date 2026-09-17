@@ -12,6 +12,7 @@
 | `lib/libDaisy/` | libDaisy 서브모듈. 고정 커밋 265aae3e(v8.1.0에서 19커밋 뒤), 하위 서브모듈 6개 포함 약 309MB |
 | `test/` | 네이티브 테스트 |
 | `tools/static_gain.cpp` | 실기기 T9 대조값 계산 |
+| `tools/offline_render.cpp`, `wav_file`, `render_pipeline` | DI 녹음을 코어에 통과시키는 오프라인 청음 도구 |
 | `hardware/` | KiCad 회로도와 생성기, 넷리스트 |
 | `hardware/spice/` | ngspice 시뮬레이션. 결과는 회로 설계 문서 12절 |
 
@@ -28,6 +29,23 @@ CMake와 g++로 돌린다. 저장소 루트에서 실행한다.
     cmake -S effector -B effector/build -DCMAKE_BUILD_TYPE=Release
     cmake --build effector/build
     ./effector/build/native_tests
+
+## 오프라인 청음
+
+스칼렛 INST, 게인 최소로 녹음한 48kHz WAV(16/24/32비트 PCM 또는 32비트 float, 첫 채널만 씀)를 코어에
+통과시킨다. 네이티브 테스트와 같은 빌드로 `effector/build/offline_render`가 생긴다.
+
+    ./effector/build/offline_render di.wav out.wav --dynamic-range 100 --seed 1 \
+        --command "input 0.5" --command "ratio 0.6"
+
+- 입력은 -4.7dB로 페달 ADC 레벨(풀스케일 +17.2dBu)에 맞춘 뒤 처리하고, 출력은 +4.7dB로 되돌린다.
+  `--command "effect 0"`만 주면 원본과 같은 레벨이다.
+- `--dynamic-range`는 T7과 같은 정의(125~8000Hz, 풀스케일 사인 RMS 기준)의 모듈 다이내믹 레인지다.
+  백색 가우스 잡음을 프로세서 앞에 더한다. 생략하면 노이즈를 넣지 않는다.
+- `--command`는 시리얼 콘솔 명령 그대로다. 파라미터를 바꾸지 않은 명령이 있으면 오류로 끝난다.
+- 실행하면 `recordingFloorDynamicRangeDb`를 출력한다. 녹음에서 가장 조용한 0.5초 창을 같은 정의로 환산한
+  값이고, 이보다 큰 `--dynamic-range`는 녹음 바닥에 묻혀 구분되지 않는다.
+- 변형끼리 비교할 때 파일별로 노멀라이즈하지 않는다.
 
 ## Seed3 빌드와 업로드
 

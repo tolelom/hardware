@@ -44,6 +44,7 @@
 | `effector/test/test_*.cpp` | 코어 단위 테스트 |
 | `effector/test/reference/openaudio_compressor.h` | T9 대조군(OpenAudio 식 이식) |
 | `effector/tools/static_gain.cpp` | 실기기 T9 대조값 계산 |
+| `effector/tools/offline_render.cpp`, `wav_file.{h,cpp}`, `render_pipeline.{h,cpp}` | DI 녹음 오프라인 청음(Task 10) |
 | `effector/lib/effector_core/src/effector_processor.{h,cpp}` | DC 제거, 프리게인, 컴프레서, Blend, Output을 한 블록에서 |
 | `effector/lib/effector_core/src/serial_console.{h,cpp}` | 1단계 시리얼 명령. `ConsoleHost`로 플랫폼을 분리 |
 | `effector/src/main.cpp` | Seed3 층. libDaisy 오디오 콜백, USB CDC 링 버퍼, 콘솔 호스트 |
@@ -1413,3 +1414,43 @@ Expected: 기록만 한다. 판정은 T16이다
 git add effector/measurements/stage1.md
 git commit -m "[Docs] 이펙터 1단계 측정 결과"
 ```
+
+---
+
+### Task 10: 오프라인 청음 도구
+
+Seed3 없이 패시브 베이스 DI 녹음을 코어에 통과시켜 컴프레서 소리와 모듈 바닥 노이즈의 영향을 들어본다.
+T7 판정선(설계서 4.4절, 100dB)이 연주에서 들리는 수준인지를 하드웨어 전에 판단하는 것이 목적이다.
+
+**Files:**
+- Create: `effector/tools/wav_file.{h,cpp}`, `effector/tools/render_pipeline.{h,cpp}`, `effector/tools/offline_render.cpp`
+- Create: `effector/test/test_wav_file.cpp`, `effector/test/test_render_pipeline.cpp`
+- Modify: `effector/CMakeLists.txt`, `effector/README.md`
+
+**Interfaces:**
+- Consumes: Task 7의 `EffectorProcessor`, `SerialConsole`
+- Produces: `offline_render <입력.wav> <출력.wav> [--dynamic-range <dB>] [--seed <n>] [--command "<콘솔 명령>"]...`
+
+알아둘 것:
+- 입력은 스칼렛 INST 게인 최소로 녹음한 48kHz WAV다. 16/24/32비트 PCM과 32비트 float, WAVE_FORMAT_EXTENSIBLE을 읽고 첫 채널만 쓴다. 48kHz가 아니면 거부한다
+- 레벨 환산: 스칼렛 INST 0dBFS는 +12.5dBu, 페달 ADC 풀스케일은 +17.2dBu(설계서 3.1절)라 입력에 -4.7dB를 곱한다. 출력은 +4.7dB로 되돌려 이펙트 끔 출력이 원본과 같은 레벨이 되게 한다
+- 노이즈: 다이내믹 레인지는 풀스케일 사인 RMS(-3.01dBFS) 기준이고 T7은 125~8000Hz 대역에서 판정한다. 백색 가우스 잡음의 전대역 RMS를 `-3.01 - DR + 10·log10(24000 / 7875)` dBFS로 넣어 대역 RMS가 `-3.01 - DR`이 되게 한다. 노이즈는 ADC 입력 기준이라 프로세서 앞에서 더한다
+- 노브 설정은 실기기 콘솔 명령을 `SerialConsole`로 그대로 넣는다. 파라미터를 적용하지 않은 명령(알 수 없는 명령 등)은 오류로 끝낸다
+- 녹음 자체 바닥: 0.5초 창 중 가장 조용한 창의 RMS를 페달 기준으로 환산해 같은 정의의 다이내믹 레인지로 출력한다. 그보다 큰 DR을 지정한 변형은 녹음 바닥에 묻혀 구분되지 않는다
+- 변형끼리 비교할 때 파일별로 노멀라이즈하지 않는다
+
+한계: 모듈 잡음을 백색으로 가정한다. 험, 디지털 잡음, DAC 잡음은 흉내 내지 않는다.
+
+- [x] **Step 1: 실패하는 테스트 작성** (WAV 읽기·쓰기, 환산, 노이즈 대역 RMS, 콘솔 명령 반영, 이펙트 끔 유니티, 녹음 바닥 추정)
+- [x] **Step 2: 실패 확인**
+- [x] **Step 3: 구현**
+- [x] **Step 4: 통과 확인**
+
+Run: `cmake -S effector -B effector/build -DCMAKE_BUILD_TYPE=Release && cmake --build effector/build && ./effector/build/native_tests`
+Expected: `40 tests, 0 failed`
+
+- [ ] **Step 5: 청음** (사용자)
+
+DI 녹음(핑거, 슬랩, 약하게 치는 구간, 무음 몇 초)을 받은 뒤 같은 설정으로 이펙트 끔, 노이즈 없음, DR 119·110·100dB를 뽑아 연습 볼륨으로 비교한다.
+
+- [ ] **Step 6: 커밋**
