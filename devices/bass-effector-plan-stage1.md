@@ -130,7 +130,9 @@ git add devices/bass-effector.md
 git commit -m "[Docs] 이펙터 DigiKey 주문 품번 확정"
 ```
 
-주문과 결제는 사용자가 한다.
+주문과 결제는 사용자가 한다. DigiKey 결제는 T7 바닥 노이즈 판정 뒤로 미룬다(2026-09-18 결정, 계획서 상태 절).
+장바구니의 대부분이 2단계 부품이고 T7 미달이면 아키텍처 비교로 돌아가기 때문이다. Task 8에 필요한 잭·저항·
+커패시터·헤더는 따로 구한다.
 
 ---
 
@@ -1216,7 +1218,7 @@ git commit -m "[Feat] 이펙터 보드를 Daisy Seed3로 전환: 설계·회로�
 - 없음 (하드웨어 작업)
 
 **Interfaces:**
-- Consumes: Task 1 부품, Task 7 펌웨어
+- Consumes: Task 7 펌웨어. 부품은 Switchcraft 12A 잭 2개, 저항 1kΩ·10kΩ, 10µF 커패시터, Seed3용 핀 헤더뿐이다. DigiKey 주문 전체를 기다리지 않는다(Task 1 Step 5)
 
 - [ ] **Step 1: Seed3 헤더**
 
