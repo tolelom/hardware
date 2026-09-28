@@ -2,7 +2,7 @@
 
 > 개인 보유 개발 장비 목록. 진입점은 [README](README.md).
 > 보드별 상세(스펙, 제약, 툴체인, 디버깅 경로)는 [`parts/`](parts/)에 있다. 여기는 보유 목록만 본다.
-> 최종 갱신: 2026-09-16
+> 최종 갱신: 2026-09-28
 
 보유는 수량으로 적고, 수량을 세기 어려운 항목은 있음·없음·여유 있음으로 적는다.
 확인하지 못한 값은 추측으로 채우지 않고 비고에 "확인 필요"로 남긴다.
@@ -32,8 +32,8 @@
 | [Seeed XIAO RP2040](parts/xiao-rp2040.md) | 1 | 노출 GPIO 11. WiFi 없음 |
 | [Seeed XIAO nRF52840](parts/xiao-nrf52840.md) | 1 | 논-Sense |
 | [Seeed XIAO nRF52840 Sense](parts/xiao-nrf52840.md) | 1 | IMU(LSM6DS3TR-C) + PDM 마이크 |
-| [Seeed XIAO nRF54LM20A](parts/xiao-nrf54lm20.md) | 1 (도착 예정) | 기본 버전 |
-| [Seeed XIAO nRF54LM20A Sense](parts/xiao-nrf54lm20.md) | 1 (도착 예정) | GPIO 28(관통홀과 패드 혼합), BLE 6.0, nPM1300 PMIC. IMU는 52840 Sense와 같은 LSM6DS3TR-C(문서 기준) |
+| [Seeed XIAO nRF54LM20A](parts/xiao-nrf54lm20.md) | 1 | 기본 버전. 외장 안테나 동봉 없음 |
+| [Seeed XIAO nRF54LM20A Sense](parts/xiao-nrf54lm20.md) | 1 | 외장 안테나 동봉 없음. GPIO 28(관통홀과 패드가 눈대중으로 반반), BLE 6.0, nPM1300 PMIC. IMU는 52840 Sense와 같은 LSM6DS3TR-C(문서 기준) |
 | [Arduino Uno 클론](parts/arduino-uno.md) | 1 | 프로젝트 배정 없음 |
 | [Raspberry Pi 3B+](parts/rpi-3bplus.md) | 1 | 용도 미정 |
 | Daisy Seed3 | 2 (도착 예정) | 이펙터용. daisy.audio 주문(2026-09-15). 핀 헤더 동봉 여부 확인 필요. [devices/bass-effector.md](devices/bass-effector.md) |
@@ -209,3 +209,4 @@ ENIG 표면처리에 소켓 패드가 커서 젖음성 문제가 날 자리가 �
 - 2026-09-15: 솔더윅과 납흡입기 보유가 확인돼 공작 절을 있음으로 고치고 미보유 1번과 소모품 후보 두 줄을 뺌.
   DigiKey 주문에서도 둘을 뺌. 팁 클리너는 DigiKey 가격이 높아 국내 구매로 돌림.
 - 2026-09-16: 9V 어댑터 구매처를 페달파츠에서 악기점으로 고침(페달파츠 미취급).
+- 2026-09-28: XIAO nRF54LM20A 기본·Sense 도착. 외장 안테나는 동봉되지 않았다.
