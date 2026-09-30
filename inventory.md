@@ -36,7 +36,7 @@
 | [Seeed XIAO nRF54LM20A Sense](parts/xiao-nrf54lm20.md) | 1 | 외장 안테나 동봉 없음. GPIO 28(관통홀과 패드가 눈대중으로 반반), BLE 6.0, nPM1300 PMIC. IMU는 52840 Sense와 같은 LSM6DS3TR-C(문서 기준) |
 | [Arduino Uno 클론](parts/arduino-uno.md) | 1 | 프로젝트 배정 없음 |
 | [Raspberry Pi 3B+](parts/rpi-3bplus.md) | 1 | 용도 미정 |
-| Daisy Seed3 | 2 | 이펙터용. daisy.audio 주문(2026-09-15), 2026-09-30 도착. 핀 헤더 납땜된 상태로 왔다. 첫 번째(DFU serial `200364500000`)는 공장 플래시 백업 뒤 이펙터 펌웨어를 올려 USB 콘솔까지 확인했다. [devices/bass-effector.md](devices/bass-effector.md) |
+| Daisy Seed3 | 2 | 이펙터용. daisy.audio 주문(2026-09-15), 2026-09-30 도착. 핀 헤더 납땜된 상태로 왔다. 둘 다 DFU 열거 확인, 공장 플래시는 바이트 단위로 같다. 1번에는 이펙터 펌웨어를 올렸다. ROM DFU serial이 둘 다 같아 물리 표시로 구분한다. [devices/bass-effector.md](devices/bass-effector.md) |
 
 > 컨트롤러 프로젝트는 nRF52840 Sense 2개를 전제로 설계돼 있어 1개 부족하다.
 > 단 IMU를 안 쓰는 프로토타입은 현 보유분으로 가능하다. → [devices/split-controller.md](devices/split-controller.md)

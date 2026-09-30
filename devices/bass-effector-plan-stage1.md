@@ -1185,6 +1185,7 @@ git commit -m "[Feat] 이펙터 노브 파라미터 매핑"
 - USB CDC 수신은 인터럽트에서 링 버퍼(256B)에 넣고 메인 루프가 꺼내 `feed`한다. 출력은 `TransmitInternal`
 - `dfu`는 `System::ResetToBootloader()`로 STM DFU에 들어간다(설계서 3.6절)
 - Ubuntu에서 `make`로 빌드를 확인했다(FLASH 106,736B, 128KB의 81%, 우리 코드 경고 0). 실기기 동작은 Task 8에서 처음 확인한다
+- 실기기에서 newlib-nano가 `%f`를 빼는 문제가 드러났다(status 숫자가 비고 명령 숫자를 못 읽음). 네이티브 테스트는 glibc라 못 잡는다. `-u _printf_float`를 링크하고 명령 파싱은 `strtof`로 바꿨다. FLASH 120,404B(91.9%, 2026-09-30 집 WSL, arm-none-eabi-gcc 10.3.1). 이 중 우리 코드는 약 4.9KB이고 나머지는 라이브러리다. 넘치면 `BOOT_SRAM`으로 간다
 - 내부 플래시가 차면 `APP_TYPE = BOOT_QSPI`로 바꾼다(`effector/README.md`)
 
 - [x] **Step 1: 코어 이전과 테스트**
@@ -1220,9 +1221,9 @@ git commit -m "[Feat] 이펙터 보드를 Daisy Seed3로 전환: 설계·회로�
 **Interfaces:**
 - Consumes: Task 7 펌웨어. 부품은 Switchcraft 12A 잭 2개, 저항 1kΩ·10kΩ, 10µF 커패시터, Seed3용 핀 헤더뿐이다. DigiKey 주문 전체를 기다리지 않는다(Task 1 Step 5)
 
-- [ ] **Step 1: Seed3 헤더**
+- [x] **Step 1: Seed3 헤더**
 
-핀 헤더가 동봉되지 않았으면 40핀을 20핀 두 줄로 잘라 Seed3 아래쪽에 납땜한다. 브레드보드 가운데 홈에 걸쳐 꽂는다. 핀 번호는 데이터시트 표 2(회로 설계 8절)다.
+두 개 모두 헤더가 납땜된 상태로 왔다(2026-09-30). 핀 헤더가 동봉되지 않았으면 40핀을 20핀 두 줄로 잘라 Seed3 아래쪽에 납땜한다. 브레드보드 가운데 홈에 걸쳐 꽂는다. 핀 번호는 데이터시트 표 2(회로 설계 8절)다.
 
 - [ ] **Step 2: 오디오 잭 배선**
 
@@ -1236,12 +1237,14 @@ Switchcraft 12A 두 개를 잭 A(입력), 잭 B(출력)로 쓴다.
 
 모듈 출력의 DC 전위가 공개되지 않아 커플링 C를 둔다(회로 설계 5절 C3와 같은 역할). 1단계에는 패드가 없으므로 잭 A에 1Vrms(+2.2dBu)를 넘는 신호를 넣지 않는다(Global Constraints).
 
-- [ ] **Step 3: 업로드와 콘솔 확인**
+- [x] **Step 3: 업로드와 콘솔 확인**
 
 Seed3를 USB-C로 PC에 연결한다(1단계는 USB 전원만, VIN은 비운다). BOOT를 누른 채 RESET을 눌렀다 떼면 DFU 모드다.
 
 Run: `cd effector && make program-dfu`
 Expected: dfu-util이 `File downloaded successfully`를 찍고 Seed3가 재시작한다. `screen /dev/ttyACM0`로 붙으면 `effector stage 1 ready. type status`, `status` 입력 시 `gainDb=0.00 ... meter=0x00 ...` 형식 한 줄
+
+결과(2026-09-30, 1번 보드): 업로드 성공, `status`가 `gainDb=-0.00 peakDbfs=-92.63 meter=0x00 drive=0.0 ratio=4.00`. 준비 문구는 포트를 연 시점보다 먼저 나가 보이지 않는다. `tone 1000 -20`에 `input 0.5`, `ratio 1`로 `gainDb=-11.53 meter=0x3F`. 집에서는 WSL에서 빌드·업로드하고(usbipd로 DFU 장치를 넘긴다) 콘솔은 Windows COM 포트로 붙었다. 2번 보드는 DFU 열거만 확인했다
 
 - [ ] **Step 4: 첫 소리**
 
@@ -1251,7 +1254,7 @@ Expected: dfu-util이 `File downloaded successfully`를 찍고 Seed3가 재시�
 
 Expected: 녹음에 1kHz가 보이고, `status`의 `peakDbfs`가 사인 재생 중 올라간다. 소리가 없으면 Step 2 배선과 `dmesg`의 CDC 인식(장치는 뜨는데 소리만 없는지)을 먼저 확인한다
 
-- [ ] **Step 5: 콘솔 DFU 진입**
+- [x] **Step 5: 콘솔 DFU 진입**
 
 콘솔에서 `dfu`를 입력한다. 장치가 DFU로 다시 열거되면(`dfu-util -l`에 0483:df11) `make program-dfu`로 다시 올린다. 설계서 T14의 업로드 항목을 여기서 미리 확인한다.
 
