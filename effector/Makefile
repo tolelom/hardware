@@ -7,8 +7,8 @@ CPP_SOURCES = src/main.cpp $(wildcard lib/effector_core/src/*.cpp)
 C_INCLUDES = -Ilib/effector_core/src
 CPP_STANDARD = -std=gnu++17
 
-# newlib-nano는 기본으로 %f를 빼므로 status 출력과 명령 숫자 파싱에 필요하다
-LDFLAGS = -u _printf_float -u _scanf_float
+# newlib-nano는 기본으로 printf의 %f를 빼므로 status 출력에 필요하다. 명령 숫자는 strtof로 읽는다
+LDFLAGS = -u _printf_float
 
 LIBDAISY_DIR = lib/libDaisy
 SYSTEM_FILES_DIR = $(LIBDAISY_DIR)/core

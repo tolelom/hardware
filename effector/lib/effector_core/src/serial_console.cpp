@@ -2,11 +2,23 @@
 
 #include <algorithm>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 #include "parameter_mapping.h"
 
 namespace {
+bool isSpace(char character) {
+    return character == ' ' || character == '\t';
+}
+
+const char* skipSpaces(const char* text) {
+    while (isSpace(*text)) {
+        ++text;
+    }
+    return text;
+}
+
 constexpr float kMaximumInputDriveDb = 30.0f;  // T16 청음으로 조정
 constexpr float kMinimumSidechainHighPassHz = 0.0f;  // 0 = 끔
 constexpr float kMaximumSidechainHighPassFraction = 0.45f;  // 나이퀴스트보다 조금 아래
@@ -33,13 +45,33 @@ void SerialConsole::feed(const char* bytes, std::size_t count) {
 
 void SerialConsole::handleLine(const char* line) {
     using namespace parameter_mapping;
+    // sscanf 대신 strtof로 읽는다. newlib-nano에서 %f를 쓰려면 _scanf_float가 FLASH를 약 9KB 먹는다
     char command[16] = {0};
-    float first = 0.0f;
-    float second = 0.0f;
-    const int fields = std::sscanf(line, "%15s %f %f", command, &first, &second);
-    if (fields < 1) {
+    const char* cursor = skipSpaces(line);
+    std::size_t commandLength = 0;
+    while (cursor[commandLength] != '\0' && !isSpace(cursor[commandLength]) &&
+           commandLength < sizeof(command) - 1) {
+        command[commandLength] = cursor[commandLength];
+        ++commandLength;
+    }
+    if (commandLength == 0) {
         return;
     }
+    cursor += commandLength;
+    int fields = 1;
+    float numbers[2] = {0.0f, 0.0f};
+    for (float& number : numbers) {
+        char* end = nullptr;
+        const float value = std::strtof(cursor, &end);
+        if (end == cursor) {
+            break;
+        }
+        number = value;
+        cursor = end;
+        ++fields;
+    }
+    const float first = numbers[0];
+    const float second = numbers[1];
     if (std::strcmp(command, "input") == 0 && fields >= 2) {
         parameters_.inputDriveDb = inputDriveDbFromKnob(first, kMaximumInputDriveDb);
     } else if (std::strcmp(command, "ratio") == 0 && fields >= 2) {

@@ -77,6 +77,32 @@ TEST_CASE("Console handles a line that arrives in pieces") {
     CHECK_NEAR(fixture.host.applied.outputGainDb, 12.0f, 1e-4f);
 }
 
+TEST_CASE("Console treats a command without a number as unknown") {
+    Fixture fixture;
+    fixture.feed("input\n");
+    fixture.feed("input abc\n");
+    CHECK(fixture.host.applyCount == 0);
+    CHECK(fixture.host.writes.size() == 2);
+    CHECK(startsWith(fixture.host.writes[0], "commands:"));
+    CHECK(startsWith(fixture.host.writes[1], "commands:"));
+}
+
+TEST_CASE("Console accepts leading spaces, tabs and negative decimals") {
+    Fixture fixture;
+    fixture.feed("  trim\t-3\n");
+    CHECK_NEAR(fixture.host.applied.unityTrimDb, -3.0f, 1e-6f);
+    fixture.feed("threshold  -18.5\n");
+    CHECK_NEAR(fixture.host.applied.compressor.thresholdDbfs, -18.5f, 1e-6f);
+    CHECK(fixture.host.applyCount == 2);
+}
+
+TEST_CASE("Console ignores text after a number") {
+    Fixture fixture;
+    fixture.feed("tone 440x -20\n");
+    CHECK_NEAR(fixture.host.toneFrequencyHz, 440.0f, 1e-3f);
+    CHECK_NEAR(fixture.host.toneAmplitude, 0.0f, 1e-6f);
+}
+
 TEST_CASE("Console clamps the sidechain high pass below Nyquist") {
     Fixture fixture;
     fixture.feed("sidechain 40000\n");
