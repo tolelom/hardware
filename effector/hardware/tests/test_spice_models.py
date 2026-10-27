@@ -1,4 +1,5 @@
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -19,6 +20,15 @@ class GeneratedFreshTest(unittest.TestCase):
                 header = path.read_text(encoding="utf-8").splitlines()[2]
                 self.assertEqual(header, f"* BLOCKS {expected}",
                                  "BLOCKS가 바뀌었다. python3 effector/hardware/gen_spice.py로 다시 생성")
+
+    def test_generated_files_match_regeneration(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            fresh = {path.name: path.read_text(encoding="utf-8") for path in gen_spice.generate(Path(directory))}
+        committed = {path.name: path.read_text(encoding="utf-8") for path in gen_spice.GENERATED.glob("*.cir")}
+        self.assertEqual(sorted(committed), sorted(fresh))
+        for name, text in fresh.items():
+            with self.subTest(name=name):
+                self.assertEqual(committed[name], text, "생성물이 BLOCKS·gen_spice.py와 다르다. gen_spice.py로 다시 생성")
 
     def test_net_preservation(self) -> None:
         power = gen_spice.opamp_power(BLOCKS)
