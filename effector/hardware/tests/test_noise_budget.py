@@ -43,6 +43,18 @@ class IntegrateTest(unittest.TestCase):
         self.assertAlmostEqual(20 * math.log10(vrms / exact), 0.0, delta=0.1)
 
 
+class InputReferredTest(unittest.TestCase):
+    def test_uses_1khz_gain_not_frequency_dependent_inoise(self) -> None:
+        frequencies = log_grid(20, 24000, 50)
+        gain = [0.5 / (1 + (f / 3700) ** 2) for f in frequencies]
+        onoise = [10e-9] * len(frequencies)
+        inoise = [o / g for o, g in zip(onoise, gain)]
+        spectrum = nb.Spectrum(frequencies, {"onoise_spectrum": onoise, "inoise_spectrum": inoise})
+        gain_1k = nb.gain_at_1k(spectrum)
+        expected = nb.integrate(frequencies, onoise, nb.WEIGHTINGS["A"]) / gain_1k
+        self.assertAlmostEqual(nb.input_referred(spectrum, nb.WEIGHTINGS["A"]), expected, delta=expected * 1e-9)
+
+
 class ZoneTest(unittest.TestCase):
     def test_boundaries(self) -> None:
         self.assertEqual(nb.t7_zone(105.0), "통과")

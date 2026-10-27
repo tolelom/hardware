@@ -126,6 +126,12 @@ def gain_at_1k(spectrum: Spectrum) -> float:
     return spectrum.vectors["onoise_spectrum"][index] / spectrum.vectors["inoise_spectrum"][index]
 
 
+def input_referred(spectrum: Spectrum, weight: Weight) -> float:
+    """입력 잭 기준 잡음(Vrms). 풀스케일과 같은 1kHz 게인으로 나눈다. inoise_spectrum은 주파수별 게인으로 나눠
+    픽업 L·C처럼 고역 게인이 떨어지는 소스에서 고역 잡음을 부풀린다."""
+    return integrate(spectrum.frequencies, spectrum.vectors["onoise_spectrum"], weight) / gain_at_1k(spectrum)
+
+
 def contributions(spectrum: Spectrum, weight: Weight, count: int = 5) -> list[tuple[str, float]]:
     rows = []
     for name, values in spectrum.vectors.items():
@@ -153,7 +159,7 @@ def budget_rows() -> tuple[list[str], dict[str, list[tuple[str, float]]]]:
                 for codec_label, adc_db, dac_db in CODEC_ROWS:
                     levels = {}
                     for key, weight in WEIGHTINGS.items():
-                        analog_in = dbu(integrate(spectrum_in.frequencies, spectrum_in.vectors["inoise_spectrum"], weight))
+                        analog_in = dbu(input_referred(spectrum_in, weight))
                         analog_out = dbu(integrate(spectrum_out.frequencies, spectrum_out.vectors["onoise_spectrum"], weight))
                         scale_db = 20 * math.log10(a_to[key])
                         side_in = power_sum_db(analog_in, full_scale_in - adc_db + scale_db)
