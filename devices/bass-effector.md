@@ -2,6 +2,7 @@
 
 상세 설계: [bass-effector-design.md](bass-effector-design.md). 회로 값과 결선: [bass-effector-schematic.md](bass-effector-schematic.md)
 설계 검증 도구: [bass-effector-tools-design.md](bass-effector-tools-design.md)
+멀티 이펙터 하드웨어 플랫폼(방향 전환, 2026-10-28): [bass-multi-platform-design.md](bass-multi-platform-design.md)
 최종 갱신: 2026-09-18
 
 ## 무엇을 만드나
