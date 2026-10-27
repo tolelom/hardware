@@ -32,7 +32,23 @@ class GeometryTest(unittest.TestCase):
         v = values_of(c, {}, [])
         self.assertEqual(en.to_case(c, en.Placement("a", "p", "top", 10, -20), v), (10, -20, 56))
         self.assertEqual(en.to_case(c, en.Placement("a", "p", "in", 30, 5), v), (47.5, 30, 33))
-        self.assertEqual(en.to_case(c, en.Placement("a", "p", "back", -15, 0), v), (-15, 60, 28))
+        self.assertEqual(en.to_case(c, en.Placement("a", "p", "back", -15, 0), v), (15, 60, 28))
+        self.assertEqual(en.to_case(c, en.Placement("a", "p", "out", 30, 5), v), (-47.5, -30, 33))
+
+    def test_face_x_is_viewer_right_from_outside(self) -> None:
+        # 면 밖에서 면을 바라볼 때 오른쪽 방향(위 = +Z). 바깥 법선 n과 위 u에서 오른쪽 = u x n
+        c = case()
+        v = values_of(c, {}, [])
+        normals = {"top": (0, 0, 1), "in": (1, 0, 0), "out": (-1, 0, 0), "back": (0, 1, 0)}
+        for face, normal in normals.items():
+            with self.subTest(face=face):
+                origin = en.to_case(c, en.Placement("o", "p", face, 0, 0), v)
+                moved = en.to_case(c, en.Placement("o", "p", face, 1, 0), v)
+                step = tuple(m - o for m, o in zip(moved, origin))
+                up = (0, 1, 0) if face == "top" else (0, 0, 1)
+                right = (up[1] * normal[2] - up[2] * normal[1], up[2] * normal[0] - up[0] * normal[2],
+                         up[0] * normal[1] - up[1] * normal[0])
+                self.assertEqual(step, right)
 
     def test_body_box_goes_inward(self) -> None:
         c = case()

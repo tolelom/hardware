@@ -1,8 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="520" height="276" viewBox="-20 -20 520 304" font-family="sans-serif" font-size="10">
 <rect x="0" y="0" width="480.0" height="224.0" fill="none" stroke="black"/>
 <text x="240.0" y="112.0" font-size="28" fill="#c00" opacity="0.3" text-anchor="middle">초안</text>
-<circle cx="300.0" cy="92.0" r="19.0" fill="none" stroke="blue"/>
-<line x1="296.0" y1="92.0" x2="304.0" y2="92.0" stroke="blue"/><line x1="300.0" y1="88.0" x2="300.0" y2="96.0" stroke="blue"/>
-<text x="306.0" y="86.0">OUT</text>
-<text x="0" y="240.0">OUT: x +15.0, y +5.0, 지름 9.5</text>
+<text x="0" y="-6">출력면(-X). 바깥에서 본 면, 중심 기준 mm</text>
+<circle cx="180.0" cy="92.0" r="19.0" fill="none" stroke="blue"/>
+<line x1="176.0" y1="92.0" x2="184.0" y2="92.0" stroke="blue"/><line x1="180.0" y1="88.0" x2="180.0" y2="96.0" stroke="blue"/>
+<text x="186.0" y="86.0">OUT</text>
+<text x="0" y="240.0">OUT: x -15.0, y +5.0, 지름 9.5</text>
 </svg>

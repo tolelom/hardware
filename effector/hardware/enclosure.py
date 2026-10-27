@@ -13,6 +13,8 @@ from pathlib import Path
 
 KNOB_GAP_MM = 6.1
 FACES = ("top", "in", "out", "back")
+# 면 좌표 x는 그 면을 바깥에서 볼 때 오른쪽, y는 위(윗면은 DC 잭 쪽 끝)다. 도면은 보는 그대로 그린다
+FACE_TITLES = {"top": "윗면", "in": "입력면(+X)", "out": "출력면(-X)", "back": "뒷면(+Y, DC 잭 쪽)"}
 
 
 @dataclass(frozen=True)
@@ -113,9 +115,9 @@ def to_case(case: Case, p: Placement, values: dict[str, float]) -> tuple[float, 
     if p.face == "in":
         return (width / 2, p.x, p.y + height / 2)
     if p.face == "out":
-        return (-width / 2, p.x, p.y + height / 2)
+        return (-width / 2, -p.x, p.y + height / 2)
     if p.face == "back":
-        return (p.x, length / 2, p.y + height / 2)
+        return (-p.x, length / 2, p.y + height / 2)
     raise ValueError(f"면 이름: {p.face}")
 
 
@@ -195,8 +197,8 @@ PLACEMENTS = [
     *[Placement(f"미터 {i + 1}", "led", "top", -14 + i * 4, -12) for i in range(8)],
     Placement("온 LED", "led", "top", 25, -12),
     Placement("풋스위치", "footswitch", "top", 0, -35),
-    Placement("IN", "jack", "in", 15, 5), Placement("OUT", "jack", "out", 15, 5),
-    Placement("DC", "dc", "back", -15, 5), Placement("USB", "usb", "back", 15, 5),
+    Placement("IN", "jack", "in", 15, 5), Placement("OUT", "jack", "out", -15, 5),
+    Placement("DC", "dc", "back", 15, 5), Placement("USB", "usb", "back", -15, 5),
 ]
 
 
@@ -229,6 +231,7 @@ def face_svg(case: Case, face: str, placements: list[Placement], values: dict[st
     if draft:
         parts.append(f'<text x="{w / 2:.1f}" y="{h / 2:.1f}" font-size="28" fill="#c00" opacity="0.3" '
                      f'text-anchor="middle">초안</text>')
+    parts.append(f'<text x="0" y="-6">{FACE_TITLES[face]}. 바깥에서 본 면, 중심 기준 mm</text>')
     rows = []
     for p in (p for p in placements if p.face == face):
         cx, cy = w / 2 + p.x * SCALE, h / 2 - p.y * SCALE
