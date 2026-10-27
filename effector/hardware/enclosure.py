@@ -5,6 +5,7 @@
 """
 from __future__ import annotations
 
+import argparse
 import itertools
 import math
 from dataclasses import dataclass
@@ -64,6 +65,7 @@ class Finding:
     check: str
     ok: bool
     detail: str
+    margin: float | None = None
 
 
 CASE_FIELDS = {"width": "케이스 폭", "length": "케이스 길이", "height": "케이스 높이",
@@ -148,18 +150,20 @@ def check(case: Case, parts: dict[str, PartSpec], placements: list[Placement], i
         distance = math.hypot(a.x - b.x, a.y - b.y)
         gap = distance - (values[f"{a.part}.outside_d"] + values[f"{b.part}.outside_d"]) / 2
         need = KNOB_GAP_MM if a.part == b.part == "knob" else 0.0
-        findings.append(Finding("패널 바깥 간섭", gap >= need - 1e-9, f"{a.label}-{b.label} 여유 {gap:.1f}mm (기준 {need:g})"))
+        findings.append(Finding("패널 바깥 간섭", gap >= need - 1e-9, f"{a.label}-{b.label} 여유 {gap:.1f}mm (기준 {need:g})",
+                                gap - need))
     for p in placements:
         width, height = face_size(case, p.face, values)
         radius = values[f"{p.part}.outside_d"] / 2
         room = min(width / 2 - margin - abs(p.x), height / 2 - margin - abs(p.y)) - radius
-        findings.append(Finding("가장자리 여유", room >= -1e-9, f"{p.label} 여유 {room:.1f}mm"))
+        findings.append(Finding("가장자리 여유", room >= -1e-9, f"{p.label} 여유 {room:.1f}mm", room))
     boxes = [body_box(case, p, parts[p.part], values) for p in placements] + list(internal)
     for a, b in itertools.combinations(boxes, 2):
         findings.append(Finding("패널 안쪽 간섭", not _overlap(a, b), f"{a.label}-{b.label}"))
     floor = values["case.wall"]
     for box in boxes:
-        findings.append(Finding("높이 스택", box.z0 >= floor - 1e-9, f"{box.label} 바닥 위 {box.z0 - floor:.1f}mm"))
+        findings.append(Finding("높이 스택", box.z0 >= floor - 1e-9, f"{box.label} 바닥 위 {box.z0 - floor:.1f}mm",
+                                box.z0 - floor))
     return findings
 
 
@@ -194,4 +198,119 @@ PLACEMENTS = [
     Placement("IN", "jack", "in", 25, 5), Placement("OUT", "jack", "out", 25, 5),
     Placement("DC", "dc", "back", -15, 5), Placement("USB", "usb", "back", 15, 5),
 ]
-INTERNAL: list[Box] = []
+
+
+SCALE = 4.0  # SVG px/mm
+INTERNAL_SPECS = {"seed3": ("Seed3 소켓 스택", _d(None, UNMEASURED), _d(51, "설계서 5.3절, Seed3 길이"),
+                            _d(20, "설계서 5.3절, 스택 약 20mm"))}
+INTERNAL_POSITION = {"seed3": (-25.0, -25.0)}
+
+
+def internal_boxes(values: dict[str, float]) -> list[Box]:
+    boxes = []
+    for key, (label, width, length, height) in INTERNAL_SPECS.items():
+        w = width.value if width.value is not None else values.get(f"{key}.width", DRAFT_DEFAULTS["body_w"])
+        x, y = INTERNAL_POSITION[key]
+        floor = values["case.wall"]
+        boxes.append(Box(label, x - w / 2, x + w / 2, y - length.value / 2, y + length.value / 2, floor, floor + height.value))
+    return boxes
+
+
+def internal_missing() -> list[str]:
+    return [f"{label} 폭" for label, width, _, _ in INTERNAL_SPECS.values() if width.value is None]
+
+
+def face_svg(case: Case, face: str, placements: list[Placement], values: dict[str, float], draft: bool) -> str:
+    width, height = face_size(case, face, values)
+    w, h = width * SCALE, height * SCALE
+    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{w + 40:.0f}" height="{h + 80:.0f}" '
+             f'viewBox="-20 -20 {w + 40:.0f} {h + 80:.0f}" font-family="sans-serif" font-size="10">',
+             f'<rect x="0" y="0" width="{w:.1f}" height="{h:.1f}" fill="none" stroke="black"/>']
+    if draft:
+        parts.append(f'<text x="{w / 2:.1f}" y="{h / 2:.1f}" font-size="28" fill="#c00" opacity="0.3" '
+                     f'text-anchor="middle">초안</text>')
+    rows = []
+    for p in (p for p in placements if p.face == face):
+        cx, cy = w / 2 + p.x * SCALE, h / 2 - p.y * SCALE
+        hole = values[f"{p.part}.hole_d"]
+        parts.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{hole / 2 * SCALE:.1f}" fill="none" stroke="blue"/>')
+        parts.append(f'<line x1="{cx - 4:.1f}" y1="{cy:.1f}" x2="{cx + 4:.1f}" y2="{cy:.1f}" stroke="blue"/>'
+                     f'<line x1="{cx:.1f}" y1="{cy - 4:.1f}" x2="{cx:.1f}" y2="{cy + 4:.1f}" stroke="blue"/>')
+        parts.append(f'<text x="{cx + 6:.1f}" y="{cy - 6:.1f}">{p.label}</text>')
+        rows.append(f"{p.label}: x {p.x:+.1f}, y {p.y:+.1f}, 지름 {hole:g}")
+    for i, row in enumerate(rows):
+        parts.append(f'<text x="0" y="{h + 16 + i * 12:.1f}">{row}</text>')
+    parts.append("</svg>")
+    svg = "\n".join(parts) + "\n"
+    return svg.replace(f'height="{h + 80:.0f}"', f'height="{h + 40 + 12 * len(rows):.0f}"', 1)
+
+
+def board_svg(case: Case, boxes: list[Box], values: dict[str, float], board_top: float, draft: bool) -> str:
+    wall = values["case.wall"]
+    width, length = values["case.width"] - 2 * wall, values["case.length"] - 2 * wall
+    w, h = width * SCALE, length * SCALE
+    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{w + 40:.0f}" height="{h + 40:.0f}" '
+             f'viewBox="-20 -20 {w + 40:.0f} {h + 40:.0f}" font-family="sans-serif" font-size="10">',
+             f'<rect x="0" y="0" width="{w:.1f}" height="{h:.1f}" fill="#efe" stroke="black"/>']
+    if draft:
+        parts.append(f'<text x="{w / 2:.1f}" y="{h / 2:.1f}" font-size="28" fill="#c00" opacity="0.3" '
+                     f'text-anchor="middle">초안</text>')
+    for box in boxes:
+        if box.z0 < board_top:
+            x = (box.x0 + width / 2) * SCALE
+            y = (length / 2 - box.y1) * SCALE
+            parts.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{(box.x1 - box.x0) * SCALE:.1f}" '
+                         f'height="{(box.y1 - box.y0) * SCALE:.1f}" fill="#fcc" stroke="#c00"/>'
+                         f'<text x="{x + 2:.1f}" y="{y + 10:.1f}">{box.label}</text>')
+    parts.append("</svg>")
+    return "\n".join(parts) + "\n"
+
+
+def report(findings: list[Finding], missing: list[str], draft: bool) -> str:
+    lines = ["# 기구 검사 보고", "", "초안. 미측정 값을 자리표시 값으로 채웠다." if draft else "최종.", ""]
+    failed = [f for f in findings if not f.ok]
+    lines += [f"실패 {len(failed)}건, 통과 {len(findings) - len(failed)}건. 통과는 검사별로 여유가 가장 작은 것만 적는다",
+              "", "| 검사 | 결과 | 내용 |", "|---|---|---|"]
+    tightest: dict[str, Finding] = {}
+    for finding in (f for f in findings if f.ok):
+        current = tightest.get(finding.check)
+        if current is None or (finding.margin is not None and (current.margin is None or finding.margin < current.margin)):
+            tightest[finding.check] = finding
+    for finding in failed + list(tightest.values()):
+        lines.append(f"| {finding.check} | {'통과' if finding.ok else '실패'} | {finding.detail} |")
+    if missing:
+        lines += ["", "## 미측정", ""] + [f"- {name}" for name in missing]
+    return "\n".join(lines) + "\n"
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser()
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--draft", action="store_true")
+    mode.add_argument("--final", action="store_true")
+    parser.add_argument("--out", default=str(Path(__file__).resolve().parent / "enclosure"))
+    args = parser.parse_args(argv)
+    values, missing = resolve(CASE, PARTS, [], draft=args.draft)
+    missing += internal_missing()
+    if args.final and missing:
+        print("미측정 값이 있어 최종 도면을 내지 않는다:")
+        for name in missing:
+            print(f"- {name}")
+        return 2
+    internal = internal_boxes(values)
+    findings = check(CASE, PARTS, PLACEMENTS, internal, values)
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+    for face in FACES:
+        (out / f"{face}.svg").write_text(face_svg(CASE, face, PLACEMENTS, values, args.draft), encoding="utf-8")
+    boxes = [body_box(CASE, p, PARTS[p.part], values) for p in PLACEMENTS] + internal
+    board_top = values["case.wall"] + INTERNAL_SPECS["seed3"][3].value
+    (out / "board.svg").write_text(board_svg(CASE, boxes, values, board_top, args.draft), encoding="utf-8")
+    (out / "report.md").write_text(report(findings, missing, args.draft), encoding="utf-8")
+    failed = sum(1 for f in findings if not f.ok)
+    print(f"{out}: 검사 실패 {failed}건, 미측정 {len(missing)}건")
+    return 1 if failed else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

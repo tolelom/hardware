@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="276" viewBox="-20 -20 520 304" font-family="sans-serif" font-size="10">
+<rect x="0" y="0" width="480.0" height="224.0" fill="none" stroke="black"/>
+<text x="240.0" y="112.0" font-size="28" fill="#c00" opacity="0.3" text-anchor="middle">초안</text>
+<circle cx="340.0" cy="92.0" r="19.0" fill="none" stroke="blue"/>
+<line x1="336.0" y1="92.0" x2="344.0" y2="92.0" stroke="blue"/><line x1="340.0" y1="88.0" x2="340.0" y2="96.0" stroke="blue"/>
+<text x="346.0" y="86.0">IN</text>
+<text x="0" y="240.0">IN: x +25.0, y +5.0, 지름 9.5</text>
+</svg>

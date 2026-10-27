@@ -1,4 +1,7 @@
+import contextlib
+import io
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -94,9 +97,50 @@ class ResolveTest(unittest.TestCase):
         self.assertEqual(values["case.wall"], en.DRAFT_DEFAULTS["case.wall"])
 
     def test_project_data_resolves_in_draft(self) -> None:
-        values, missing = en.resolve(en.CASE, en.PARTS, en.INTERNAL, draft=True)
+        values, missing = en.resolve(en.CASE, en.PARTS, [], draft=True)
         self.assertTrue(missing)
-        en.check(en.CASE, en.PARTS, en.PLACEMENTS, en.INTERNAL, values)
+        en.check(en.CASE, en.PARTS, en.PLACEMENTS, en.internal_boxes(values), values)
+
+
+class OutputTest(unittest.TestCase):
+    def test_svg_contains_holes_and_draft_mark(self) -> None:
+        values, _ = en.resolve(en.CASE, en.PARTS, [], draft=True)
+        svg = en.face_svg(en.CASE, "top", en.PLACEMENTS, values, draft=True)
+        self.assertTrue(svg.startswith("<svg"))
+        self.assertIn("초안", svg)
+        self.assertEqual(svg.count("<circle"), sum(1 for p in en.PLACEMENTS if p.face == "top"))
+        self.assertIn("Input", svg)
+
+    def test_final_refuses_with_unmeasured(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                code = en.main(["--final", "--out", directory])
+            self.assertEqual(code, 2)
+            self.assertIn("미측정", out.getvalue())
+            self.assertEqual(list(Path(directory).glob("*.svg")), [])
+
+    def test_draft_writes_outputs(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            with contextlib.redirect_stdout(io.StringIO()):
+                en.main(["--draft", "--out", directory])
+            names = sorted(p.name for p in Path(directory).iterdir())
+        self.assertEqual(names, ["back.svg", "board.svg", "in.svg", "out.svg", "report.md", "top.svg"])
+
+    def test_report_keeps_only_smallest_margin_per_passing_check(self) -> None:
+        findings = [en.Finding("가장자리 여유", True, "a 여유 9.0mm", 9.0),
+                    en.Finding("가장자리 여유", True, "b 여유 2.0mm", 2.0),
+                    en.Finding("패널 안쪽 간섭", True, "c-d", None)]
+        text = en.report(findings, [], draft=False)
+        self.assertIn("b 여유 2.0mm", text)
+        self.assertNotIn("a 여유 9.0mm", text)
+        self.assertIn("c-d", text)
+
+    def test_report_lists_failures_first(self) -> None:
+        findings = [en.Finding("가장자리 여유", True, "a"), en.Finding("패널 바깥 간섭", False, "b-c")]
+        text = en.report(findings, ["케이스 벽 두께"], draft=True)
+        self.assertLess(text.index("b-c"), text.index("가장자리 여유"))
+        self.assertIn("케이스 벽 두께", text)
 
 
 if __name__ == "__main__":

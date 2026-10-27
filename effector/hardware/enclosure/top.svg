@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="700" viewBox="-20 -20 420 560" font-family="sans-serif" font-size="10">
+<rect x="0" y="0" width="380.0" height="480.0" fill="none" stroke="black"/>
+<text x="190.0" y="240.0" font-size="28" fill="#c00" opacity="0.3" text-anchor="middle">초안</text>
+<circle cx="90.0" cy="100.0" r="15.0" fill="none" stroke="blue"/>
+<line x1="86.0" y1="100.0" x2="94.0" y2="100.0" stroke="blue"/><line x1="90.0" y1="96.0" x2="90.0" y2="104.0" stroke="blue"/>
+<text x="96.0" y="94.0">Input</text>
+<circle cx="190.0" cy="100.0" r="15.0" fill="none" stroke="blue"/>
+<line x1="186.0" y1="100.0" x2="194.0" y2="100.0" stroke="blue"/><line x1="190.0" y1="96.0" x2="190.0" y2="104.0" stroke="blue"/>
+<text x="196.0" y="94.0">Ratio</text>
+<circle cx="290.0" cy="100.0" r="15.0" fill="none" stroke="blue"/>
+<line x1="286.0" y1="100.0" x2="294.0" y2="100.0" stroke="blue"/><line x1="290.0" y1="96.0" x2="290.0" y2="104.0" stroke="blue"/>
+<text x="296.0" y="94.0">Att/Rel</text>
+<circle cx="90.0" cy="200.0" r="15.0" fill="none" stroke="blue"/>
+<line x1="86.0" y1="200.0" x2="94.0" y2="200.0" stroke="blue"/><line x1="90.0" y1="196.0" x2="90.0" y2="204.0" stroke="blue"/>
+<text x="96.0" y="194.0">Blend</text>
+<circle cx="190.0" cy="200.0" r="15.0" fill="none" stroke="blue"/>
+<line x1="186.0" y1="200.0" x2="194.0" y2="200.0" stroke="blue"/><line x1="190.0" y1="196.0" x2="190.0" y2="204.0" stroke="blue"/>
+<text x="196.0" y="194.0">Output</text>
+<circle cx="242.0" cy="200.0" r="6.0" fill="none" stroke="blue"/>
+<line x1="238.0" y1="200.0" x2="246.0" y2="200.0" stroke="blue"/><line x1="242.0" y1="196.0" x2="242.0" y2="204.0" stroke="blue"/>
+<text x="248.0" y="194.0">미터 1</text>
+<circle cx="258.0" cy="200.0" r="6.0" fill="none" stroke="blue"/>
+<line x1="254.0" y1="200.0" x2="262.0" y2="200.0" stroke="blue"/><line x1="258.0" y1="196.0" x2="258.0" y2="204.0" stroke="blue"/>
+<text x="264.0" y="194.0">미터 2</text>
+<circle cx="274.0" cy="200.0" r="6.0" fill="none" stroke="blue"/>
+<line x1="270.0" y1="200.0" x2="278.0" y2="200.0" stroke="blue"/><line x1="274.0" y1="196.0" x2="274.0" y2="204.0" stroke="blue"/>
+<text x="280.0" y="194.0">미터 3</text>
+<circle cx="290.0" cy="200.0" r="6.0" fill="none" stroke="blue"/>
+<line x1="286.0" y1="200.0" x2="294.0" y2="200.0" stroke="blue"/><line x1="290.0" y1="196.0" x2="290.0" y2="204.0" stroke="blue"/>
+<text x="296.0" y="194.0">미터 4</text>
+<circle cx="306.0" cy="200.0" r="6.0" fill="none" stroke="blue"/>
+<line x1="302.0" y1="200.0" x2="310.0" y2="200.0" stroke="blue"/><line x1="306.0" y1="196.0" x2="306.0" y2="204.0" stroke="blue"/>
+<text x="312.0" y="194.0">미터 5</text>
+<circle cx="322.0" cy="200.0" r="6.0" fill="none" stroke="blue"/>
+<line x1="318.0" y1="200.0" x2="326.0" y2="200.0" stroke="blue"/><line x1="322.0" y1="196.0" x2="322.0" y2="204.0" stroke="blue"/>
+<text x="328.0" y="194.0">미터 6</text>
+<circle cx="338.0" cy="200.0" r="6.0" fill="none" stroke="blue"/>
+<line x1="334.0" y1="200.0" x2="342.0" y2="200.0" stroke="blue"/><line x1="338.0" y1="196.0" x2="338.0" y2="204.0" stroke="blue"/>
+<text x="344.0" y="194.0">미터 7</text>
+<circle cx="354.0" cy="200.0" r="6.0" fill="none" stroke="blue"/>
+<line x1="350.0" y1="200.0" x2="358.0" y2="200.0" stroke="blue"/><line x1="354.0" y1="196.0" x2="354.0" y2="204.0" stroke="blue"/>
+<text x="360.0" y="194.0">미터 8</text>
+<circle cx="290.0" cy="280.0" r="6.0" fill="none" stroke="blue"/>
+<line x1="286.0" y1="280.0" x2="294.0" y2="280.0" stroke="blue"/><line x1="290.0" y1="276.0" x2="290.0" y2="284.0" stroke="blue"/>
+<text x="296.0" y="274.0">온 LED</text>
+<circle cx="190.0" cy="380.0" r="24.0" fill="none" stroke="blue"/>
+<line x1="186.0" y1="380.0" x2="194.0" y2="380.0" stroke="blue"/><line x1="190.0" y1="376.0" x2="190.0" y2="384.0" stroke="blue"/>
+<text x="196.0" y="374.0">풋스위치</text>
+<text x="0" y="496.0">Input: x -25.0, y +35.0, 지름 7.5</text>
+<text x="0" y="508.0">Ratio: x +0.0, y +35.0, 지름 7.5</text>
+<text x="0" y="520.0">Att/Rel: x +25.0, y +35.0, 지름 7.5</text>
+<text x="0" y="532.0">Blend: x -25.0, y +10.0, 지름 7.5</text>
+<text x="0" y="544.0">Output: x +0.0, y +10.0, 지름 7.5</text>
+<text x="0" y="556.0">미터 1: x +13.0, y +10.0, 지름 3</text>
+<text x="0" y="568.0">미터 2: x +17.0, y +10.0, 지름 3</text>
+<text x="0" y="580.0">미터 3: x +21.0, y +10.0, 지름 3</text>
+<text x="0" y="592.0">미터 4: x +25.0, y +10.0, 지름 3</text>
+<text x="0" y="604.0">미터 5: x +29.0, y +10.0, 지름 3</text>
+<text x="0" y="616.0">미터 6: x +33.0, y +10.0, 지름 3</text>
+<text x="0" y="628.0">미터 7: x +37.0, y +10.0, 지름 3</text>
+<text x="0" y="640.0">미터 8: x +41.0, y +10.0, 지름 3</text>
+<text x="0" y="652.0">온 LED: x +25.0, y -10.0, 지름 3</text>
+<text x="0" y="664.0">풋스위치: x +0.0, y -35.0, 지름 12</text>
+</svg>

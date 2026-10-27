@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="396" height="496" viewBox="-20 -20 396 496" font-family="sans-serif" font-size="10">
+<rect x="0" y="0" width="356.0" height="456.0" fill="#efe" stroke="black"/>
+<text x="178.0" y="228.0" font-size="28" fill="#c00" opacity="0.3" text-anchor="middle">초안</text>
+<rect x="46.0" y="226.0" width="64.0" height="204.0" fill="#fcc" stroke="#c00"/><text x="48.0" y="236.0">Seed3 소켓 스택</text>
+</svg>
