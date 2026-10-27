@@ -1,6 +1,7 @@
 # 베이스 이펙터 계획
 
 상세 설계: [bass-effector-design.md](bass-effector-design.md). 회로 값과 결선: [bass-effector-schematic.md](bass-effector-schematic.md)
+설계 검증 도구: [bass-effector-tools-design.md](bass-effector-tools-design.md)
 최종 갱신: 2026-09-18
 
 ## 무엇을 만드나
