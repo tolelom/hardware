@@ -161,8 +161,10 @@ class Block:
 # 넷 이름 규칙: SEED_<핀 이름>_<역할>은 Daisy Seed3 핀. J4 핀 번호가 Seed3 물리 핀 번호(데이터시트 표 2)다.
 BLOCKS = [
     Block("A. 전원 입력과 보호 (설계서 3.5절)", [
-        Part("J3", "Connector", "Barrel_Jack", "DC 9V 센터 마이너스", {"1": "GND", "2": "VIN_RAW"},
+        Part("J3", "Connector", "Barrel_Jack", "DC 9V 센터 마이너스", {"1": "GND", "2": "VIN_JACK"},
              note="핀 1 센터 = GND, 핀 2 슬리브 = +9V"),
+        Part("FB1", "Device", "FerriteBead", "600R@100MHz", {"1": "VIN_JACK", "2": "VIN_RAW"},
+             note="어댑터 선으로 들어오는 고주파와 페달 안 스위칭 잡음(LT1054, 화면)이 밖으로 나가는 것을 막는다. Seed3 Pedal Dev Kit 전원 입력과 같은 구성"),
         Part("Q1", "Transistor_FET", "IRF9540N", "IRF9540N", {"1": "VG", "2": "VIN_RAW", "3": "VS"},
              note="역극성 보호. 드레인이 잭 쪽"),
         Part("Q2", "Transistor_FET", "IRF9540N", "IRF9540N", {"1": "VG", "2": "V9", "3": "VS"},
@@ -207,6 +209,8 @@ BLOCKS = [
         Part("R1", "Device", "R", "2.2M", {"1": "IN_A", "2": "GND"}, note="R_pd. K1 NO 접점 쪽"),
         Part("R2", "Device", "R", "10k", {"1": "IN_A", "2": "IN_B"}, note="입력 클램프 전류 제한"),
         Part("C1", "Device", "C", "100n 필름", {"1": "IN_B", "2": "IN_C"}, note="입력 커플링. R3와 0.9Hz"),
+        Part("C24", "Device", "C", "100p C0G 50V", {"1": "IN_C", "2": "GND"},
+             note="RF 필터. R2 10k와 159kHz. 버퍼 입력 핀 가까이. Seed3 Pedal Dev Kit의 100Ω/100pF와 같은 목적"),
         Part("R3", "Device", "R", "1.8M", {"1": "IN_C", "2": "VBIAS"}, note="R_bias. R1과 병렬 약 1M"),
         Part("U1", "Amplifier_Operational", "TL072", "OPA2992", {"3": "IN_C", "2": "BUF_OUT", "1": "BUF_OUT"},
              unit=1, note="A: 유니티 버퍼"),

@@ -46,6 +46,17 @@ class BenchTest(unittest.TestCase):
             with self.subTest(capacitor=name):
                 self.assertGreater(r[name], 8.0)
 
+    def test_input_rf_filter(self) -> None:
+        text = "\n".join([
+            "* 입력 RF 필터: 버퍼 출력의 잭 대비 응답", ".include opamp_rr.inc", ".include generated/vbias.cir",
+            ".include generated/block_D.cir", "Vrail vrail 0 16.9", "Vin in_a 0 DC 0 AC 1", "Rcodec seed_audio_in1 0 5k",
+            ".ac dec 50 10 10meg", ".control", "run",
+            "meas ac g20k FIND vdb(buf_out) AT=20k", "meas ac g1meg FIND vdb(buf_out) AT=1meg", ".endc", ".end"]) + "\n"
+        r = ngspice_run.run_text(text, expect=["g20k", "g1meg"])
+        # T3 예산(20Hz~20kHz ±1dB) 안에서 RF 필터 몫은 0.2dB 이하. 20kHz 전체 응답은 C23 몫 -0.5dB가 따로 있다(회로 설계 12절)
+        self.assertGreater(r["g20k"], -0.2)
+        self.assertLess(r["g1meg"], -15.0)
+
     @unittest.skipUnless((SPICE / "vendor" / "opa2992.lib").exists(), "TI 모델 없음(spice/README.md)")
     def test_cable_ti(self) -> None:
         r = ngspice_run.run(SPICE / "cable_ti.cir", ["step_final", "step_max", "step47n_final", "step47n_max"])

@@ -41,7 +41,7 @@ def _tolerances() -> dict[str, float]:
             if (p.lib, p.name) == ("Device", "R"):
                 table[p.ref] = 0.05 if p.ref == "R32" else 0.01
             elif (p.lib, p.name) == ("Device", "C"):
-                table[p.ref] = 0.05 if p.ref == "C23" else FILM_OR_CERAMIC
+                table[p.ref] = 0.05 if p.ref in ("C23", "C24") else FILM_OR_CERAMIC
             elif (p.lib, p.name) == ("Device", "C_Polarized"):
                 table[p.ref] = 0.20
     return table

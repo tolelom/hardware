@@ -27,6 +27,7 @@ SUFFIXES = {"": 1.0, "R": 1.0, "k": 1e3, "K": 1e3, "M": 1e6, "m": 1e-3, "u": 1e-
 RELAY_COIL_OHM = 579.0
 CONTACT_CLOSED_OHM = 0.05
 CONTACT_OPEN_OHM = 1e12
+FERRITE_DC_OHM = 0.05
 GENERATED = Path(__file__).resolve().parent / "spice" / "generated"
 SUBSETS = {"vbias": ["R11", "R12", "C6"]}
 
@@ -73,6 +74,8 @@ def part_lines(part: Part, power: dict[str, tuple[str, str]], scale: float = 1.0
     ref = part.ref
     if kind in (("Device", "R"), ("Device", "C"), ("Device", "C_Polarized")):
         return [f"{ref} {nets['1']} {nets['2']} {fmt(parse_value(part.value) * scale)}"]
+    if kind == ("Device", "FerriteBead"):
+        return [f"R{ref} {nets['1']} {nets['2']} {fmt(FERRITE_DC_OHM)}"]
     if part.lib == "Device" and part.name in ("D", "D_Schottky", "D_Zener", "LED"):
         model = "DLEDR" if part.name == "LED" else DIODE_MODELS.get(part.value.split()[0])
         if model is None:

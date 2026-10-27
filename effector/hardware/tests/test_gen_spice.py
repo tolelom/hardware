@@ -91,6 +91,10 @@ class PartLinesTest(unittest.TestCase):
             "RRV1_B seed_a0_input 0 {max(1, 10000 * pos_rv1)}",
         ])
 
+    def test_ferrite_bead_is_dc_resistance(self) -> None:
+        fb = part("FB1", "Device", "FerriteBead", "600R@100MHz", {"1": "VIN_JACK", "2": "VIN_RAW"})
+        self.assertEqual(self.lines(fb), ["RFB1 vin_jack vin_raw 0.05"])
+
     def test_skipped_symbols(self) -> None:
         for lib, name in gen_spice.SKIPPED:
             with self.subTest(name=name):

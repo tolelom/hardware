@@ -1,6 +1,6 @@
 * 자동 생성: gen_spice.py. 손으로 고치지 않는다.
 * E. 출력단 (설계서 4.2절)
-* BLOCKS 427003d48a4a1ecf
+* BLOCKS 0df6b7d85cd821a3
 C3 seed_audio_out1 out_in 1e-06
 R6 out_in vbias 100000
 XU1B out_in fb u1b_out vrail 0 opamp_model

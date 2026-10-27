@@ -1,6 +1,6 @@
 * 자동 생성: gen_spice.py. 손으로 고치지 않는다.
 * G. 컨트롤: 노브, 풋스위치, LED (설계서 3.2절, 3.3절, 4.3절)
-* BLOCKS 427003d48a4a1ecf
+* BLOCKS 0df6b7d85cd821a3
 RRV1_A seed_3v3a seed_a0_input {max(1, 10000 * (1 - pos_rv1))}
 RRV1_B seed_a0_input 0 {max(1, 10000 * pos_rv1)}
 RRV2_A seed_3v3a seed_a1_ratio {max(1, 10000 * (1 - pos_rv2))}

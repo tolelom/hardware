@@ -127,6 +127,8 @@ F(K1 바이패스)를 메인 기판으로 옮긴다. 값은 BLOCKS 그대로 시
 | MIDI IN | TRS 타입 A, 6N137급 광커플러 → UART RX | MIDI 규격의 절연 입력 |
 | EXP | TRS, 링에 3.3V 기준, 팁 와이퍼 → ADC, 꽂힘 감지 | 익스프레션 페달 |
 | 스테레오 출력 | 출력단 한 채널 풋프린트, Seed3 Audio Out 2 배선 | 부품은 얹지 않는다 |
+| microSD | 4비트 SDMMC (Seed3 D1~D6) | 캐비닛 IR, 프리셋 백업, 샘플. Seed3 Pedal Dev Kit과 같은 핀 |
+| MIDI OUT | TRS 타입 A, UART TX(D13) | 다른 장비의 프리셋·템포 제어. THRU는 넣지 않는다 |
 
 ### 5.3 핀 배정 (초안)
 
@@ -135,15 +137,21 @@ F(K1 바이패스)를 메인 기판으로 옮긴다. 값은 BLOCKS 그대로 시
 | 화면 SPI (SCK, MOSI, CS, DC, RST, 백라이트) | 6 | SPI1(D7~D10) 포함, 나머지 GPIO |
 | I2C (MCP23017) | 2 | D11, D12 |
 | MCP23017 인터럽트 | 2 | GPIO |
-| 풋스위치 3 | 3 | GPIO |
+| 풋스위치 3 | 3 | GPIO (D1~D6 제외) |
 | 풋스위치 LED 3 | 3 | GPIO |
 | K1 구동 | 1 | D0 (계승) |
 | MIDI IN UART RX | 1 | D14 |
+| MIDI OUT UART TX | 1 | D13 |
+| microSD (CLK, CMD, D0~D3) | 6 | D1~D6 (SDMMC1) |
 | EXP | 1 | ADC |
 | 전원 감시 | 1 | A5 (계승) |
 
-합계 20핀. Seed3 GPIO는 D0~D30 31개이고 그중 A0~A11 12개가 ADC를 겸한다(libDaisy `daisy_seed.h`). D29·D30은
+합계 27핀. Seed3 GPIO는 D0~D30 31개이고 그중 A0~A11 12개가 ADC를 겸한다(libDaisy `daisy_seed.h`). D29·D30은
 외부 USB 핀이라 USB 호스트 자리로 비워 둔다. 핀 번호 확정은 생성기 `check()`의 중복 검사를 통과한 BLOCKS가 기준이다.
+
+Seed3 Pedal Dev Kit(Electro-Smith, Rev4 2026-09-15 공개, 회로도·BOM 공개)은 9V 단일 전원에 입력단 감쇠 -4.6dB, 출력 ×2.2라
+잭 기준 최대 입출력이 약 +9dBu다(부품값으로 계산). 보유 베이스 슬랩 피크(+10dBu)를 받지 못하므로 입출력단은 계승 회로를
+쓴다. 같은 보드에서 입력 RF 필터와 전원 입력 페라이트 비드를 가져왔다(회로 설계 1절·4절의 FB1, C24).
 
 ### 5.4 전류 예산
 
