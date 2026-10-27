@@ -127,7 +127,8 @@ def generate(out: Path = GENERATED, scales: dict[str, float] | None = None) -> l
                  [by_ref[r] for r in refs]) for name, refs in SUBSETS.items()]
     for filename, title, parts in targets:
         path = out / filename
-        io.open(path, "w", encoding="utf-8", newline="\n").write(emit(title, parts, scales))
+        with io.open(path, "w", encoding="utf-8", newline="\n") as stream:
+            stream.write(emit(title, parts, scales))
         written.append(path)
     return written
 
