@@ -1,0 +1,103 @@
+import sys
+import unittest
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+import enclosure as en  # noqa: E402
+
+M = en.Dimension
+
+
+def case() -> en.Case:
+    return en.Case(M(95, "t"), M(120, "t"), M(56, "t"), M(3, "t"), M(5, "t"))
+
+
+def spec(name: str, outside: float, body: float = 10, depth: float = 10) -> en.PartSpec:
+    return en.PartSpec(name, M(7, "t"), M(outside, "t"), M(body, "t"), M(body, "t"), M(depth, "t"))
+
+
+def values_of(c: en.Case, parts: dict[str, en.PartSpec], internal: list) -> dict[str, float]:
+    values, missing = en.resolve(c, parts, internal, draft=False)
+    assert not missing, missing
+    return values
+
+
+class GeometryTest(unittest.TestCase):
+    def test_face_transform(self) -> None:
+        c = case()
+        v = values_of(c, {}, [])
+        self.assertEqual(en.to_case(c, en.Placement("a", "p", "top", 10, -20), v), (10, -20, 56))
+        self.assertEqual(en.to_case(c, en.Placement("a", "p", "in", 30, 5), v), (47.5, 30, 33))
+        self.assertEqual(en.to_case(c, en.Placement("a", "p", "back", -15, 0), v), (-15, 60, 28))
+
+    def test_body_box_goes_inward(self) -> None:
+        c = case()
+        parts = {"p": spec("p", 10, body=16, depth=12)}
+        v = values_of(c, parts, [])
+        box = en.body_box(c, en.Placement("k", "p", "top", 0, 0), parts["p"], v)
+        self.assertEqual((box.x0, box.x1, box.z0, box.z1), (-8, 8, 56 - 3 - 12, 56 - 3))
+        side = en.body_box(c, en.Placement("j", "p", "in", 0, 0), parts["p"], v)
+        self.assertEqual((side.x0, side.x1), (47.5 - 3 - 12, 47.5 - 3))
+
+
+class CheckTest(unittest.TestCase):
+    def run_check(self, placements: list[en.Placement], parts: dict[str, en.PartSpec], internal=()) -> list[en.Finding]:
+        c = case()
+        return en.check(c, parts, placements, list(internal), values_of(c, parts, list(internal)))
+
+    def failures(self, findings: list[en.Finding]) -> list[str]:
+        return [f.check for f in findings if not f.ok]
+
+    def test_outside_overlap(self) -> None:
+        parts = {"knob": spec("knob", 18.9)}
+        close = [en.Placement("a", "knob", "top", 0, 0), en.Placement("b", "knob", "top", 20, 0)]
+        far = [en.Placement("a", "knob", "top", 0, 0), en.Placement("b", "knob", "top", 25, 0)]
+        self.assertIn("패널 바깥 간섭", self.failures(self.run_check(close, parts)))
+        self.assertNotIn("패널 바깥 간섭", self.failures(self.run_check(far, parts)))
+
+    def test_knob_gap_rule(self) -> None:
+        parts = {"knob": spec("knob", 18.9)}
+        tight = [en.Placement("a", "knob", "top", 0, 0), en.Placement("b", "knob", "top", 24.9, 0)]
+        self.assertIn("패널 바깥 간섭", self.failures(self.run_check(tight, parts)))
+
+    def test_edge_margin_and_out_of_face(self) -> None:
+        parts = {"led": spec("led", 3)}
+        inside = [en.Placement("a", "led", "top", 47.5 - 5 - 1.5, 0)]
+        outside = [en.Placement("a", "led", "top", 47.5 - 5 - 1.4, 0)]
+        negative = [en.Placement("a", "led", "top", -60, 0)]
+        self.assertNotIn("가장자리 여유", self.failures(self.run_check(inside, parts)))
+        self.assertIn("가장자리 여유", self.failures(self.run_check(outside, parts)))
+        self.assertIn("가장자리 여유", self.failures(self.run_check(negative, parts)))
+
+    def test_inside_collision_across_faces(self) -> None:
+        parts = {"pot": spec("pot", 10, body=16, depth=30), "jack": spec("jack", 10, body=16, depth=30)}
+        placements = [en.Placement("pot", "pot", "top", 35, 0), en.Placement("jack", "jack", "in", 0, 15)]
+        self.assertIn("패널 안쪽 간섭", self.failures(self.run_check(placements, parts)))
+
+    def test_floor_stack(self) -> None:
+        parts = {"pot": spec("pot", 10, body=16, depth=40)}
+        stack = [en.Box("seed3", -10, 10, -10, 10, 3, 3 + 20)]
+        self.assertIn("패널 안쪽 간섭", self.failures(
+            self.run_check([en.Placement("pot", "pot", "top", 0, 0)], parts, stack)))
+        too_deep = {"pot": spec("pot", 10, body=16, depth=60)}
+        self.assertIn("높이 스택", self.failures(self.run_check([en.Placement("pot", "pot", "top", 30, 30)], too_deep)))
+
+
+class ResolveTest(unittest.TestCase):
+    def test_unmeasured_blocks_final(self) -> None:
+        c = en.Case(M(95, "t"), M(120, "t"), M(56, "t"), M(None, "미측정"), M(5, "t"))
+        values, missing = en.resolve(c, {}, [], draft=False)
+        self.assertEqual(missing, ["케이스 벽 두께"])
+        values, missing = en.resolve(c, {}, [], draft=True)
+        self.assertEqual(missing, ["케이스 벽 두께"])
+        self.assertEqual(values["case.wall"], en.DRAFT_DEFAULTS["case.wall"])
+
+    def test_project_data_resolves_in_draft(self) -> None:
+        values, missing = en.resolve(en.CASE, en.PARTS, en.INTERNAL, draft=True)
+        self.assertTrue(missing)
+        en.check(en.CASE, en.PARTS, en.PLACEMENTS, en.INTERNAL, values)
+
+
+if __name__ == "__main__":
+    unittest.main()
