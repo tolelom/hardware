@@ -1,24 +1,22 @@
-* 블록 B: LT1054 동작 모델 더블러. 25kHz 스위치(온저항 25옴)가 CAP+를 0/9V로 흔든다. 부하 2.8k(약 6mA)
+* 블록 B: LT1054 동작 모델 더블러의 레일 평균, 리플, 기동, 극성 C 전위. V9 9V, 레일 부하 2.8k(약 6mA)
+* Vbias(R11·R12 10k, C6 100u)는 시정수 0.5s라 3초(6τ)까지 돌려 마지막 구간에서 평균·리플을 본다
+.include models.inc
+.include lt1054_behavioral.inc
+.include generated/block_B.cir
 V9 v9 0 9
-Vosc osc 0 PULSE(0 1 0 100n 100n 20u 40u)
-Boscn oscn 0 V = 1 - V(osc)
-S1 v9 cap osc 0 SWM
-S2 cap 0 oscn 0 SWM
-.model SWM SW (RON=25 ROFF=1e9 VT=0.5 VH=0.1)
-.model DS D (IS=1e-8 N=1.05 RS=0.05)
-C8 pumpx cap 10u
-D1 v9 pumpx DS
-D2 pumpx vrr DS
-C9 vrr 0 100u
-R16 vrr vrail 10
-C10 vrail 0 100u
 Rload vrail 0 2800
-.tran 0.5u 300m
+.tran 0.5u 3
 .control
 run
-meas tran rail_avg AVG v(vrail) from=250m to=300m
-meas tran rail_pp PP v(vrail) from=290m to=300m
-meas tran raw_pp PP v(vrr) from=290m to=300m
+meas tran rail_avg AVG v(vrail) from=2.9 to=3
+meas tran rail_pp PP v(vrail) from=2.99 to=3
+meas tran raw_pp PP v(vrail_raw) from=2.99 to=3
 meas tran t_90 WHEN v(vrail)=15.2 RISE=1
+let c8 = v(pumpx) - v(pump)
+meas tran c8_avg AVG c8 from=2.9 to=3
+meas tran c9_avg AVG v(vrail_raw) from=2.9 to=3
+meas tran vbias_avg AVG v(vbias) from=2.9 to=3
+let vbias_ratio = vbias_avg / rail_avg
+print vbias_ratio
 .endc
 .end

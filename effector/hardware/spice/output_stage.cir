@@ -1,31 +1,21 @@
-* 블록 E: 출력단 헤드룸. 모듈 출력 1Vrms(공통모드 1.65V)를 +15.1dB로. 레일을 16.9V와 16.1V로 바꿔 클립 확인
+* 블록 E: 출력단 헤드룸. 모듈 출력 1Vrms(공통모드 1.65V)를 +15.1dB로. 레일 16.9V와 16.1V에서 클립 확인
 .include opamp_rr.inc
+.include generated/vbias.cir
+.include generated/block_E.cir
 Vrail vrail 0 16.9
-R11 vrail vbias 10k
-R12 vbias 0 10k
-C6 vbias 0 100u
-Vseed seed 0 SIN(1.65 1.4142 1k)
-C3 seed outin 1u
-R6 outin vbias 100k
-X1 outin fb u1b vrail 0 opamp_rr
-R7 u1b fb 47k
-R8 fb fbc 10k
-C4 fbc 0 10u
-R9 u1b outr 100
-C5 outr outc 10u
-R10 outc 0 100k
-Rjack outc 0 10k
-.ic v(vbias)=8.45 v(fbc)=8.45 v(outr)=8.45 v(outin)=8.45
+Vseed seed_audio_out1 0 SIN(1.65 1.4142 1k)
+Rjack out_c 0 10k
+.ic v(vbias)=8.45 v(fb_c)=8.45 v(out_r)=8.45 v(out_in)=8.45
 .tran 5u 400m
 .control
 run
-meas tran out_pp PP v(outc) from=380m to=400m
-meas tran out_max MAX v(u1b) from=380m to=400m
-meas tran out_min MIN v(u1b) from=380m to=400m
+meas tran out_pp PP v(out_c) from=380m to=400m
+meas tran out_max MAX v(u1b_out) from=380m to=400m
+meas tran out_min MIN v(u1b_out) from=380m to=400m
 alter Vrail 16.1
 run
-meas tran out_pp_161 PP v(outc) from=380m to=400m
-meas tran out_max_161 MAX v(u1b) from=380m to=400m
-meas tran out_min_161 MIN v(u1b) from=380m to=400m
+meas tran out_pp_161 PP v(out_c) from=380m to=400m
+meas tran out_max_161 MAX v(u1b_out) from=380m to=400m
+meas tran out_min_161 MIN v(u1b_out) from=380m to=400m
 .endc
 .end

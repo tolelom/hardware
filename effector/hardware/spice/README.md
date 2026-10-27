@@ -2,10 +2,15 @@
 
 회로 설계 문서 12절의 근거 파일이다. `ngspice -b <파일>`로 돌리면 `meas` 결과가 표준 출력에 나온다.
 
+부품 값은 테스트벤치에 적지 않는다. `python3 effector/hardware/gen_spice.py`가 `gen_schematic.py`의 BLOCKS에서
+`generated/block_<문자>.cir`와 `generated/vbias.cir`(R11·R12·C6)를 만들고 테스트벤치가 include한다. BLOCKS를 고치면
+다시 생성한다. 판정 범위는 `effector/hardware/tests/test_benches.py`에 있다. 모델 카드는 `models.inc`,
+op-amp는 `opamp_rr.inc`(동작 모델)·`opamp_rr_noise.inc`(잡음 모델)·`opamp_ti.inc`(TI 모델) 중 하나를 include한다.
+
 | 파일 | 무엇을 보나 | 모델의 한계 |
 |---|---|---|
 | `protection.cir` | 블록 A 백투백 보호. 입력 -18~+18V DC 스윕에서 V9, VS, VG | IRF9540N은 LEVEL 1 PMOS(VTO -3.7V, Rds 0.117Ω 상당)와 바디 다이오드, 제너는 BV 12V 이상 모델 |
-| `doubler.cir` | 블록 B 더블러의 레일 평균, 리플, 기동 시간 | LT1054는 25kHz 스위치(온저항 25Ω) 동작 모델. 손실은 6mA에서 약 0.3V가 되게 잡았다 |
+| `doubler.cir` | 블록 B 더블러의 레일 평균, 리플, 기동 시간, C8·C9 극성. Vbias 시정수(0.5s) 때문에 3초까지 돌린다 | LT1054는 25kHz 스위치(온저항 25Ω) 동작 모델. 손실은 6mA에서 약 0.3V가 되게 잡았다 |
 | `output_stage.cir` | 블록 E 출력단이 모듈 1Vrms를 받을 때 레일 16.9V와 16.1V에서의 스윙 | op-amp는 `opamp_rr.inc`(개루프 1e4, 1kHz 극점, 레일 안쪽 0.25V 제한) |
 | `boot.cir` | 전원 투입 뒤 OUT_C(K1 NO 접점 쪽) 잔류 전압이 -60dBu에 닿는 시각 | 레일이 20ms, 모듈 출력 DC가 100ms에 서는 것으로 가정 |
 | `dc_polarity.cir` | 극성 커패시터 C2, C4, C5, C6 양단 DC 전위 | 레일 16.6V, 모듈 출력 DC 1.65V |

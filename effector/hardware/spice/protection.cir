@@ -1,23 +1,16 @@
-* 블록 A: 백투백 P-MOSFET 보호. 입력 -18~+18V DC 스윕. 부하 40옴(9V에서 225mA)
-.model PMOSQ PMOS (LEVEL=1 VTO=-3.7 KP=1.36 LAMBDA=0.001)
-.model DBODY D (IS=1e-12 N=1.2 RS=0.02)
-.model DZ12 D (IS=1e-12 BV=12 IBV=1m N=1)
-.model Q2N3906 PNP (IS=1e-14 BF=200 VAF=50)
-Vin vin 0 DC 9
-M1 vin vg vs vs PMOSQ W=1u L=1u
-Db1 vin vs DBODY
-M2 v9 vg vs vs PMOSQ W=1u L=1u
-Db2 v9 vs DBODY
-R13 vg 0 100k
-Q3 vg ovb vs Q2N3906
-R14 vs ovb 10k
-R15 ovb zk 4.7k
-D3 0 zk DZ12
+* 블록 A: 백투백 P-MOSFET 보호. VIN_RAW -18~+18V DC 스윕. 부하 40옴(9V에서 225mA)
+.include models.inc
+.include generated/block_A.cir
+Vin vin_raw 0 DC 9
 Rload v9 0 40
-.dc Vin -18 18 0.5
+.dc Vin -18 18 0.1
 .control
 run
-set width=120
-print v(vin) v(v9) v(vs) v(vg)
+meas dc v9_rev18 FIND v(v9) AT=-18
+meas dc v9_at9 FIND v(v9) AT=9
+meas dc v9_at12 FIND v(v9) AT=12
+meas dc v9_at12p5 FIND v(v9) AT=12.5
+meas dc v9_at13 FIND v(v9) AT=13
+meas dc v9_at15 FIND v(v9) AT=15
 .endc
 .end

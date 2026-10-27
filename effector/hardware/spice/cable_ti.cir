@@ -1,32 +1,23 @@
 * 출력단(TI OPA2992 모델) 계단 응답. R9 100옴 뒤 케이블 용량 0 / 1nF / 4.7nF, 앰프 입력 10k. vendor/opa2992.lib 필요(README)
-.include vendor/opa2992.lib
+.include opamp_ti.inc
+.include generated/vbias.cir
+.include generated/block_E.cir
 Vrail vrail 0 16.6
-Vbias vbias 0 8.3
-Vseed seed 0 PULSE(1.55 1.75 400m 1u 1u 2m 4m)
-C3 seed outin 1u
-R6 outin vbias 100k
-X1 outin fb vrail 0 u1b OPA2992
-R7 u1b fb 47k
-R8 fb fbc 10k
-C4 fbc 0 10u
-R9 u1b outr 100
-C5 outr outc 10u
-R10 outc 0 100k
-Rjack outc 0 10k
-Ccable outc 0 1p
-
+Vseed seed_audio_out1 0 PULSE(1.55 1.75 400m 1u 1u 2m 4m)
+Rjack out_c 0 10k
+Ccable out_c 0 1p
 .tran 1u 403m 399m
 .control
 run
-meas tran step_final FIND v(outc) AT=402.9m
-meas tran step_max MAX v(outc) from=400m to=400.5m
+meas tran step_final FIND v(out_c) AT=402.9m
+meas tran step_max MAX v(out_c) from=400m to=400.5m
 alter Ccable 1n
 run
-meas tran step1n_final FIND v(outc) AT=402.9m
-meas tran step1n_max MAX v(outc) from=400m to=400.5m
+meas tran step1n_final FIND v(out_c) AT=402.9m
+meas tran step1n_max MAX v(out_c) from=400m to=400.5m
 alter Ccable 4.7n
 run
-meas tran step47n_final FIND v(outc) AT=402.9m
-meas tran step47n_max MAX v(outc) from=400m to=400.5m
+meas tran step47n_final FIND v(out_c) AT=402.9m
+meas tran step47n_max MAX v(out_c) from=400m to=400.5m
 .endc
 .end

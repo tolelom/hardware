@@ -725,7 +725,8 @@ meas tran rail_avg AVG v(vrail) from=250m to=300m
 meas tran rail_pp PP v(vrail) from=290m to=300m
 meas tran raw_pp PP v(vrail_raw) from=290m to=300m
 meas tran t_90 WHEN v(vrail)=15.2 RISE=1
-meas tran c8_avg AVG v(pumpx,pump) from=250m to=300m
+let c8 = v(pumpx) - v(pump)
+meas tran c8_avg AVG c8 from=250m to=300m
 meas tran c9_avg AVG v(vrail_raw) from=250m to=300m
 meas tran vbias_avg AVG v(vbias) from=250m to=300m
 let vbias_ratio = vbias_avg / rail_avg
