@@ -11,11 +11,25 @@ from pathlib import Path
 
 SPICE_DIR = Path(__file__).resolve().parent / "spice"
 RESULT = re.compile(r"^\s*([A-Za-z_][\w().,+\-*/]*)\s+=\s+([-+]?(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:[eE][-+]?[0-9]+)?)")
-ERROR = re.compile(r"^\s*(?:error|.*\bfailed\b)", re.IGNORECASE | re.MULTILINE)
+ERROR_PATTERNS = [re.compile(pattern, re.IGNORECASE) for pattern in (
+    r"^\s*error\b", r"timestep too small", r"simulation\(s\) aborted", r"^\s*warning from checkvalid",
+    r"\bfailed!\s*$")]
+IGNORED_PREFIXES = ("circuit:", "warning:")
 
 
 class NgspiceError(Exception):
     pass
+
+
+def error_lines(output: str) -> list[str]:
+    """에러로 볼 줄. 회로 제목 줄과 복구되는 경고(gmin stepping failed 등)는 뺀다."""
+    found = []
+    for line in output.splitlines():
+        if line.strip().lower().startswith(IGNORED_PREFIXES):
+            continue
+        if any(pattern.search(line) for pattern in ERROR_PATTERNS):
+            found.append(line)
+    return found
 
 
 def available() -> bool:
@@ -29,7 +43,7 @@ def run(netlist: Path, expect: list[str] = ()) -> dict[str, float]:
     completed = subprocess.run(["ngspice", "-b", netlist.name], cwd=netlist.parent,
                                capture_output=True, text=True, timeout=1800)
     output = completed.stdout + completed.stderr
-    if completed.returncode != 0 or ERROR.search(output):
+    if completed.returncode != 0 or error_lines(output):
         raise NgspiceError(f"{netlist.name}: ngspice 에러\n{output[-3000:]}")
     results = {}
     for line in output.splitlines():

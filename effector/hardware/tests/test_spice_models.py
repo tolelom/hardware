@@ -50,6 +50,20 @@ class GeneratedFreshTest(unittest.TestCase):
                 self.assertEqual(emitted, expected)
 
 
+class ErrorLinesTest(unittest.TestCase):
+    def test_flags_errors_and_aborts(self) -> None:
+        for line in ("Error on line 3 : X1 a b nosuch", "Error: measure  pad_db  find(AT) : out of interval",
+                     "doAnalyses: TRAN:  Timestep too small; time = 1e-9", "tran simulation(s) aborted",
+                     "Warning from checkvalid: vector v(nosuch) is not available or has zero length.",
+                     "meas tran t_90 failed!"):
+            with self.subTest(line=line):
+                self.assertEqual(ngspice_run.error_lines(line + "\n"), [line])
+
+    def test_ignores_titles_and_recovered_warnings(self) -> None:
+        output = "Circuit: * failed bench title\nWarning: gmin stepping failed\nNote: source stepping succeeded\n"
+        self.assertEqual(ngspice_run.error_lines(output), [])
+
+
 @ngspice_run.requires_ngspice
 class NgspiceTest(unittest.TestCase):
     def test_vbias_divider(self) -> None:
