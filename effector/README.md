@@ -15,12 +15,32 @@
 | `tools/offline_render.cpp`, `wav_file`, `render_pipeline` | DI 녹음을 코어에 통과시키는 오프라인 청음 도구 |
 | `hardware/` | KiCad 회로도와 생성기, 넷리스트 |
 | `hardware/spice/` | ngspice 시뮬레이션. 결과는 회로 설계 문서 12절 |
+| `hardware/gen_spice.py`, `hardware/ngspice_run.py` | BLOCKS에서 SPICE 넷리스트 생성(`hardware/spice/generated/`), ngspice 실행과 결과 읽기 |
+| `hardware/spice/noise_budget.py`, `hardware/spice/monte_carlo.py` | 잡음 예산, 공차 몬테카를로 |
+| `hardware/enclosure.py`, `hardware/enclosure/` | 케이스 기구 기준과 간섭 검사, 타공 도면·기판 영역 SVG |
+| `hardware/tests/` | 설계 검증 도구 테스트 |
 
 ## 회로도
 
 `hardware/`에 KiCad 회로도(`bass-compressor.kicad_sch`, KiCad 8 형식)와 그것을 만드는 `gen_schematic.py`,
 자동 생성 넷리스트 `netlist.md`가 있다. 값의 근거는 [../devices/bass-effector-schematic.md](../devices/bass-effector-schematic.md).
 회로도를 손으로 고치지 않고 생성기의 PARTS 표를 고쳐 다시 만든다(실행법과 ERC 명령은 그 문서 10절).
+
+## 설계 검증 도구
+
+설계는 [../devices/bass-effector-tools-design.md](../devices/bass-effector-tools-design.md). ngspice가 필요하다(`brew install ngspice`).
+저장소 루트에서 실행한다.
+
+    python3 effector/hardware/gen_spice.py
+    python3 -m unittest discover -s effector/hardware/tests -t effector/hardware
+    python3 effector/hardware/spice/noise_budget.py
+    python3 effector/hardware/spice/monte_carlo.py --count 200 --seed 1
+    python3 effector/hardware/spice/monte_carlo.py --count 200 --seed 1 --conservative
+    python3 effector/hardware/enclosure.py --draft
+
+- BLOCKS를 고치면 `gen_spice.py`를 다시 돌린다. 생성물 해시가 다르면 테스트가 실패한다.
+- 몬테카를로 200벌은 수 분 걸린다. `--conservative`는 LT1054 동작 모델 손실을 보수 값으로 고정한다.
+- `enclosure.py --final`은 미측정 값이 하나라도 있으면 도면을 내지 않고 종료 코드 2로 끝난다.
 
 ## 네이티브 테스트
 

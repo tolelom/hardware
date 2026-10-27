@@ -192,10 +192,10 @@ PLACEMENTS = [
     Placement("Input", "knob", "top", -25, 35), Placement("Ratio", "knob", "top", 0, 35),
     Placement("Att/Rel", "knob", "top", 25, 35), Placement("Blend", "knob", "top", -25, 10),
     Placement("Output", "knob", "top", 0, 10),
-    *[Placement(f"미터 {i + 1}", "led", "top", 13 + i * 4, 10) for i in range(8)],
-    Placement("온 LED", "led", "top", 25, -10),
+    *[Placement(f"미터 {i + 1}", "led", "top", -14 + i * 4, -12) for i in range(8)],
+    Placement("온 LED", "led", "top", 25, -12),
     Placement("풋스위치", "footswitch", "top", 0, -35),
-    Placement("IN", "jack", "in", 25, 5), Placement("OUT", "jack", "out", 25, 5),
+    Placement("IN", "jack", "in", 15, 5), Placement("OUT", "jack", "out", 15, 5),
     Placement("DC", "dc", "back", -15, 5), Placement("USB", "usb", "back", 15, 5),
 ]
 
