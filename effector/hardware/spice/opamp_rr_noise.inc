@@ -1,6 +1,7 @@
 * opamp_rr.inc의 동작에 입력 잡음원을 더한 opamp_model. en: 입력 전압 잡음(V/rtHz), in: 입력 전류 잡음(A/rtHz)
 * OPA2992 데이터시트 1kHz 7nV/rtHz, 10kHz 4.4nV/rtHz, 60fA/rtHz. 잡음원은 동작점과 분리된 1k 저항의 열잡음
-.subckt opamp_model inp inn out vcc vee params: en=7n in=60f
+.param en_value=7n
+.subckt opamp_model inp inn out vcc vee params: en={en_value} in=60f
 .param inoise_1k = {sqrt(4 * 1.380649e-23 * 300.15 / 1000)}
 Rvn nv 0 1k
 Vvn nv 0 0
