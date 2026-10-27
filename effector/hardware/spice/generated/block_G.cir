@@ -1,0 +1,38 @@
+* 자동 생성: gen_spice.py. 손으로 고치지 않는다.
+* G. 컨트롤: 노브, 풋스위치, LED (설계서 3.2절, 3.3절, 4.3절)
+* BLOCKS 427003d48a4a1ecf
+RRV1_A seed_3v3a seed_a0_input {max(1, 10000 * (1 - pos_rv1))}
+RRV1_B seed_a0_input 0 {max(1, 10000 * pos_rv1)}
+RRV2_A seed_3v3a seed_a1_ratio {max(1, 10000 * (1 - pos_rv2))}
+RRV2_B seed_a1_ratio 0 {max(1, 10000 * pos_rv2)}
+RRV3_A seed_3v3a seed_a2_attrel {max(1, 10000 * (1 - pos_rv3))}
+RRV3_B seed_a2_attrel 0 {max(1, 10000 * pos_rv3)}
+RRV4_A seed_3v3a seed_a3_blend {max(1, 10000 * (1 - pos_rv4))}
+RRV4_B seed_a3_blend 0 {max(1, 10000 * pos_rv4)}
+RRV5_A seed_3v3a seed_a4_output {max(1, 10000 * (1 - pos_rv5))}
+RRV5_B seed_a4_output 0 {max(1, 10000 * pos_rv5)}
+C18 seed_a0_input 0 1e-07
+C19 seed_a1_ratio 0 1e-07
+C20 seed_a2_attrel 0 1e-07
+C21 seed_a3_blend 0 1e-07
+C22 seed_a4_output 0 1e-07
+R22 seed_3v3d seed_d1_fsw 10000
+C15 seed_d1_fsw 0 1e-07
+R23 seed_d2_meter1 led1_a 470
+D5 led1_a 0 DLEDR
+R24 seed_d3_meter2 led2_a 470
+D6 led2_a 0 DLEDR
+R25 seed_d4_meter3 led3_a 470
+D7 led3_a 0 DLEDR
+R26 seed_d5_meter4 led4_a 470
+D8 led4_a 0 DLEDR
+R27 seed_d6_meter5 led5_a 470
+D9 led5_a 0 DLEDR
+R28 seed_d7_meter6 led6_a 470
+D10 led6_a 0 DLEDR
+R29 seed_d8_meter7 led7_a 470
+D11 led7_a 0 DLEDR
+R30 seed_d9_meter8 led8_a 470
+D12 led8_a 0 DLEDR
+R31 seed_d10_ledon led9_a 470
+D13 led9_a 0 DLEDR

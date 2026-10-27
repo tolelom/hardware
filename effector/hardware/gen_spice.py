@@ -7,9 +7,12 @@ spice/generated/에 block_<문자>.cir와 부분 묶음(SUBSETS)을 쓴다. 생�
 """
 from __future__ import annotations
 
+import hashlib
+import io
 import re
+from pathlib import Path
 
-from gen_schematic import Block, Part
+from gen_schematic import BLOCKS, Block, Part
 
 SKIPPED = {
     ("Connector", "Barrel_Jack"),
@@ -24,6 +27,8 @@ SUFFIXES = {"": 1.0, "R": 1.0, "k": 1e3, "K": 1e3, "M": 1e6, "m": 1e-3, "u": 1e-
 RELAY_COIL_OHM = 579.0
 CONTACT_CLOSED_OHM = 0.05
 CONTACT_OPEN_OHM = 1e12
+GENERATED = Path(__file__).resolve().parent / "spice" / "generated"
+SUBSETS = {"vbias": ["R11", "R12", "C6"]}
 
 
 class SpiceError(Exception):
@@ -98,3 +103,39 @@ def part_lines(part: Part, power: dict[str, tuple[str, str]], scale: float = 1.0
         return [f"R{ref}_A {nets['1']} {nets['2']} {{max(1, {total} * (1 - {position}))}}",
                 f"R{ref}_B {nets['2']} {nets['3']} {{max(1, {total} * {position})}}"]
     raise SpiceError(f"SPICE 매핑 없음: {ref} {part.lib}:{part.name}")
+
+
+def blocks_hash() -> str:
+    return hashlib.sha256(repr(BLOCKS).encode("utf-8")).hexdigest()[:16]
+
+
+def emit(title: str, parts: list[Part], scales: dict[str, float] | None = None) -> str:
+    power = opamp_power(BLOCKS)
+    scales = scales or {}
+    lines = ["* 자동 생성: gen_spice.py. 손으로 고치지 않는다.", f"* {title}", f"* BLOCKS {blocks_hash()}"]
+    for part in parts:
+        lines += part_lines(part, power, scales.get(part.ref, 1.0))
+    return "\n".join(lines) + "\n"
+
+
+def generate(out: Path = GENERATED, scales: dict[str, float] | None = None) -> list[Path]:
+    out.mkdir(parents=True, exist_ok=True)
+    written = []
+    by_ref = {p.ref: p for b in BLOCKS for p in b.parts if p.unit == 1}
+    targets = [(f"block_{b.title[0]}.cir", b.title, b.parts) for b in BLOCKS]
+    targets += [(f"{name}.cir", f"부분 묶음 {name}: {', '.join(refs)}. block_B와 같이 include하지 않는다",
+                 [by_ref[r] for r in refs]) for name, refs in SUBSETS.items()]
+    for filename, title, parts in targets:
+        path = out / filename
+        io.open(path, "w", encoding="utf-8", newline="\n").write(emit(title, parts, scales))
+        written.append(path)
+    return written
+
+
+def main() -> None:
+    for path in generate():
+        print(path)
+
+
+if __name__ == "__main__":
+    main()

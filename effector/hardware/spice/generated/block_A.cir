@@ -1,0 +1,12 @@
+* 자동 생성: gen_spice.py. 손으로 고치지 않는다.
+* A. 전원 입력과 보호 (설계서 3.5절)
+* BLOCKS 427003d48a4a1ecf
+XQ1 vin_raw vg vs IRF9540N
+XQ2 v9 vg vs IRF9540N
+R13 vg 0 100000
+Q3 vg ov_b vs Q2N3906
+R14 vs ov_b 10000
+R15 ov_b zk 4700
+D3 0 zk DZ12
+D14 vg vs DZ15
+C7 v9 0 0.001

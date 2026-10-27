@@ -1,0 +1,12 @@
+* 자동 생성: gen_spice.py. 손으로 고치지 않는다.
+* D. 입력 네트워크와 버퍼, 패드 (설계서 4.1절)
+* BLOCKS 427003d48a4a1ecf
+R1 in_a 0 2.2e+06
+R2 in_a in_b 10000
+C1 in_b in_c 1e-07
+R3 in_c vbias 1.8e+06
+XU1A in_c buf_out buf_out vrail 0 opamp_model
+C2 buf_out pad_in 4.7e-05
+R4 pad_in seed_audio_in1 3300
+R5 seed_audio_in1 0 820
+C23 seed_audio_in1 0 4.7e-09
