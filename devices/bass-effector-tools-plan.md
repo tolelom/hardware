@@ -76,7 +76,7 @@ class ParseValueTest(unittest.TestCase):
                 self.assertAlmostEqual(gen_spice.parse_value(text), expected, delta=expected * 1e-12)
 
     def test_unparsable(self) -> None:
-        for text in ("abc", "", "4k7", "10 ohm"):
+        for text in ("abc", "", "4k7", "ohm 10"):
             with self.subTest(text=text):
                 with self.assertRaises(gen_spice.SpiceError):
                     gen_spice.parse_value(text)
