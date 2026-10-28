@@ -17,7 +17,15 @@ from gen_schematic import BLOCKS, Block, Part
 SKIPPED = {
     ("Connector", "Barrel_Jack"),
     ("Connector_Audio", "AudioJack2"),
+    ("Connector_Audio", "AudioJack3"),
     ("Connector_Generic", "Conn_01x40"),
+    ("Connector_Generic", "Conn_01x16"),
+    ("Connector_Generic", "Conn_02x10_Odd_Even"),
+    ("Connector", "Micro_SD_Card"),
+    ("Device", "RotaryEncoder_Switch"),
+    ("Interface_Expansion", "MCP23017_SO"),
+    ("Isolator", "H11L1"),
+    ("Regulator_Switching", "TPS562200"),
     ("Switch", "SW_Push"),
     ("power", "PWR_FLAG"),
 }
@@ -74,6 +82,8 @@ def part_lines(part: Part, power: dict[str, tuple[str, str]], scale: float = 1.0
     ref = part.ref
     if kind in (("Device", "R"), ("Device", "C"), ("Device", "C_Polarized")):
         return [f"{ref} {nets['1']} {nets['2']} {fmt(parse_value(part.value) * scale)}"]
+    if kind == ("Device", "L"):
+        return [f"L{ref} {nets['1']} {nets['2']} {fmt(parse_value(part.value) * scale)}"]
     if kind == ("Device", "FerriteBead"):
         return [f"R{ref} {nets['1']} {nets['2']} {fmt(FERRITE_DC_OHM)}"]
     if part.lib == "Device" and part.name in ("D", "D_Schottky", "D_Zener", "LED"):
@@ -108,30 +118,43 @@ def part_lines(part: Part, power: dict[str, tuple[str, str]], scale: float = 1.0
     raise SpiceError(f"SPICE 매핑 없음: {ref} {part.lib}:{part.name}")
 
 
-def blocks_hash() -> str:
-    return hashlib.sha256(repr(BLOCKS).encode("utf-8")).hexdigest()[:16]
+def blocks_hash(blocks: list[Block] | None = None) -> str:
+    return hashlib.sha256(repr(BLOCKS if blocks is None else blocks).encode("utf-8")).hexdigest()[:16]
 
 
-def emit(title: str, parts: list[Part], scales: dict[str, float] | None = None) -> str:
-    power = opamp_power(BLOCKS)
+def block_letter(title: str) -> str:
+    match = re.match(r"(?:\[[^]]+\] )?([A-Z][0-9]?)\.", title)
+    if not match:
+        raise SpiceError(f"블록 제목에 문자가 없음: {title!r}")
+    return match.group(1)
+
+
+def emit(title: str, parts: list[Part], scales: dict[str, float] | None = None,
+         blocks: list[Block] | None = None) -> str:
+    blocks = BLOCKS if blocks is None else blocks
+    power = opamp_power(blocks)
     scales = scales or {}
-    lines = ["* 자동 생성: gen_spice.py. 손으로 고치지 않는다.", f"* {title}", f"* BLOCKS {blocks_hash()}"]
+    lines = ["* 자동 생성: gen_spice.py. 손으로 고치지 않는다.", f"* {title}", f"* BLOCKS {blocks_hash(blocks)}"]
     for part in parts:
         lines += part_lines(part, power, scales.get(part.ref, 1.0))
     return "\n".join(lines) + "\n"
 
 
-def generate(out: Path = GENERATED, scales: dict[str, float] | None = None) -> list[Path]:
+def generate(out: Path = GENERATED, scales: dict[str, float] | None = None,
+             blocks: list[Block] | None = None, prefix: str = "block") -> list[Path]:
+    default = blocks is None
+    blocks = BLOCKS if default else blocks
     out.mkdir(parents=True, exist_ok=True)
     written = []
-    by_ref = {p.ref: p for b in BLOCKS for p in b.parts if p.unit == 1}
-    targets = [(f"block_{b.title[0]}.cir", b.title, b.parts) for b in BLOCKS]
-    targets += [(f"{name}.cir", f"부분 묶음 {name}: {', '.join(refs)}. block_B와 같이 include하지 않는다",
-                 [by_ref[r] for r in refs]) for name, refs in SUBSETS.items()]
+    by_ref = {p.ref: p for b in blocks for p in b.parts if p.unit == 1}
+    targets = [(f"{prefix}_{block_letter(b.title)}.cir", b.title, b.parts) for b in blocks]
+    if default:
+        targets += [(f"{name}.cir", f"부분 묶음 {name}: {', '.join(refs)}. block_B와 같이 include하지 않는다",
+                     [by_ref[r] for r in refs]) for name, refs in SUBSETS.items()]
     for filename, title, parts in targets:
         path = out / filename
         with io.open(path, "w", encoding="utf-8", newline="\n") as stream:
-            stream.write(emit(title, parts, scales))
+            stream.write(emit(title, parts, scales, blocks))
         written.append(path)
     return written
 

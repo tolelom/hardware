@@ -22,8 +22,9 @@ import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
+HERE = Path(__file__).resolve().parent
 PROJECT = "bass-compressor"
-ROOT_UUID = str(uuid.uuid5(uuid.NAMESPACE_URL, "tolelom/hardware/" + PROJECT))
+TITLE = "베이스 컴프레서 페달 1호"
 FONT = "(effects (font (size 1.27 1.27)))"
 STUB = 2.54
 
@@ -292,8 +293,12 @@ BLOCKS = [
 
 
 # ---------------------------------------------------------------- 배치와 출력
-def uid(*keys: object) -> str:
-    return str(uuid.uuid5(uuid.NAMESPACE_URL, PROJECT + "/" + "/".join(map(str, keys))))
+def root_uuid(project: str) -> str:
+    return str(uuid.uuid5(uuid.NAMESPACE_URL, "tolelom/hardware/" + project))
+
+
+def uid(project: str, *keys: object) -> str:
+    return str(uuid.uuid5(uuid.NAMESPACE_URL, project + "/" + "/".join(map(str, keys))))
 
 
 def fmt(v: float) -> str:
@@ -305,7 +310,10 @@ LABEL_ANGLE = {0: 180, 180: 0, 90: 270, 270: 90}
 LABEL_JUSTIFY = {0: "right", 180: "left", 90: "right", 270: "left"}
 
 
-def render(library: Library, out: Path) -> None:
+def render(library: Library, out: Path, blocks: list[Block] | None = None,
+           name: str = PROJECT, title: str = TITLE, doc: str = "bass-effector-schematic.md") -> None:
+    blocks = BLOCKS if blocks is None else blocks
+    root = root_uuid(name)
     lib_symbols: dict[str, list] = {}
     body: list[str] = []
     netlist: dict[str, list[tuple[str, str, str]]] = {}
@@ -313,10 +321,10 @@ def render(library: Library, out: Path) -> None:
     cell = 40.64
     x_limit = 1150.0
     y0 = 25.4
-    for block in BLOCKS:
+    for block in blocks:
         x0 = 25.4
         body.append(f'(text "{block.title}" (exclude_from_sim no) (at {fmt(x0)} {fmt(y0 - 5.08)} 0) '
-                    f'{FONT[:-1]} (justify left bottom)) (uuid "{uid("text", block.title)}"))')
+                    f'{FONT[:-1]} (justify left bottom)) (uuid "{uid(name, "text", block.title)}"))')
         column = 0
         row_height = cell
         for part in block.parts:
@@ -335,46 +343,47 @@ def render(library: Library, out: Path) -> None:
             cx = x0 + column * cell + wide * cell / 2
             cy = y0 + height / 2
             column += wide
-            body.append(symbol_instance(part, cx, cy))
+            body.append(symbol_instance(part, cx, cy, name, root))
             for pin in pins:
                 px, py = cx + pin.x, cy - pin.y
                 net = part.nets.get(pin.number)
                 if net is None:
                     raise SystemExit(f"{part.ref} 핀 {pin.number}({pin.name})의 넷이 없다")
                 if net == "NC":
-                    body.append(f'(no_connect (at {fmt(px)} {fmt(py)}) (uuid "{uid(part.ref, pin.number, "nc")}"))')
+                    body.append(f'(no_connect (at {fmt(px)} {fmt(py)}) (uuid "{uid(name, part.ref, pin.number, "nc")}"))')
                     continue
                 dx, dy = OUTWARD[pin.angle]
                 ex, ey = px + dx * STUB, py + dy * STUB
                 body.append(f'(wire (pts (xy {fmt(px)} {fmt(py)}) (xy {fmt(ex)} {fmt(ey)})) '
-                            f'(stroke (width 0) (type default)) (uuid "{uid(part.ref, pin.number, "w")}"))')
-                body.append(global_label(net, ex, ey, pin.angle, part.ref, pin.number))
+                            f'(stroke (width 0) (type default)) (uuid "{uid(name, part.ref, pin.number, "w")}"))')
+                body.append(global_label(net, ex, ey, pin.angle, name, part.ref, pin.number))
                 netlist.setdefault(net, []).append((part.ref, pin.number, pin.name))
             shown_ref = part.ref if part.name != "TL072" else part.ref + {1: "A", 2: "B", 3: " 전원"}[part.unit]
             net_rows.append(f"| {shown_ref} | {part.value} | " +
                             ", ".join(f"{n}={part.nets[n]}" for n in part.nets) + f" | {part.note} |")
         y0 += row_height + 15.24
 
-    check(netlist)
+    check(netlist, blocks)
     symbols_text = "\n".join(dump(tree, 1) for tree in lib_symbols.values())
     sch = (
         f'(kicad_sch (version 20231120) (generator "gen_schematic.py") (generator_version "8.0")\n'
-        f'\t(uuid "{ROOT_UUID}")\n\t(paper "A0")\n'
-        f'\t(title_block (title "베이스 컴프레서 페달 1호") (date "2026-09-14") (rev "0.1") '
+        f'\t(uuid "{root}")\n\t(paper "A0")\n'
+        f'\t(title_block (title "{title}") (date "2026-09-14") (rev "0.1") '
         f'(comment 1 "설계서 devices/bass-effector-design.md, 값 근거 devices/bass-effector-schematic.md"))\n'
         f'\t(lib_symbols\n{symbols_text}\n\t)\n'
         + "\n".join("\t" + line for line in body) + "\n"
         f'\t(sheet_instances (path "/" (page "1")))\n)\n'
     )
     out.mkdir(parents=True, exist_ok=True)
-    io.open(out / f"{PROJECT}.kicad_sch", "w", encoding="utf-8", newline="\n").write(sch)
-    io.open(out / f"{PROJECT}.kicad_pro", "w", encoding="utf-8", newline="\n").write(
+    io.open(out / f"{name}.kicad_sch", "w", encoding="utf-8", newline="\n").write(sch)
+    io.open(out / f"{name}.kicad_pro", "w", encoding="utf-8", newline="\n").write(
         '{\n  "meta": {\n    "filename": "%s.kicad_pro",\n    "version": 1\n  },\n'
-        '  "sheets": [\n    [\n      "%s",\n      ""\n    ]\n  ]\n}\n' % (PROJECT, ROOT_UUID))
-    write_netlist(out / "netlist.md", net_rows, netlist)
+        '  "sheets": [\n    [\n      "%s",\n      ""\n    ]\n  ]\n}\n' % (name, root))
+    netlist_name = "netlist.md" if name == PROJECT else f"{name}-netlist.md"
+    write_netlist(out / netlist_name, net_rows, netlist, title, doc)
 
 
-def symbol_instance(part: Part, x: float, y: float) -> str:
+def symbol_instance(part: Part, x: float, y: float, project: str, root: str) -> str:
     key = f"{part.lib}:{part.name}"
     props = [
         ("Reference", part.ref, x + 5.08, y - 3.81, ""),
@@ -386,34 +395,34 @@ def symbol_instance(part: Part, x: float, y: float) -> str:
     prop_text = "\n".join(
         f'\t(property "{k}" "{v}" (at {fmt(px)} {fmt(py)} 0) (effects (font (size 1.27 1.27)) (justify left){h}))'
         for k, v, px, py, h in props)
-    pin_text = "\n".join(f'\t(pin "{n}" (uuid "{uid(part.ref, part.unit, n, "pin")}"))' for n in part.nets)
+    pin_text = "\n".join(f'\t(pin "{n}" (uuid "{uid(project, part.ref, part.unit, n, "pin")}"))' for n in part.nets)
     return (
         f'(symbol (lib_id "{key}") (at {fmt(x)} {fmt(y)} 0) (unit {part.unit}) (exclude_from_sim no) '
         f'(in_bom yes) (on_board yes) (dnp no)\n'
-        f'\t(uuid "{uid(part.ref, part.unit, "sym")}")\n{prop_text}\n{pin_text}\n'
-        f'\t(instances (project "{PROJECT}" (path "/{ROOT_UUID}" (reference "{part.ref}") (unit {part.unit}))))\n)'
+        f'\t(uuid "{uid(project, part.ref, part.unit, "sym")}")\n{prop_text}\n{pin_text}\n'
+        f'\t(instances (project "{project}" (path "/{root}" (reference "{part.ref}") (unit {part.unit}))))\n)'
     )
 
 
-def global_label(net: str, x: float, y: float, pin_angle: int, ref: str, number: str) -> str:
+def global_label(net: str, x: float, y: float, pin_angle: int, project: str, ref: str, number: str) -> str:
     angle = LABEL_ANGLE[pin_angle]
     justify = LABEL_JUSTIFY[pin_angle]
     return (
         f'(global_label "{net}" (shape passive) (at {fmt(x)} {fmt(y)} {angle}) (fields_autoplaced yes) '
-        f'(effects (font (size 1.27 1.27)) (justify {justify})) (uuid "{uid(ref, number, "lbl")}")\n'
+        f'(effects (font (size 1.27 1.27)) (justify {justify})) (uuid "{uid(project, ref, number, "lbl")}")\n'
         f'\t(property "Intersheetrefs" "${{INTERSHEET_REFS}}" (at {fmt(x)} {fmt(y)} 0) '
         f'(effects (font (size 1.27 1.27)) (hide yes))))'
     )
 
 
-def check(netlist: dict[str, list[tuple[str, str, str]]]) -> None:
+def check(netlist: dict[str, list[tuple[str, str, str]]], blocks: list[Block]) -> None:
     problems = []
     for net, pins in sorted(netlist.items()):
         if len(pins) < 2:
             problems.append(f"넷 {net}에 핀이 하나뿐: {pins}")
-    refs = [p.ref for b in BLOCKS for p in b.parts]
+    refs = [p.ref for b in blocks for p in b.parts]
     seen: dict[str, int] = {}
-    for b in BLOCKS:
+    for b in blocks:
         for p in b.parts:
             seen[(p.ref, p.unit)] = seen.get((p.ref, p.unit), 0) + 1
     duplicates = [k for k, v in seen.items() if v > 1]
@@ -424,10 +433,12 @@ def check(netlist: dict[str, list[tuple[str, str, str]]]) -> None:
     print(f"부품 {len(set(refs))}개, 넷 {len(netlist)}개, 핀 접속 {sum(len(v) for v in netlist.values())}개. 검사 통과")
 
 
-def write_netlist(path: Path, rows: list[str], netlist: dict[str, list[tuple[str, str, str]]]) -> None:
-    lines = ["# 베이스 컴프레서 넷리스트 (자동 생성)", "",
+def write_netlist(path: Path, rows: list[str], netlist: dict[str, list[tuple[str, str, str]]], title: str,
+                  doc: str) -> None:
+    heading = "# 베이스 컴프레서 넷리스트 (자동 생성)" if title == TITLE else f"# {title} 넷리스트 (자동 생성)"
+    lines = [heading, "",
              "gen_schematic.py가 만든다. 손으로 고치지 않는다. 값의 근거는",
-             "[bass-effector-schematic.md](../../devices/bass-effector-schematic.md).", "",
+             f"[{doc}](../../devices/{doc}).", "",
              "## 부품별 접속", "", "| 지정자 | 값 | 핀=넷 | 비고 |", "|---|---|---|---|"] + rows + [
              "", "## 넷별 핀", "", "| 넷 | 핀 |", "|---|---|"]
     for net, pins in sorted(netlist.items()):
@@ -438,7 +449,7 @@ def write_netlist(path: Path, rows: list[str], netlist: dict[str, list[tuple[str
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--libs", required=True, help="KiCad .kicad_sym 폴더")
-    parser.add_argument("--out", default=str(Path(__file__).parent), help="출력 폴더")
+    parser.add_argument("--out", default=str(HERE), help="출력 폴더")
     args = parser.parse_args()
     render(Library(Path(args.libs)), Path(args.out))
 

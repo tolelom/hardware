@@ -1,0 +1,13 @@
+* 자동 생성: gen_spice.py. 손으로 고치지 않는다.
+* [메인] P. 출력 잭과 스테레오 출력 자리 (설계서 5.2절). 값은 블록 E와 같다
+* BLOCKS 450e90e0df3202d6
+C70 seed_audio_out2 out2_in 1e-06
+R71 out2_in vbias 100000
+XU3A out2_in out2_fb u3a_out vrail 0 opamp_model
+XU3B vbias u3b_out u3b_out vrail 0 opamp_model
+R72 u3a_out out2_fb 47000
+R73 out2_fb out2_fb_c 10000
+C71 out2_fb_c 0 1e-05
+R70 u3a_out out2_r 100
+C72 out2_r out2_tip 1e-05
+R74 out2_tip 0 100000

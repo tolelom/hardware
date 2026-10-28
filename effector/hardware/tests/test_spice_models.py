@@ -1,3 +1,6 @@
+import contextlib
+import io
+import os
 import sys
 import tempfile
 import unittest
@@ -106,6 +109,28 @@ class NgspiceTest(unittest.TestCase):
         text = ".include models.inc\nI1 0 a 3m\nD1 a 0 DLEDR\n.op\n.control\nrun\nprint v(a)\n.endc\n.end\n"
         result = ngspice_run.run_text(text, expect=["v(a)"])
         self.assertTrue(1.8 < result["v(a)"] < 2.1)
+
+
+@unittest.skipUnless(os.environ.get("KICAD_SYMBOL_DIR"), "KICAD_SYMBOL_DIR 없음(KiCad 9.0.7 심볼 11개 이상)")
+@unittest.skipUnless(os.environ.get("KICAD_SYMBOL_DIR"), "KICAD_SYMBOL_DIR 없음(KiCad 9.0.7 심볼 11개 이상)")
+class SchematicRegenerationTest(unittest.TestCase):
+    def test_default_blocks_reproduce_committed_files(self) -> None:
+        import gen_schematic as gs
+        with tempfile.TemporaryDirectory() as directory:
+            with contextlib.redirect_stdout(io.StringIO()):
+                gs.render(gs.Library(Path(os.environ["KICAD_SYMBOL_DIR"])), Path(directory))
+            for name in ("bass-compressor.kicad_sch", "netlist.md"):
+                with self.subTest(name=name):
+                    self.assertEqual((Path(directory) / name).read_bytes(), (gs.HERE / name).read_bytes())
+
+    def test_custom_name_and_blocks(self) -> None:
+        import gen_schematic as gs
+        with tempfile.TemporaryDirectory() as directory:
+            with contextlib.redirect_stdout(io.StringIO()):
+                gs.render(gs.Library(Path(os.environ["KICAD_SYMBOL_DIR"])), Path(directory),
+                          blocks=gs.BLOCKS[:2], name="part", title="부분")
+            self.assertTrue((Path(directory) / "part.kicad_sch").exists())
+            self.assertTrue((Path(directory) / "part-netlist.md").exists())
 
 
 if __name__ == "__main__":
