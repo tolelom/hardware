@@ -1,6 +1,6 @@
 * 자동 생성: gen_spice.py. 손으로 고치지 않는다.
 * [메인] B. LT1054 더블러와 아날로그 레일 (설계서 4.2절, 데이터시트 그림 20)
-* BLOCKS 450e90e0df3202d6
+* BLOCKS 7455d67e97fa27e2
 XU2 v9 pump 0 lt1054
 C16 v9 0 1e-05
 C8 pumpx pump 1e-05

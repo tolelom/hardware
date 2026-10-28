@@ -1,6 +1,6 @@
 * 자동 생성: gen_spice.py. 손으로 고치지 않는다.
 * [메인] M. MIDI IN·OUT, TRS 타입 A 3.5mm (설계서 5.2절, MMA CA-033·RP-054)
-* BLOCKS 450e90e0df3202d6
+* BLOCKS 7455d67e97fa27e2
 R40 midi_in_src opto_a 220
 D30 midi_in_sink opto_a D1N4148
 R41 seed_3v3d seed_d14_usart1_rx 270

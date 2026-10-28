@@ -19,7 +19,7 @@ SKIPPED = {
     ("Connector_Audio", "AudioJack2"),
     ("Connector_Audio", "AudioJack3"),
     ("Connector_Generic", "Conn_01x40"),
-    ("Connector_Generic", "Conn_01x16"),
+    ("Connector_Generic", "Conn_01x08"),
     ("Connector_Generic", "Conn_02x10_Odd_Even"),
     ("Connector", "Micro_SD_Card"),
     ("Device", "RotaryEncoder_Switch"),

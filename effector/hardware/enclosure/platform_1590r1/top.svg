@@ -2,7 +2,7 @@
 <rect x="0" y="0" width="768.0" height="445.0" fill="none" stroke="black"/>
 <text x="384.0" y="222.5" font-size="28" fill="#c00" opacity="0.3" text-anchor="middle">초안</text>
 <text x="0" y="-6">윗면. 바깥에서 본 면, 중심 기준 mm</text>
-<rect x="419.4" y="39.4" width="301.6" height="204.0" fill="none" stroke="blue"/>
+<rect x="421.3" y="41.5" width="297.8" height="199.8" fill="none" stroke="blue"/>
 <line x1="566.2" y1="141.4" x2="574.2" y2="141.4" stroke="blue"/><line x1="570.2" y1="137.4" x2="570.2" y2="145.4" stroke="blue"/>
 <text x="576.2" y="135.4">화면</text>
 <circle cx="168.0" cy="84.0" r="15.0" fill="none" stroke="blue"/>
@@ -44,7 +44,7 @@
 <circle cx="624.0" cy="360.0" r="24.0" fill="none" stroke="blue"/>
 <line x1="620.0" y1="360.0" x2="628.0" y2="360.0" stroke="blue"/><line x1="624.0" y1="356.0" x2="624.0" y2="364.0" stroke="blue"/>
 <text x="630.0" y="354.0">FS3</text>
-<text x="0" y="461.0">화면: x +46.5, y +20.3, 사각 75.4 × 51</text>
+<text x="0" y="461.0">화면: x +46.5, y +20.3, 사각 74.44 × 49.96</text>
 <text x="0" y="473.0">E1: x -54.0, y +34.6, 지름 7.5</text>
 <text x="0" y="485.0">E2: x -31.0, y +34.6, 지름 7.5</text>
 <text x="0" y="497.0">E3: x -8.0, y +34.6, 지름 7.5</text>

@@ -19,10 +19,11 @@ CASE = Case(_d(192, "Hammond 1590R1, 판매점 DigiKey"), _d(111.25, "Hammond 15
             _d(None, "미측정"))
 
 PARTS = {
-    "screen": PartSpec("화면 3.5\"", _d(0, "사각 타공"), _d(0, "사각"), _d(82.94, "Orient AFK320480A0 외형"),
-                       _d(54.66, "Orient AFK320480A0 외형"), _d(7.74, "Orient AFK320480A0 두께"),
-                       cutout=(_d(75.4, "보이는 영역 74.4 + 1mm, EA TFT035 기준"), _d(51.0, "보이는 영역 50 + 1mm, EA TFT035 기준")),
-                       outside_rect=(_d(75.4, "타공과 같음"), _d(51.0, "타공과 같음"))),
+    "screen": PartSpec("화면 3.5\"", _d(0, "사각 타공"), _d(0, "사각"), _d(89.94, "Orient AFK320480A0 도면 V01, 기판 폭 82.94 + FPC 접힘 돌출 3.5(돌출 쪽 미판독이라 양쪽)"),
+                       _d(65.66, "Orient AFK320480A0 도면 V01, 헤더 띠 포함 기판 높이(유리는 54.66)"),
+                       _d(7.74, "Orient AFK320480A0 도면 V01, 최대 두께"),
+                       cutout=(_d(74.44, "Orient 도면 V01 표시 영역 73.44 + 1mm"), _d(49.96, "Orient 도면 V01 표시 영역 48.96 + 1mm")),
+                       outside_rect=(_d(74.44, "타공과 같음"), _d(49.96, "타공과 같음"))),
     "enc": PartSpec("인코더", _d(7.5, f"{REP}, EC11 부싱"), _d(15, f"{REP}, 노브"), _d(12.5, f"{REP}, EC11"),
                     _d(13.4, f"{REP}, EC11"), _d(20, f"{REP}, EC11 몸체와 조작부 기판")),
     "nav": PartSpec("NAV 인코더", _d(7.5, f"{REP}, EC11 부싱"), _d(20, f"{REP}, 노브"), _d(12.5, f"{REP}, EC11"),
