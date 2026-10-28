@@ -18,6 +18,9 @@
 | `hardware/gen_spice.py`, `hardware/ngspice_run.py` | BLOCKS에서 SPICE 넷리스트 생성(`hardware/spice/generated/`), ngspice 실행과 결과 읽기 |
 | `hardware/spice/noise_budget.py`, `hardware/spice/monte_carlo.py` | 잡음 예산, 공차 몬테카를로 |
 | `hardware/enclosure.py`, `hardware/enclosure/` | 케이스 기구 기준과 간섭 검사, 타공 도면·기판 영역 SVG |
+| `hardware/pinmap.py` | Seed3 핀 능력 표와 멀티 이펙터 플랫폼 핀 배정 |
+| `hardware/platform_blocks.py`, `hardware/platform.kicad_sch` | 멀티 이펙터 플랫폼 회로 블록과 회로도. 값의 근거는 [../devices/bass-multi-platform-schematic.md](../devices/bass-multi-platform-schematic.md) |
+| `hardware/designs/` | 케이스 설계(`compressor_1590c`, `platform_1590r1`) |
 | `hardware/tests/` | 설계 검증 도구 테스트 |
 
 ## 회로도
@@ -37,9 +40,14 @@
     python3 effector/hardware/spice/monte_carlo.py --count 200 --seed 1
     python3 effector/hardware/spice/monte_carlo.py --count 200 --seed 1 --conservative
     python3 effector/hardware/enclosure.py --draft
+    python3 effector/hardware/enclosure.py --draft --design platform_1590r1 --dxf
+    python3 effector/hardware/platform_blocks.py --libs <KiCad 9.0.7 .kicad_sym 폴더>
 
 - BLOCKS를 고치면 `gen_spice.py`를 다시 돌린다. 생성물 해시가 다르면 테스트가 실패한다.
 - 몬테카를로 200벌은 수 분 걸린다. `--conservative`는 LT1054 동작 모델 손실을 보수 값으로 고정한다.
+- `--design`의 기본은 `compressor_1590c`다. `--dxf`는 면별 CNC 도면(OUTLINE·CUT·NOTE 층)을 더 쓴다.
+- `platform_blocks.py`는 `spice/generated/platform/`을 쓰고, `--libs`를 주면 `platform.kicad_sch`와 `platform-netlist.md`도 쓴다.
+  회로도 재생성 테스트는 환경변수 `KICAD_SYMBOL_DIR`에 같은 폴더가 있을 때만 돈다.
 - `enclosure.py --final`은 미측정 값이 하나라도 있으면 도면을 내지 않고 종료 코드 2로 끝난다.
 
 ## 네이티브 테스트
