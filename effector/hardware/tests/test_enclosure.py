@@ -200,6 +200,23 @@ class DesignTest(unittest.TestCase):
         findings = en.check(d.DESIGN.case, d.DESIGN.parts, d.DESIGN.placements, [tall], values)
         self.assertTrue(any(not f.ok and "시험용" in f.detail for f in findings if f.check == "패널 안쪽 간섭"))
 
+    def test_back_jacks_sit_on_main_board(self) -> None:
+        from designs import platform_1590r1 as d
+        values, _ = en.resolve(d.DESIGN.case, d.DESIGN.parts, [], draft=True)
+        board = next(b for b in d.DESIGN.internal(values) if b.label == "메인 기판")
+        for p in d.DESIGN.placements:
+            if p.face == "back" and values.get(f"{p.part}.body_d") is not None:
+                with self.subTest(jack=p.label):
+                    body = en.body_box(d.DESIGN.case, p, d.DESIGN.parts[p.part], values)
+                    self.assertAlmostEqual(body.z0, board.z1, places=6)
+
+    def test_seed_stack_stays_out_of_jack_band(self) -> None:
+        from designs import platform_1590r1 as d
+        values, _ = en.resolve(d.DESIGN.case, d.DESIGN.parts, [], draft=True)
+        seed = next(b for b in d.DESIGN.internal(values) if b.label.startswith("Seed3"))
+        inner_back = values["case.length"] / 2 - values["case.wall"]
+        self.assertLessEqual(seed.y1, inner_back - d.JACK_BAND_MM)
+
     def test_compressor_design_output_unchanged(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             with contextlib.redirect_stdout(io.StringIO()):

@@ -35,11 +35,22 @@ PARTS = {
                       _d(16, "1호 설계서 5.2절"), _d(30, f"{REP}, 잭 몸체 길이")),
     "trs35": PartSpec("3.5mm TRS 잭", _d(6, f"{REP}"), _d(8, f"{REP}, 너트"), _d(8, f"{REP}"),
                       _d(10, f"{REP}"), _d(15, f"{REP}, 잭 몸체 길이")),
-    "usb": PartSpec("USB-C", _d(0, "사각 타공"), _d(0, "사각"), _d(None, "미측정"), _d(None, "미측정"),
-                    _d(None, "미측정"), cutout=(_d(9.5, REP), _d(3.8, REP)), outside_rect=(_d(12, REP), _d(7.2, REP))),
-    "dc": PartSpec("DC 잭", _d(12, "1호 설계서 5.2절"), _d(14, f"{REP}, 너트"), _d(None, "미측정"),
-                   _d(None, "미측정"), _d(None, "미측정")),
+    "usb": PartSpec("USB-C", _d(0, "사각 타공"), _d(0, "사각"), _d(9, f"{REP}, 기판 장착 리셉터클"),
+                    _d(3.5, f"{REP}, 기판 장착 리셉터클"), _d(7.5, f"{REP}, 기판 장착 리셉터클"), cutout=(_d(9.5, REP), _d(3.8, REP)), outside_rect=(_d(12, REP), _d(7.2, REP))),
+    "dc": PartSpec("DC 잭", _d(12, "1호 설계서 5.2절"), _d(14, f"{REP}, 너트"), _d(9, f"{REP}, 패널형 몸체"),
+                   _d(11, f"{REP}, 패널형 몸체"), _d(14, f"{REP}, 패널형 몸체")),
 }
+
+STANDOFF_MM = 5.0      # 대표값, 메인 기판 M3 스페이서. 3mm면 USB-C·DC 구멍이 뒷면 아래 가장자리 여유 6mm를 어긴다
+PCB_MM = 1.6
+JACK_BAND_MM = 30.0    # 설계서 4절: 1/4" 잭 몸체가 뒷벽에서 들어오는 띠
+MAIN_BOARD_TOP = CASE.wall.value + STANDOFF_MM + PCB_MM
+
+
+def _board_mount_y(part: str) -> float:
+    """기판 장착 잭: 몸체 아래가 메인 기판 윗면에 닿는 뒷면 y."""
+    return MAIN_BOARD_TOP + PARTS[part].body_d.value / 2 - CASE.height.value / 2
+
 
 PLACEMENTS = [
     Placement("화면", "screen", "top", 46.55, 20.28),
@@ -48,16 +59,20 @@ PLACEMENTS = [
     Placement("NAV", "nav", "top", -79, 33.63),
     *[Placement(f"LED{i + 1}", "led", "top", x, -18.38) for i, x in enumerate((-60, 0, 60))],
     *[Placement(f"FS{i + 1}", "fs", "top", x, -34.38) for i, x in enumerate((-60, 0, 60))],
-    Placement("OUT", "trs14", "back", 76, 0), Placement("IN", "trs14", "back", 52, 0),
-    Placement("EXP", "trs14", "back", 26, 0), Placement("MIDI OUT", "trs35", "back", 3, 0),
-    Placement("MIDI IN", "trs35", "back", -17, 0), Placement("USB-C", "usb", "back", -44, 0),
-    Placement("DC 9V", "dc", "back", -72, 0),
+    Placement("OUT", "trs14", "back", 76, _board_mount_y("trs14")), Placement("IN", "trs14", "back", 52, _board_mount_y("trs14")),
+    Placement("EXP", "trs14", "back", 26, _board_mount_y("trs14")), Placement("MIDI OUT", "trs35", "back", 3, _board_mount_y("trs35")),
+    Placement("MIDI IN", "trs35", "back", -17, _board_mount_y("trs35")), Placement("USB-C", "usb", "back", -44, _board_mount_y("usb")),
+    Placement("DC 9V", "dc", "back", -72, _board_mount_y("dc")),
 ]
 
 
 def internal(values: dict[str, float]) -> list[Box]:
-    floor = values["case.wall"]
-    return [Box("Seed3 소켓 스택", 40, 80, -15, 30, floor, floor + 20)]
+    inner_x = values["case.width"] / 2 - values["case.wall"]
+    inner_y = values["case.length"] / 2 - values["case.wall"]
+    board_bottom = values["case.wall"] + STANDOFF_MM
+    top = board_bottom + PCB_MM
+    return [Box("메인 기판", -inner_x, inner_x, -inner_y, inner_y, board_bottom, top),
+            Box("Seed3 소켓 스택", 40, 80, -22, inner_y - JACK_BAND_MM, top, top + 20)]
 
 
 def missing_extra() -> list[str]:
