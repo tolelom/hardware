@@ -356,6 +356,7 @@ def main(argv: list[str] | None = None) -> int:
     mode.add_argument("--final", action="store_true")
     parser.add_argument("--design", choices=("compressor_1590c", "platform_1590r1"), default="compressor_1590c")
     parser.add_argument("--out", default=None)
+    parser.add_argument("--dxf", action="store_true", help="면마다 CNC용 DXF도 쓴다")
     args = parser.parse_args(argv)
     if args.design == "platform_1590r1":
         from designs.platform_1590r1 import DESIGN
@@ -383,6 +384,21 @@ def main(argv: list[str] | None = None) -> int:
     return 1 if failed else 0
 
 
+def face_dxf(case: Case, face: str, placements: list[Placement], values: dict[str, float],
+             specs: dict[str, PartSpec]) -> str:
+    import dxf
+    width, height = face_size(case, face, values)
+    entities: list[tuple] = [("rect", 0.0, 0.0, width, height, "OUTLINE")]
+    for p in (p for p in placements if p.face == face):
+        if specs[p.part].cutout is not None:
+            entities.append(("rect", p.x, p.y, values[f"{p.part}.cutout_w"], values[f"{p.part}.cutout_h"], "CUT"))
+        else:
+            entities.append(("circle", p.x, p.y, values[f"{p.part}.hole_d"] / 2, "CUT"))
+        label = p.label if p.label.isascii() else p.part
+        entities.append(("text", p.x + 1.0, p.y + 1.0, 2.0, f"{label} ({p.x:+.2f}, {p.y:+.2f})", "NOTE"))
+    return dxf.document(entities)
+
+
 def _run_design(design: Design, args: argparse.Namespace) -> int:
     values, missing = resolve(design.case, design.parts, [], draft=args.draft)
     missing += design.missing_extra()
@@ -399,6 +415,9 @@ def _run_design(design: Design, args: argparse.Namespace) -> int:
         if any(p.face == face for p in design.placements):
             (out / f"{face}.svg").write_text(face_svg(design.case, face, design.placements, values, args.draft, design.parts),
                                              encoding="utf-8")
+            if args.dxf:
+                (out / f"{face}.dxf").write_text(face_dxf(design.case, face, design.placements, values, design.parts),
+                                                 encoding="utf-8")
     (out / "report.md").write_text(report(findings, missing, args.draft), encoding="utf-8")
     failed = sum(1 for f in findings if not f.ok)
     print(f"{out}: 검사 실패 {failed}건, 미측정 {len(missing)}건")
