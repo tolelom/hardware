@@ -166,14 +166,18 @@ def _aux_supply_block() -> Block:
 
 
 def _display_block() -> Block:
-    return Block("[조작부] K. 화면 Orient AFK320480A0-3.5INTH-ANO (설계서 3절, 모듈 데이터시트 V01 2절)", [
-        Part("J22", "Connector_Generic", "Conn_01x16", "화면 모듈 16핀", {
+    return Block("[조작부] K. 화면 Orient AFK320480A0-3.5INTH-ANO (설계서 3절, 모듈 데이터시트 V01 2절·도면)", [
+        Part("J22", "Connector_Generic", "Conn_01x08", "화면 모듈 신호 헤더 2.54mm 8핀", {
             "1": "GND", "2": "3V3_AUX", "3": N("SPI1_SCK"), "4": N("SPI1_MOSI"), "5": N("DISPLAY_RST"),
-            "6": N("DISPLAY_DC"), "7": N("SPI1_NSS"), "8": "DISPLAY_BLK",
-            **{str(n): "NC" for n in range(9, 17)}},
-            note="데이터시트 2절: 1 GND, 2 VDD(2.5~3.6V), 3 SCL, 4 SDA, 5 RST, 6 DC, 7 CS, 8 BLK, 9~16 NC. 4선 SPI 전용. "
-                 "커넥터 피치·형식은 기구 도면 확인 필요"),
-        Part("R60", "Device", "R", "100R", {"1": N("DISPLAY_BL_PWM"), "2": "DISPLAY_BLK"}, note="BLK 직렬. 링잉 완화"),
+            "6": N("DISPLAY_DC"), "7": N("SPI1_NSS"), "8": "DISPLAY_BLK"},
+            note="데이터시트 2절: 1 GND, 2 VDD(2.5~3.6V), 3 SCL, 4 SDA, 5 RST, 6 DC, 7 CS, 8 BLK. 4선 SPI 전용. "
+                 "도면 V01: 모듈 기판 아래 변 1~8, 2.54mm"),
+        Part("J23", "Connector_Generic", "Conn_01x08", "화면 모듈 지지 헤더 2.54mm 8핀",
+             {str(n): "NC" for n in range(1, 9)},
+             note="모듈 9~16핀(위 변, 모두 NC). 기구 지지용. 장착 구멍 4개는 중심 간격 80.44 × 60.66mm"),
+        Part("R60", "Device", "R", "100R", {"1": N("DISPLAY_BL_PWM"), "2": "DISPLAY_BLK"},
+             note="BLK 직렬. BLK는 모듈 기판 위 승압 LED 구동기의 제어 입력이다(도면 V01: 헤더 전원은 VDD 3.3V뿐, LED는 "
+                  "6직렬 2병렬 17.1~19.8V). 극성·풀업·허용 PWM 주파수는 실물 확인"),
         Part("R61", "Device", "R", "100k", {"1": "DISPLAY_BLK", "2": "GND"}, note="부팅 중 백라이트 꺼짐"),
         Part("C60", "Device", "C", "10u 10V", {"1": "3V3_AUX", "2": "GND"},
              note="백라이트 LED 6직렬 2병렬, VF 19.2V 40mA. 3.3V 쪽 약 0.27A(승압 효율 85% 가정)"),

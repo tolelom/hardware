@@ -121,8 +121,9 @@ gen_schematic.py가 만든다. 손으로 고치지 않는다. 값의 근거는
 | FB2 | 600R@100MHz 1A | 1=3V3_BUCK, 2=3V3_AUX | 스위칭 잡음을 조작부 안에 가둔다. 정격 1A 이상 |
 | C35 | 10u 10V | 1=3V3_AUX, 2=GND | 페라이트 뒤 |
 | PF7 | PWR_FLAG | 1=3V3_AUX |  |
-| J22 | 화면 모듈 16핀 | 1=GND, 2=3V3_AUX, 3=SEED_D8_SPI1_SCK, 4=SEED_D10_SPI1_MOSI, 5=SEED_D18_DISPLAY_RST, 6=SEED_D17_DISPLAY_DC, 7=SEED_D7_SPI1_NSS, 8=DISPLAY_BLK, 9=NC, 10=NC, 11=NC, 12=NC, 13=NC, 14=NC, 15=NC, 16=NC | 데이터시트 2절: 1 GND, 2 VDD(2.5~3.6V), 3 SCL, 4 SDA, 5 RST, 6 DC, 7 CS, 8 BLK, 9~16 NC. 4선 SPI 전용. 커넥터 피치·형식은 기구 도면 확인 필요 |
-| R60 | 100R | 1=SEED_D16_DISPLAY_BL_PWM, 2=DISPLAY_BLK | BLK 직렬. 링잉 완화 |
+| J22 | 화면 모듈 신호 헤더 2.54mm 8핀 | 1=GND, 2=3V3_AUX, 3=SEED_D8_SPI1_SCK, 4=SEED_D10_SPI1_MOSI, 5=SEED_D18_DISPLAY_RST, 6=SEED_D17_DISPLAY_DC, 7=SEED_D7_SPI1_NSS, 8=DISPLAY_BLK | 데이터시트 2절: 1 GND, 2 VDD(2.5~3.6V), 3 SCL, 4 SDA, 5 RST, 6 DC, 7 CS, 8 BLK. 4선 SPI 전용. 도면 V01: 모듈 기판 아래 변 1~8, 2.54mm |
+| J23 | 화면 모듈 지지 헤더 2.54mm 8핀 | 1=NC, 2=NC, 3=NC, 4=NC, 5=NC, 6=NC, 7=NC, 8=NC | 모듈 9~16핀(위 변, 모두 NC). 기구 지지용. 장착 구멍 4개는 중심 간격 80.44 × 60.66mm |
+| R60 | 100R | 1=SEED_D16_DISPLAY_BL_PWM, 2=DISPLAY_BLK | BLK 직렬. BLK는 모듈 기판 위 승압 LED 구동기의 제어 입력이다(도면 V01: 헤더 전원은 VDD 3.3V뿐, LED는 6직렬 2병렬 17.1~19.8V). 극성·풀업·허용 PWM 주파수는 실물 확인 |
 | R61 | 100k | 1=DISPLAY_BLK, 2=GND | 부팅 중 백라이트 꺼짐 |
 | C60 | 10u 10V | 1=3V3_AUX, 2=GND | 백라이트 LED 6직렬 2병렬, VF 19.2V 40mA. 3.3V 쪽 약 0.27A(승압 효율 85% 가정) |
 | C61 | 100n | 1=3V3_AUX, 2=GND | J22 핀 2 가까이 |
