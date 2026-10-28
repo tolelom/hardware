@@ -1,6 +1,6 @@
 * 자동 생성: gen_spice.py. 손으로 고치지 않는다.
 * [메인] N. EXP 입력 (설계서 5.2절)
-* BLOCKS 7455d67e97fa27e2
+* BLOCKS f9730b72d5d6f429
 R50 seed_3v3a exp_ring 10000
 R51 seed_3v3a exp_tip 100000
 R52 exp_tip seed_d15_exp_adc 1000
