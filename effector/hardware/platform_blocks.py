@@ -26,6 +26,8 @@ SEED_RENAMES = {
 }
 # 계승 블록에서 바꿔 끼우는 부품. 아래 블록 P 참고
 REPLACED = {"J2"}
+# EXP ADC 값이 전체 눈금의 이 비율 이상이면 펌웨어가 페달이 빠졌다고 본다
+EXP_UNPLUGGED_THRESHOLD = 0.97
 
 
 def _inherit(block: Block) -> Block:
@@ -68,8 +70,9 @@ def _exp_block() -> Block:
     return Block("[메인] N. EXP 입력 (설계서 5.2절)", [
         Part("J12", "Connector_Audio", "AudioJack3", "EXP 6.35mm TRS", {"T": "EXP_TIP", "R": "EXP_RING", "S": "GND"},
              note="팁 와이퍼, 링 기준, 슬리브 GND"),
-        Part("R50", "Device", "R", "4.7k", {"1": "SEED_3V3A", "2": "EXP_RING"},
-             note="링 기준 직렬. 꽂힌 페달의 최대값을 R/(R+4.7k)로 낮춰 뺀 상태(전체 눈금)와 구분한다. 10k 페달 68%, 100k 페달 95.5%"),
+        Part("R50", "Device", "R", "10k", {"1": "SEED_3V3A", "2": "EXP_RING"},
+             note="링 기준 직렬. 꽂힌 페달의 최대값을 R/(R+10k)로 낮춰 뺀 상태(전체 눈금)와 구분한다. "
+                  "10k 페달 50%, 100k 90.9%, 250k 96.2%(문턱 97%)"),
         Part("R51", "Device", "R", "100k", {"1": "SEED_3V3A", "2": "EXP_TIP"},
              note="팁 풀업. 뺐을 때 ADC가 전체 눈금 = 꽂힘 감지"),
         Part("R52", "Device", "R", "1k", {"1": "EXP_TIP", "2": N("EXP_ADC")}, note="ADC 직렬, 정전기 전류 제한"),
@@ -129,21 +132,26 @@ def _midi_block() -> Block:
         Part("C40", "Device", "C", "100n", {"1": "SEED_3V3D", "2": "GND"}, note="U11 핀 6 가까이"),
         Part("J11", "Connector_Audio", "AudioJack3", "MIDI OUT 3.5mm TRS",
              {"T": "MIDI_OUT_SINK", "R": "MIDI_OUT_SRC", "S": "GND"}, note="RP-054. 송신 쪽 실드는 접지"),
-        Part("R42", "Device", "R", "33R 0.5W", {"1": "SEED_3V3D", "2": "MIDI_OUT_SRC"},
-             note="CA-033 그림 1 RA, 3.3V ±5% 값"),
+        Part("R42", "Device", "R", "33R 0.5W", {"1": "3V3_AUX", "2": "MIDI_OUT_SRC"},
+             note="CA-033 그림 1 RA, 3.3V ±5% 값. TS 플러그가 링을 GND에 붙이면 100mA(0.33W)가 흐르므로 "
+                  "Seed3 3V3D가 아니라 2A 보조 레일에서 받는다"),
         Part("R43", "Device", "R", "10R", {"1": N("USART1_TX"), "2": "MIDI_OUT_SINK"},
              note="CA-033 그림 1 RC, 3.3V ±5% 값"),
     ])
 
 
 def _aux_supply_block() -> Block:
-    return Block("[조작부] L. 보조 3.3V 강압 (설계서 4절·5.2절, TPS562201 데이터시트 SLVSD91D 7.2절)", [
-        Part("U10", "Regulator_Switching", "TPS562200", "TPS562201", {
-            "1": "GND", "2": "BUCK_SW", "3": "V9", "4": "BUCK_FB", "5": "BUCK_EN", "6": "BUCK_BST"},
-            note="VIN 4.5~17V, 2A, 580kHz, 경부하 펄스 스킵. 심볼은 핀 배치가 같은 TPS562200(표 4-1: 1 GND, 2 SW, 3 VIN, 4 VFB, 5 EN, 6 VBST)"),
-        Part("C30", "Device", "C", "10u 25V", {"1": "V9", "2": "GND"}, note="입력. 7.2.2.4절: 10µF 이상, 최대 VIN 이상 정격"),
-        Part("C31", "Device", "C", "100n 25V", {"1": "V9", "2": "GND"}, note="U10 핀 3 바로 옆"),
-        Part("R80", "Device", "R", "100k", {"1": "V9", "2": "BUCK_EN"}, note="EN을 VIN 쪽으로. EN 절대 최대 19V"),
+    return Block("[조작부] L. 보조 3.3V 강압 (설계서 4절·5.2절, TPS562208, 데이터시트 SLVSD91D 7.2절)", [
+        Part("FB3", "Device", "FerriteBead", "600R@100MHz 1A", {"1": "V9", "2": "BUCK_VIN"},
+             note="입력 파이 필터. 강압기 입력 리플과 백라이트 PWM 전류가 V9를 타고 메인 기판 아날로그단으로 가지 않게 한다"),
+        Part("C36", "Device", "C_Polarized", "47u 25V", {"1": "V9", "2": "GND"}, note="파이 필터 J21 쪽"),
+        Part("U10", "Regulator_Switching", "TPS562200", "TPS562208", {
+            "1": "GND", "2": "BUCK_SW", "3": "BUCK_VIN", "4": "BUCK_FB", "5": "BUCK_EN", "6": "BUCK_BST"},
+            note="VIN 4.5~17V, 2A, 580kHz, 강제 연속 모드(FCCM). 경부하에서도 주파수가 오디오 대역으로 내려가지 않는다. "
+                 "TPS562201과 핀 호환, 같은 데이터시트(SLVSD91D). 심볼은 핀 배치가 같은 TPS562200"),
+        Part("C30", "Device", "C", "10u 25V", {"1": "BUCK_VIN", "2": "GND"}, note="입력. 7.2.2.4절: 10µF 이상, 최대 VIN 이상 정격"),
+        Part("C31", "Device", "C", "100n 25V", {"1": "BUCK_VIN", "2": "GND"}, note="U10 핀 3 바로 옆"),
+        Part("R80", "Device", "R", "100k", {"1": "BUCK_VIN", "2": "BUCK_EN"}, note="EN을 VIN 쪽으로. EN 절대 최대 19V"),
         Part("C32", "Device", "C", "100n", {"1": "BUCK_BST", "2": "BUCK_SW"}, note="부트스트랩. 7.2.2.5절"),
         Part("L10", "Device", "L", "3.3u", {"1": "BUCK_SW", "2": "3V3_BUCK"}, note="표 7-2: 3.3V 출력 3.3µH(최대 4.7µH). 포화 3A 이상"),
         Part("C33", "Device", "C", "22u 10V", {"1": "3V3_BUCK", "2": "GND"}, note="출력. 표 7-2 20~68µF"),

@@ -68,6 +68,30 @@ class PlatformBlocksTest(unittest.TestCase):
                     self.assertEqual(p.nets["8"], "NC")
                     self.assertEqual(p.nets["28"], "NC")
 
+    def part(self, ref: str):
+        return next(p for p in self.all_parts() if p.ref == ref)
+
+    def test_buck_runs_continuous_and_filters_its_input(self) -> None:
+        buck = self.part("U10")
+        self.assertEqual(buck.value, "TPS562208")
+        vin = buck.nets["3"]
+        self.assertNotEqual(vin, "V9")
+        filters = [p for p in self.all_parts() if p.name == "FerriteBead" and set(p.nets.values()) == {"V9", vin}]
+        self.assertEqual(len(filters), 1)
+        bulk = [p for p in self.all_parts() if p.name.startswith("C") and vin in p.nets.values()
+                and gen_spice.parse_value(p.value) >= 10e-6 * 0.999]
+        self.assertTrue(bulk)
+
+    def test_midi_out_short_does_not_load_seed_rail(self) -> None:
+        source = self.part("R42")
+        self.assertNotIn("SEED_3V3D", source.nets.values())
+
+    def test_exp_detects_unplugged_for_pedals_up_to_250k(self) -> None:
+        series = gen_spice.parse_value(self.part("R50").value)
+        for pedal in (10e3, 25e3, 50e3, 100e3, 250e3):
+            with self.subTest(pedal=pedal):
+                self.assertLess(pedal / (pedal + series), pb.EXP_UNPLUGGED_THRESHOLD - 0.005)
+
     def test_spice_mapping_covers_platform(self) -> None:
         power = gen_spice.opamp_power(pb.PLATFORM_BLOCKS)
         for p in self.all_parts():

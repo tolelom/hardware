@@ -1,6 +1,6 @@
 * 자동 생성: gen_spice.py. 손으로 고치지 않는다.
 * [메인] F. K1 릴레이 바이패스와 구동 (설계서 3.4절, 5.4절)
-* BLOCKS a52d60d17119c809
+* BLOCKS 450e90e0df3202d6
 RK1_COIL v9 k1_coil 579
 RK1_11_12 in_tip bypass {k1_on > 0.5 ? 1e+12 : 0.05}
 RK1_11_14 in_tip in_a {k1_on > 0.5 ? 0.05 : 1e+12}
