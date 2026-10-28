@@ -62,7 +62,8 @@ PLATFORM = {
     "K1_DRIVE": "D0",
     "SDMMC1_D3": "D1", "SDMMC1_D2": "D2", "SDMMC1_D1": "D3", "SDMMC1_D0": "D4",
     "SDMMC1_CMD": "D5", "SDMMC1_CK": "D6",
-    "SPI1_NSS": "D7", "SPI1_SCK": "D8", "SPI1_MISO": "D9", "SPI1_MOSI": "D10",
+    # 화면 모듈(Orient AFK320480A0)은 쓰기 전용 4선 SPI라 MISO(D9)는 비운다
+    "SPI1_NSS": "D7", "SPI1_SCK": "D8", "SPI1_MOSI": "D10",
     "I2C1_SCL": "D11", "I2C1_SDA": "D12",
     "USART1_TX": "D13", "USART1_RX": "D14",
     "EXP_ADC": "D15",

@@ -311,7 +311,7 @@ LABEL_JUSTIFY = {0: "right", 180: "left", 90: "right", 270: "left"}
 
 
 def render(library: Library, out: Path, blocks: list[Block] | None = None,
-           name: str = PROJECT, title: str = TITLE) -> None:
+           name: str = PROJECT, title: str = TITLE, doc: str = "bass-effector-schematic.md") -> None:
     blocks = BLOCKS if blocks is None else blocks
     root = root_uuid(name)
     lib_symbols: dict[str, list] = {}
@@ -380,7 +380,7 @@ def render(library: Library, out: Path, blocks: list[Block] | None = None,
         '{\n  "meta": {\n    "filename": "%s.kicad_pro",\n    "version": 1\n  },\n'
         '  "sheets": [\n    [\n      "%s",\n      ""\n    ]\n  ]\n}\n' % (name, root))
     netlist_name = "netlist.md" if name == PROJECT else f"{name}-netlist.md"
-    write_netlist(out / netlist_name, net_rows, netlist, title)
+    write_netlist(out / netlist_name, net_rows, netlist, title, doc)
 
 
 def symbol_instance(part: Part, x: float, y: float, project: str, root: str) -> str:
@@ -433,11 +433,12 @@ def check(netlist: dict[str, list[tuple[str, str, str]]], blocks: list[Block]) -
     print(f"부품 {len(set(refs))}개, 넷 {len(netlist)}개, 핀 접속 {sum(len(v) for v in netlist.values())}개. 검사 통과")
 
 
-def write_netlist(path: Path, rows: list[str], netlist: dict[str, list[tuple[str, str, str]]], title: str) -> None:
+def write_netlist(path: Path, rows: list[str], netlist: dict[str, list[tuple[str, str, str]]], title: str,
+                  doc: str) -> None:
     heading = "# 베이스 컴프레서 넷리스트 (자동 생성)" if title == TITLE else f"# {title} 넷리스트 (자동 생성)"
     lines = [heading, "",
              "gen_schematic.py가 만든다. 손으로 고치지 않는다. 값의 근거는",
-             "[bass-effector-schematic.md](../../devices/bass-effector-schematic.md).", "",
+             f"[{doc}](../../devices/{doc}).", "",
              "## 부품별 접속", "", "| 지정자 | 값 | 핀=넷 | 비고 |", "|---|---|---|---|"] + rows + [
              "", "## 넷별 핀", "", "| 넷 | 핀 |", "|---|---|"]
     for net, pins in sorted(netlist.items()):
