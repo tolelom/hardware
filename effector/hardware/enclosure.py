@@ -10,6 +10,7 @@ import itertools
 import math
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable
 
 KNOB_GAP_MM = 6.1
 FACES = ("top", "in", "out", "back")
@@ -40,6 +41,8 @@ class PartSpec:
     body_w: Dimension
     body_d: Dimension
     body_h: Dimension
+    cutout: tuple[Dimension, Dimension] | None = None
+    outside_rect: tuple[Dimension, Dimension] | None = None
 
 
 @dataclass(frozen=True)
@@ -70,12 +73,38 @@ class Finding:
     margin: float | None = None
 
 
+@dataclass(frozen=True)
+class Design:
+    name: str
+    case: "Case"
+    parts: dict
+    placements: list
+    internal: Callable[[dict[str, float]], list["Box"]]
+    missing_extra: Callable[[], list[str]] = lambda: []
+
+
 CASE_FIELDS = {"width": "케이스 폭", "length": "케이스 길이", "height": "케이스 높이",
                "wall": "케이스 벽 두께", "edge_margin": "패널 가장자리 여유"}
 PART_FIELDS = {"hole_d": "타공 지름", "outside_d": "바깥 점유 지름", "body_w": "몸체 폭",
                "body_d": "몸체 깊이", "body_h": "패널 아래 높이"}
 DRAFT_DEFAULTS = {"case.wall": 3.0, "case.edge_margin": 6.0, "hole_d": 10.0, "outside_d": 14.0,
-                  "body_w": 16.0, "body_d": 16.0, "body_h": 30.0}
+                  "body_w": 16.0, "body_d": 16.0, "body_h": 30.0, "cutout_w": 10.0, "cutout_h": 10.0,
+                  "outside_w": 10.0, "outside_h": 10.0}
+REPRESENTATIVE = "대표값"
+RECT_FIELDS = {"cutout": ("사각 타공 폭", "사각 타공 높이"), "outside_rect": ("바깥 점유 폭", "바깥 점유 높이")}
+RECT_KEYS = {"cutout": ("cutout_w", "cutout_h"), "outside_rect": ("outside_w", "outside_h")}
+
+
+def _take(values: dict[str, float], missing: list[str], key: str, default_key: str, dimension: Dimension,
+          label: str, draft: bool) -> None:
+    if dimension.value is None:
+        missing.append(label)
+        if draft:
+            values[key] = DRAFT_DEFAULTS[default_key]
+        return
+    values[key] = dimension.value
+    if dimension.source.startswith(REPRESENTATIVE):
+        missing.append(f"{label} (대표값)")
 
 
 def resolve(case: Case, parts: dict[str, PartSpec], internal: list[Box], draft: bool) -> tuple[dict[str, float], list[str]]:
@@ -92,15 +121,42 @@ def resolve(case: Case, parts: dict[str, PartSpec], internal: list[Box], draft: 
             values[key] = dimension.value
     for name, spec in parts.items():
         for field, label in PART_FIELDS.items():
-            dimension = getattr(spec, field)
-            key = f"{name}.{field}"
-            if dimension.value is None:
-                missing.append(f"{spec.name} {label}")
-                if draft:
-                    values[key] = DRAFT_DEFAULTS[field]
-            else:
-                values[key] = dimension.value
+            if spec.cutout is not None and field in ("hole_d",):
+                continue
+            if spec.outside_rect is not None and field in ("outside_d",):
+                continue
+            _take(values, missing, f"{name}.{field}", field, getattr(spec, field), f"{spec.name} {label}", draft)
+        for field, labels in RECT_FIELDS.items():
+            pair = getattr(spec, field)
+            if pair is None:
+                continue
+            for dimension, key, label in zip(pair, RECT_KEYS[field], labels):
+                _take(values, missing, f"{name}.{key}", key, dimension, f"{spec.name} {label}", draft)
     return values, missing
+
+
+def outside_shape(spec: PartSpec, part: str, values: dict[str, float]) -> tuple[float, float, bool]:
+    """(반폭, 반높이, 원 여부). 원이면 반폭=반높이=반지름."""
+    if spec.outside_rect is not None:
+        return values[f"{part}.outside_w"] / 2, values[f"{part}.outside_h"] / 2, False
+    r = values[f"{part}.outside_d"] / 2
+    return r, r, True
+
+
+def _gap(a: Placement, sa: tuple[float, float, bool], b: Placement, sb: tuple[float, float, bool]) -> float:
+    dx, dy = abs(a.x - b.x), abs(a.y - b.y)
+    if sa[2] and sb[2]:
+        return math.hypot(dx, dy) - sa[0] - sb[0]
+    if sa[2] or sb[2]:
+        circle, rect = (sa, sb) if sa[2] else (sb, sa)
+        ox, oy = max(dx - rect[0], 0.0), max(dy - rect[1], 0.0)
+        if ox == 0.0 and oy == 0.0:
+            return -min(rect[0] - dx, rect[1] - dy) - circle[0]
+        return math.hypot(ox, oy) - circle[0]
+    ox, oy = dx - sa[0] - sb[0], dy - sa[1] - sb[1]
+    if ox < 0 and oy < 0:
+        return max(ox, oy)
+    return math.hypot(max(ox, 0.0), max(oy, 0.0))
 
 
 def face_size(case: Case, face: str, values: dict[str, float]) -> tuple[float, float]:
@@ -149,15 +205,14 @@ def check(case: Case, parts: dict[str, PartSpec], placements: list[Placement], i
     for a, b in itertools.combinations(placements, 2):
         if a.face != b.face:
             continue
-        distance = math.hypot(a.x - b.x, a.y - b.y)
-        gap = distance - (values[f"{a.part}.outside_d"] + values[f"{b.part}.outside_d"]) / 2
+        gap = _gap(a, outside_shape(parts[a.part], a.part, values), b, outside_shape(parts[b.part], b.part, values))
         need = KNOB_GAP_MM if a.part == b.part == "knob" else 0.0
         findings.append(Finding("패널 바깥 간섭", gap >= need - 1e-9, f"{a.label}-{b.label} 여유 {gap:.1f}mm (기준 {need:g})",
                                 gap - need))
     for p in placements:
         width, height = face_size(case, p.face, values)
-        radius = values[f"{p.part}.outside_d"] / 2
-        room = min(width / 2 - margin - abs(p.x), height / 2 - margin - abs(p.y)) - radius
+        half_w, half_h, _ = outside_shape(parts[p.part], p.part, values)
+        room = min(width / 2 - margin - abs(p.x) - half_w, height / 2 - margin - abs(p.y) - half_h)
         findings.append(Finding("가장자리 여유", room >= -1e-9, f"{p.label} 여유 {room:.1f}mm", room))
     boxes = [body_box(case, p, parts[p.part], values) for p in placements] + list(internal)
     for a, b in itertools.combinations(boxes, 2):
@@ -222,7 +277,8 @@ def internal_missing() -> list[str]:
     return [f"{label} 폭" for label, width, _, _ in INTERNAL_SPECS.values() if width.value is None]
 
 
-def face_svg(case: Case, face: str, placements: list[Placement], values: dict[str, float], draft: bool) -> str:
+def face_svg(case: Case, face: str, placements: list[Placement], values: dict[str, float], draft: bool,
+             specs: dict[str, PartSpec] | None = None) -> str:
     width, height = face_size(case, face, values)
     w, h = width * SCALE, height * SCALE
     parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{w + 40:.0f}" height="{h + 80:.0f}" '
@@ -235,12 +291,19 @@ def face_svg(case: Case, face: str, placements: list[Placement], values: dict[st
     rows = []
     for p in (p for p in placements if p.face == face):
         cx, cy = w / 2 + p.x * SCALE, h / 2 - p.y * SCALE
-        hole = values[f"{p.part}.hole_d"]
-        parts.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{hole / 2 * SCALE:.1f}" fill="none" stroke="blue"/>')
+        if specs is not None and specs[p.part].cutout is not None:
+            cw, ch = values[f"{p.part}.cutout_w"], values[f"{p.part}.cutout_h"]
+            parts.append(f'<rect x="{cx - cw / 2 * SCALE:.1f}" y="{cy - ch / 2 * SCALE:.1f}" width="{cw * SCALE:.1f}" '
+                         f'height="{ch * SCALE:.1f}" fill="none" stroke="blue"/>')
+            size = f"사각 {cw:g} × {ch:g}"
+        else:
+            hole = values[f"{p.part}.hole_d"]
+            parts.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{hole / 2 * SCALE:.1f}" fill="none" stroke="blue"/>')
+            size = f"지름 {hole:g}"
         parts.append(f'<line x1="{cx - 4:.1f}" y1="{cy:.1f}" x2="{cx + 4:.1f}" y2="{cy:.1f}" stroke="blue"/>'
                      f'<line x1="{cx:.1f}" y1="{cy - 4:.1f}" x2="{cx:.1f}" y2="{cy + 4:.1f}" stroke="blue"/>')
         parts.append(f'<text x="{cx + 6:.1f}" y="{cy - 6:.1f}">{p.label}</text>')
-        rows.append(f"{p.label}: x {p.x:+.1f}, y {p.y:+.1f}, 지름 {hole:g}")
+        rows.append(f"{p.label}: x {p.x:+.1f}, y {p.y:+.1f}, {size}")
     for i, row in enumerate(rows):
         parts.append(f'<text x="0" y="{h + 16 + i * 12:.1f}">{row}</text>')
     parts.append("</svg>")
@@ -291,8 +354,13 @@ def main(argv: list[str] | None = None) -> int:
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--draft", action="store_true")
     mode.add_argument("--final", action="store_true")
-    parser.add_argument("--out", default=str(Path(__file__).resolve().parent / "enclosure"))
+    parser.add_argument("--design", choices=("compressor_1590c", "platform_1590r1"), default="compressor_1590c")
+    parser.add_argument("--out", default=None)
     args = parser.parse_args(argv)
+    if args.design == "platform_1590r1":
+        from designs.platform_1590r1 import DESIGN
+        return _run_design(DESIGN, args)
+    args.out = args.out or str(Path(__file__).resolve().parent / "enclosure")
     values, missing = resolve(CASE, PARTS, [], draft=args.draft)
     missing += internal_missing()
     if args.final and missing:
@@ -309,6 +377,28 @@ def main(argv: list[str] | None = None) -> int:
     boxes = [body_box(CASE, p, PARTS[p.part], values) for p in PLACEMENTS] + internal
     board_top = values["case.wall"] + INTERNAL_SPECS["seed3"][3].value
     (out / "board.svg").write_text(board_svg(CASE, boxes, values, board_top, args.draft), encoding="utf-8")
+    (out / "report.md").write_text(report(findings, missing, args.draft), encoding="utf-8")
+    failed = sum(1 for f in findings if not f.ok)
+    print(f"{out}: 검사 실패 {failed}건, 미측정 {len(missing)}건")
+    return 1 if failed else 0
+
+
+def _run_design(design: Design, args: argparse.Namespace) -> int:
+    values, missing = resolve(design.case, design.parts, [], draft=args.draft)
+    missing += design.missing_extra()
+    if args.final and missing:
+        print("미측정 값이 있어 최종 도면을 내지 않는다:")
+        for name in missing:
+            print(f"- {name}")
+        return 2
+    internal = design.internal(values)
+    findings = check(design.case, design.parts, design.placements, internal, values)
+    out = Path(args.out or Path(__file__).resolve().parent / "enclosure" / design.name)
+    out.mkdir(parents=True, exist_ok=True)
+    for face in FACES:
+        if any(p.face == face for p in design.placements):
+            (out / f"{face}.svg").write_text(face_svg(design.case, face, design.placements, values, args.draft, design.parts),
+                                             encoding="utf-8")
     (out / "report.md").write_text(report(findings, missing, args.draft), encoding="utf-8")
     failed = sum(1 for f in findings if not f.ok)
     print(f"{out}: 검사 실패 {failed}건, 미측정 {len(missing)}건")

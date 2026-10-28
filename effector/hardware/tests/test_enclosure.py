@@ -159,5 +159,56 @@ class OutputTest(unittest.TestCase):
         self.assertIn("케이스 벽 두께", text)
 
 
+class RectTest(unittest.TestCase):
+    def rect_spec(self, name: str, w: float, h: float) -> en.PartSpec:
+        return en.PartSpec(name, M(1, "t"), M(1, "t"), M(w, "t"), M(h, "t"), M(5, "t"),
+                           cutout=(M(w, "t"), M(h, "t")), outside_rect=(M(w, "t"), M(h, "t")))
+
+    def test_rect_circle_gap(self) -> None:
+        c = case()
+        parts = {"scr": self.rect_spec("scr", 40, 20), "knob": spec("knob", 10)}
+        near = [en.Placement("s", "scr", "top", 0, 0), en.Placement("k", "knob", "top", 24, 0)]
+        far = [en.Placement("s", "scr", "top", 0, 0), en.Placement("k", "knob", "top", 26, 0)]
+        values = values_of(c, parts, [])
+        bad = [f for f in en.check(c, parts, near, [], values) if f.check == "패널 바깥 간섭" and not f.ok]
+        good = [f for f in en.check(c, parts, far, [], values) if f.check == "패널 바깥 간섭" and not f.ok]
+        self.assertTrue(bad)
+        self.assertFalse(good)
+
+    def test_rect_edge_margin(self) -> None:
+        c = case()
+        parts = {"scr": self.rect_spec("scr", 40, 20)}
+        values = values_of(c, parts, [])
+        inside = en.check(c, parts, [en.Placement("s", "scr", "top", 47.5 - 5 - 20, 0)], [], values)
+        outside = en.check(c, parts, [en.Placement("s", "scr", "top", 47.5 - 5 - 19.9, 0)], [], values)
+        self.assertTrue(all(f.ok for f in inside if f.check == "가장자리 여유"))
+        self.assertFalse(all(f.ok for f in outside if f.check == "가장자리 여유"))
+
+
+class DesignTest(unittest.TestCase):
+    def test_platform_design_draft_has_no_failures(self) -> None:
+        from designs import platform_1590r1 as d
+        values, missing = en.resolve(d.DESIGN.case, d.DESIGN.parts, [], draft=True)
+        findings = en.check(d.DESIGN.case, d.DESIGN.parts, d.DESIGN.placements, d.DESIGN.internal(values), values)
+        failed = [f for f in findings if not f.ok]
+        self.assertEqual(failed, [], failed)
+
+    def test_back_jack_body_collides_with_tall_board_part(self) -> None:
+        from designs import platform_1590r1 as d
+        values, _ = en.resolve(d.DESIGN.case, d.DESIGN.parts, [], draft=True)
+        tall = en.Box("시험용 키 큰 부품", -10, 10, 30, 50, 2, 40)
+        findings = en.check(d.DESIGN.case, d.DESIGN.parts, d.DESIGN.placements, [tall], values)
+        self.assertTrue(any(not f.ok and "시험용" in f.detail for f in findings if f.check == "패널 안쪽 간섭"))
+
+    def test_compressor_design_output_unchanged(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            with contextlib.redirect_stdout(io.StringIO()):
+                en.main(["--draft", "--out", directory])
+            for name in ("top.svg", "report.md"):
+                with self.subTest(name=name):
+                    self.assertEqual((Path(directory) / name).read_text(encoding="utf-8"),
+                                     (Path(en.__file__).parent / "enclosure" / name).read_text(encoding="utf-8"))
+
+
 if __name__ == "__main__":
     unittest.main()
