@@ -174,10 +174,10 @@ class DxfTest(unittest.TestCase):
         self.assertNotIn("e", text.lower().replace("section", "").replace("entities", "").replace("eof", "").replace("circle", "").replace("endsec", ""))
 ```
 
-- [ ] **Step 2: 실패 확인** — `ModuleNotFoundError: dxf`
-- [ ] **Step 3: 구현** — 그룹 코드 0/8/10/20/40(원), 0/8/10/20/11/21(선), 0/8/10/20/40/1(글자). 숫자는 `f"{v:.4f}"`. `parse`는 쌍으로 읽어 `("CIRCLE", layer, (x, y, r))`, `("LINE", layer, (x1, y1, x2, y2))`, `("TEXT", layer, (x, y, h, s))`를 돌려준다. `enclosure.py main`에 `--dxf`가 있으면 면마다 `<face>.dxf`를 함께 쓴다.
-- [ ] **Step 4: 통과 확인** — 전체 테스트 OK, `python3 effector/hardware/enclosure.py --draft --design platform_1590r1 --dxf`로 `top.dxf`, `back.dxf` 생성
-- [ ] **Step 5: 커밋** — `[Feat] 기구 도구 CNC용 DXF(R12 ENTITIES) 출력`
+- [ ] **Step 2: 실패 확인**: `ModuleNotFoundError: dxf`
+- [ ] **Step 3: 구현**: 그룹 코드 0/8/10/20/40(원), 0/8/10/20/11/21(선), 0/8/10/20/40/1(글자). 숫자는 `f"{v:.4f}"`. `parse`는 쌍으로 읽어 `("CIRCLE", layer, (x, y, r))`, `("LINE", layer, (x1, y1, x2, y2))`, `("TEXT", layer, (x, y, h, s))`를 돌려준다. `enclosure.py main`에 `--dxf`가 있으면 면마다 `<face>.dxf`를 함께 쓴다.
+- [ ] **Step 4: 통과 확인**: 전체 테스트 OK, `python3 effector/hardware/enclosure.py --draft --design platform_1590r1 --dxf`로 `top.dxf`, `back.dxf` 생성
+- [ ] **Step 5: 커밋**: `[Feat] 기구 도구 CNC용 DXF(R12 ENTITIES) 출력`
 
 ---
 
@@ -235,10 +235,10 @@ class PinmapTest(unittest.TestCase):
         self.assertEqual(pinmap.net("EXP_ADC"), "SEED_D15_EXP_ADC")
 ```
 
-- [ ] **Step 2: 실패 확인** — `ModuleNotFoundError: pinmap`
-- [ ] **Step 3: 구현** — 데이터시트 표 2를 읽어 표를 채운다(물리 핀 번호는 기존 BLOCKS H 블록의 J4 넷과 대조). 배정의 GPIO 핀은 대체 기능 충돌이 없는 것으로 고르고 PWM 핀을 확인한다
-- [ ] **Step 4: 통과 확인** — 전체 테스트 OK
-- [ ] **Step 5: 커밋** — `[Feat] Seed3 핀 능력 표와 플랫폼 배정 검사`
+- [ ] **Step 2: 실패 확인**: `ModuleNotFoundError: pinmap`
+- [ ] **Step 3: 구현**: 데이터시트 표 2를 읽어 표를 채운다(물리 핀 번호는 기존 BLOCKS H 블록의 J4 넷과 대조). 배정의 GPIO 핀은 대체 기능 충돌이 없는 것으로 고르고 PWM 핀을 확인한다
+- [ ] **Step 4: 통과 확인**: 전체 테스트 OK
+- [ ] **Step 5: 커밋**: `[Feat] Seed3 핀 능력 표와 플랫폼 배정 검사`
 
 ---
 
@@ -280,10 +280,10 @@ class SchematicRegenerationTest(unittest.TestCase):
 
 (테스트 파일 맨 위에 `import contextlib, io` 추가)
 
-- [ ] **Step 2: 실패 확인** — `KICAD_SYMBOL_DIR=<스크래치패드>/kicad-symbols-9.0.7`로 실행해 두 번째 테스트가 `TypeError`
-- [ ] **Step 3: 구현** — `render`와 `check`, `write_netlist`가 인자를 받게 하고, 출력 파일 이름은 기본 `bass-compressor.kicad_sch`·`netlist.md`, 그 밖에는 `<name>.kicad_sch`·`<name>-netlist.md`. `uid`의 PROJECT는 이름별로 `PROJECT if name == "bass-compressor" else name`. `HERE = Path(__file__).resolve().parent` 상수를 둔다
-- [ ] **Step 4: 통과 확인** — 두 테스트 OK(기본 출력 바이트 동일), 전체 테스트 OK
-- [ ] **Step 5: 커밋** — `[Refactor] 회로도 생성기가 블록 목록과 출력 이름을 인자로 받음`
+- [ ] **Step 2: 실패 확인**: `KICAD_SYMBOL_DIR=<스크래치패드>/kicad-symbols-9.0.7`로 실행해 두 번째 테스트가 `TypeError`
+- [ ] **Step 3: 구현**: `render`와 `check`, `write_netlist`가 인자를 받게 하고, 출력 파일 이름은 기본 `bass-compressor.kicad_sch`·`netlist.md`, 그 밖에는 `<name>.kicad_sch`·`<name>-netlist.md`. `uid`의 PROJECT는 이름별로 `PROJECT if name == "bass-compressor" else name`. `HERE = Path(__file__).resolve().parent` 상수를 둔다
+- [ ] **Step 4: 통과 확인**: 두 테스트 OK(기본 출력 바이트 동일), 전체 테스트 OK
+- [ ] **Step 5: 커밋**: `[Refactor] 회로도 생성기가 블록 목록과 출력 이름을 인자로 받음`
 
 ---
 
@@ -373,10 +373,10 @@ class PlatformBlocksTest(unittest.TestCase):
             gen_spice.part_lines(p, power)
 ```
 
-- [ ] **Step 3: 실패 확인** — `ModuleNotFoundError: platform_blocks`
-- [ ] **Step 4: 구현** — `platform_blocks.py`에 블록을 쓴다. 지정자는 1호와 겹치지 않게 블록별로 정한다(예: L 블록 U10·L1·C30~, M 블록 U11·J10·R40~, G2 블록 U20·U21·SW10~·R60~). `gen_spice.SKIPPED`에 디지털 IC·커넥터·인코더 심볼을 더하고, 아날로그 시험이 필요한 N-MOSFET은 `NMOSQ` 모델로 매핑한다. `gen_spice.generate`에 블록 목록·접두사 인자를 더해 `platform_<문자>.cir`를 쓴다. 회로도는 `render(..., blocks=PLATFORM_BLOCKS, name="platform", title="멀티 이펙터 플랫폼 넷리스트")`
-- [ ] **Step 5: 통과 확인** — 전체 테스트 OK, 회로도 `check()` 통과(넷마다 핀 2개 이상, 지정자 중복 없음)
-- [ ] **Step 6: 커밋** — `[Feat] 멀티 이펙터 플랫폼 회로 블록(계승 A~F와 새 블록), 회로도·SPICE 생성`
+- [ ] **Step 3: 실패 확인**: `ModuleNotFoundError: platform_blocks`
+- [ ] **Step 4: 구현**: `platform_blocks.py`에 블록을 쓴다. 지정자는 1호와 겹치지 않게 블록별로 정한다(예: L 블록 U10·L1·C30~, M 블록 U11·J10·R40~, G2 블록 U20·U21·SW10~·R60~). `gen_spice.SKIPPED`에 디지털 IC·커넥터·인코더 심볼을 더하고, 아날로그 시험이 필요한 N-MOSFET은 `NMOSQ` 모델로 매핑한다. `gen_spice.generate`에 블록 목록·접두사 인자를 더해 `platform_<문자>.cir`를 쓴다. 회로도는 `render(..., blocks=PLATFORM_BLOCKS, name="platform", title="멀티 이펙터 플랫폼 넷리스트")`
+- [ ] **Step 5: 통과 확인**: 전체 테스트 OK, 회로도 `check()` 통과(넷마다 핀 2개 이상, 지정자 중복 없음)
+- [ ] **Step 6: 커밋**: `[Feat] 멀티 이펙터 플랫폼 회로 블록(계승 A~F와 새 블록), 회로도·SPICE 생성`
 
 ---
 
