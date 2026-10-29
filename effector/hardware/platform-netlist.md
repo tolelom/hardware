@@ -121,6 +121,7 @@ gen_schematic.py가 만든다. 손으로 고치지 않는다. 값의 근거는
 | FB2 | 600R@100MHz 1A | 1=3V3_BUCK, 2=3V3_AUX | 스위칭 잡음을 조작부 안에 가둔다. 정격 1A 이상 |
 | C35 | 10u 10V | 1=3V3_AUX, 2=GND | 페라이트 뒤 |
 | PF7 | PWR_FLAG | 1=3V3_AUX |  |
+| PF8 | PWR_FLAG | 1=BUCK_VIN |  |
 | J22 | 화면 모듈 신호 헤더 2.54mm 8핀 | 1=GND, 2=3V3_AUX, 3=SEED_D8_SPI1_SCK, 4=SEED_D10_SPI1_MOSI, 5=SEED_D18_DISPLAY_RST, 6=SEED_D17_DISPLAY_DC, 7=SEED_D7_SPI1_NSS, 8=DISPLAY_BLK | 데이터시트 2절: 1 GND, 2 VDD(2.5~3.6V), 3 SCL, 4 SDA, 5 RST, 6 DC, 7 CS, 8 BLK. 4선 SPI 전용. 도면 V01: 모듈 기판 아래 변 1~8, 2.54mm |
 | J23 | 화면 모듈 지지 헤더 2.54mm 8핀 | 1=NC, 2=NC, 3=NC, 4=NC, 5=NC, 6=NC, 7=NC, 8=NC | 모듈 9~16핀(위 변, 모두 NC). 기구 지지용. 장착 구멍 4개는 중심 간격 80.44 × 60.66mm |
 | R60 | 100R | 1=SEED_D16_DISPLAY_BL_PWM, 2=DISPLAY_BLK | BLK 직렬. BLK는 모듈 기판 위 승압 LED 구동기의 제어 입력이다(도면 V01: 헤더 전원은 VDD 3.3V뿐, LED는 6직렬 2병렬 17.1~19.8V). 극성·풀업·허용 PWM 주파수는 실물 확인 |
@@ -210,7 +211,7 @@ gen_schematic.py가 만든다. 손으로 고치지 않는다. 값의 근거는
 | BUCK_EN | U10.5, R80.2 |
 | BUCK_FB | U10.4, R81.2, R82.1 |
 | BUCK_SW | U10.2, C32.2, L10.1 |
-| BUCK_VIN | FB3.2, U10.3, C30.1, C31.1, R80.1 |
+| BUCK_VIN | FB3.2, U10.3, C30.1, C31.1, R80.1, PF8.1 |
 | BUF_OUT | U1.2, U1.1, C2.1 |
 | BYPASS | K1.12, K1.22 |
 | DISPLAY_BLK | J22.8, R60.2, R61.1 |

@@ -1,6 +1,6 @@
 * 자동 생성: gen_spice.py. 손으로 고치지 않는다.
 * [조작부] L. 보조 3.3V 강압 (설계서 4절·5.2절, TPS562208, 데이터시트 SLVSD91D 7.2절)
-* BLOCKS 7455d67e97fa27e2
+* BLOCKS f9730b72d5d6f429
 RFB3 v9 buck_vin 0.05
 C36 v9 0 4.7e-05
 C30 buck_vin 0 1e-05

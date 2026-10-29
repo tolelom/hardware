@@ -110,6 +110,27 @@ class PlatformBlocksTest(unittest.TestCase):
 
 @unittest.skipUnless(os.environ.get("KICAD_SYMBOL_DIR"), "KICAD_SYMBOL_DIR 없음(KiCad 9.0.7 심볼)")
 class PlatformSchematicTest(unittest.TestCase):
+    def test_every_power_input_net_is_driven(self) -> None:
+        import gen_schematic as gs
+        library = gs.Library(Path(os.environ["KICAD_SYMBOL_DIR"]))
+        driven, inputs = set(), {}
+        for block in pb.PLATFORM_BLOCKS:
+            for part in block.parts:
+                if part.name == "PWR_FLAG":
+                    driven.add(part.nets["1"])
+                    continue
+                for pin in library.pins(part.lib, part.name):
+                    net = part.nets.get(pin.number)
+                    if pin.unit not in (0, part.unit) or net in (None, "NC"):
+                        continue
+                    if pin.electrical == "power_out":
+                        driven.add(net)
+                    elif pin.electrical == "power_in":
+                        inputs.setdefault(net, f"{part.ref}.{pin.number}")
+        for net, pin in sorted(inputs.items()):
+            with self.subTest(net=net, pin=pin):
+                self.assertIn(net, driven)
+
     def test_committed_schematic_matches_regeneration(self) -> None:
         import gen_schematic as gs
         with tempfile.TemporaryDirectory() as directory:

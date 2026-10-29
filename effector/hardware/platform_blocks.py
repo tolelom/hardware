@@ -162,6 +162,7 @@ def _aux_supply_block() -> Block:
              note="스위칭 잡음을 조작부 안에 가둔다. 정격 1A 이상"),
         Part("C35", "Device", "C", "10u 10V", {"1": "3V3_AUX", "2": "GND"}, note="페라이트 뒤"),
         Part("PF7", "power", "PWR_FLAG", "PWR_FLAG", {"1": "3V3_AUX"}),
+        Part("PF8", "power", "PWR_FLAG", "PWR_FLAG", {"1": "BUCK_VIN"}),
     ])
 
 

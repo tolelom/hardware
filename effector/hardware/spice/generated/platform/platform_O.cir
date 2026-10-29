@@ -1,6 +1,6 @@
 * 자동 생성: gen_spice.py. 손으로 고치지 않는다.
 * [메인] O. microSD (설계서 5.2절, SDMMC1 4비트)
-* BLOCKS 7455d67e97fa27e2
+* BLOCKS f9730b72d5d6f429
 R53 seed_d6_sdmmc1_ck sd_clk 33
 R54 3v3_aux seed_d5_sdmmc1_cmd 47000
 R55 3v3_aux seed_d4_sdmmc1_d0 47000
