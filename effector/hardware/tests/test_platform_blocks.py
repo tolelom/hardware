@@ -92,6 +92,14 @@ class PlatformBlocksTest(unittest.TestCase):
             with self.subTest(pedal=pedal):
                 self.assertLess(pedal / (pedal + series), pb.EXP_UNPLUGGED_THRESHOLD - 0.005)
 
+    def test_bulk_holds_v9_long_enough_to_release_k1(self) -> None:
+        # 어댑터를 뽑은 뒤 V9가 5.5V(레일이 Vbias에 닿기 시작)로 떨어지기 전에 감지 1ms + 평균 2ms + K1 릴리즈 2ms
+        # + 여유 3ms가 끝나야 한다. 강압기가 섞인 부하라 정전력 3.87W(9V 430mA)로 본다
+        bulk = sum(gen_spice.parse_value(p.value) for p in self.all_parts()
+                   if p.name == "C_Polarized" and set(p.nets.values()) == {"V9", "GND"})
+        seconds = bulk * (9.0 ** 2 - 5.5 ** 2) / (2 * 3.87)
+        self.assertGreaterEqual(seconds, 0.008, f"벌크 {bulk * 1e6:.0f}µF, {seconds * 1e3:.1f}ms")
+
     def test_spice_mapping_covers_platform(self) -> None:
         power = gen_spice.opamp_power(pb.PLATFORM_BLOCKS)
         for p in self.all_parts():

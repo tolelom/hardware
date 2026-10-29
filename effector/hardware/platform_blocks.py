@@ -247,6 +247,15 @@ def _controls_block() -> Block:
     return Block("[조작부] G2. 인코더 7개, 풋스위치 3개, LED 3개 (설계서 3절·5.2절)", parts)
 
 
+def _holdup_block() -> Block:
+    return Block("[메인] A2. 전원 차단 유지 보강 (설계서 5.4절)", [
+        Part("C37", "Device", "C_Polarized", "1000u 25V", {"1": "V9", "2": "GND"},
+             note="C7과 병렬, 합계 2000µF. 플랫폼 부하(9V 약 430mA, 강압기 포함 정전력 약 3.87W)에서 어댑터를 뽑은 뒤 "
+                  "V9가 5.5V까지 13.1ms(1000µF면 6.6ms). 감지 1ms + 평균 2ms + K1 릴리즈 2ms + 여유 3ms = 8ms를 넘긴다. "
+                  "높이 20mm 이하 품번을 고르고 풋스위치 아래를 피해 놓는다"),
+    ])
+
+
 def _flags_block() -> Block:
     return Block("[메인] I2. ERC용 전원 플래그. GND는 U2 VOUT이 구동한다", [
         Part("PF1", "power", "PWR_FLAG", "PWR_FLAG", {"1": "VIN_RAW"}),
@@ -268,6 +277,7 @@ PLATFORM_BLOCKS = [_inherit(block) for block in BLOCKS[:6]] + [
     _sd_block(),
     _stereo_block(),
     Block("[메인] Q1. 기판 연결 메인 쪽 (설계서 4절)", [_link("J20", "조작부 J21과 1:1. 접지는 이 헤더 한 곳에서만 잇는다")]),
+    _holdup_block(),
     _flags_block(),
     Block("[조작부] Q2. 기판 연결 조작부 쪽 (설계서 4절)", [_link("J21", "메인 J20과 1:1")]),
     _aux_supply_block(),
