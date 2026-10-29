@@ -1,6 +1,6 @@
 * 자동 생성: gen_spice.py. 손으로 고치지 않는다.
 * [조작부] G2. 인코더 7개, 풋스위치 3개, LED 3개 (설계서 3절·5.2절)
-* BLOCKS f9730b72d5d6f429
+* BLOCKS b4b31ea4aa3a4076
 R98 3v3_aux u20_reset 10000
 C93 3v3_aux 0 1e-07
 R99 3v3_aux u21_reset 10000

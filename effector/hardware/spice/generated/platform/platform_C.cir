@@ -1,6 +1,6 @@
 * 자동 생성: gen_spice.py. 손으로 고치지 않는다.
 * [메인] C. Seed3 VIN 필터와 전원 감시 (설계서 3.5절, 4.1절)
-* BLOCKS f9730b72d5d6f429
+* BLOCKS b4b31ea4aa3a4076
 R32 v9 seed_vin 3.3
 C11 seed_vin 0 0.0001
 C12 seed_vin 0 1e-07
