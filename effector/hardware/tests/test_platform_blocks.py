@@ -100,6 +100,17 @@ class PlatformBlocksTest(unittest.TestCase):
         seconds = bulk * (9.0 ** 2 - 5.5 ** 2) / (2 * 3.87)
         self.assertGreaterEqual(seconds, 0.008, f"벌크 {bulk * 1e6:.0f}µF, {seconds * 1e3:.1f}ms")
 
+    def test_exp_jack_reads_both_tip_and_ring(self) -> None:
+        # EXP 잭은 익스프레션 페달과 2버튼 풋스위치(팁–슬리브 1번, 링–슬리브 2번)를 둘 다 받는다.
+        # 풋스위치 2번을 읽으려면 링도 ADC 핀에 닿아야 한다
+        jack = self.part("J12")
+        for pin, function in (("T", "EXP_ADC"), ("R", "EXP_RING_ADC")):
+            with self.subTest(pin=pin):
+                net = jack.nets[pin]
+                path = [p for p in self.all_parts() if p.name == "R" and net in p.nets.values()
+                        and pinmap.net(function) in p.nets.values()]
+                self.assertTrue(path, f"{net}에서 {pinmap.net(function)}로 가는 직렬 저항이 없다")
+
     def test_spice_mapping_covers_platform(self) -> None:
         power = gen_spice.opamp_power(pb.PLATFORM_BLOCKS)
         for p in self.all_parts():

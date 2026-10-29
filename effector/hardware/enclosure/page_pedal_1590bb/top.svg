@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="518" height="452" viewBox="-20 -20 518 456" font-family="sans-serif" font-size="10">
+<rect x="0" y="0" width="478.0" height="375.6" fill="none" stroke="black"/>
+<text x="239.0" y="187.8" font-size="28" fill="#c00" opacity="0.3" text-anchor="middle">초안</text>
+<text x="0" y="-6">윗면. 바깥에서 본 면, 중심 기준 mm</text>
+<circle cx="119.0" cy="235.8" r="24.0" fill="none" stroke="blue"/>
+<line x1="115.0" y1="235.8" x2="123.0" y2="235.8" stroke="blue"/><line x1="119.0" y1="231.8" x2="119.0" y2="239.8" stroke="blue"/>
+<text x="125.0" y="229.8">발판 왼쪽</text>
+<circle cx="359.0" cy="235.8" r="24.0" fill="none" stroke="blue"/>
+<line x1="355.0" y1="235.8" x2="363.0" y2="235.8" stroke="blue"/><line x1="359.0" y1="231.8" x2="359.0" y2="239.8" stroke="blue"/>
+<text x="365.0" y="229.8">발판 오른쪽</text>
+<circle cx="335.0" cy="51.8" r="6.0" fill="none" stroke="blue"/>
+<line x1="331.0" y1="51.8" x2="339.0" y2="51.8" stroke="blue"/><line x1="335.0" y1="47.8" x2="335.0" y2="55.8" stroke="blue"/>
+<text x="341.0" y="45.8">키 세트 LED</text>
+<text x="0" y="391.6">발판 왼쪽: x -30.0, y -12.0, 지름 12</text>
+<text x="0" y="403.6">발판 오른쪽: x +30.0, y -12.0, 지름 12</text>
+<text x="0" y="415.6">키 세트 LED: x +24.0, y +34.0, 지름 3</text>
+</svg>

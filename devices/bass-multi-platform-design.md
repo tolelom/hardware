@@ -145,7 +145,7 @@ F(K1 바이패스)를 메인 기판으로 옮긴다. 값은 BLOCKS 그대로 시
 | 인코더 확장 | MCP23017 ×2 (I2C, 각 16비트). 인코더 7개 × 3선 = 21선 | Seed3 GPIO 절약. 인터럽트 핀으로 변화를 알린다 |
 | 화면 | SPI + DC + RST + 백라이트 PWM | DMA SPI로 오디오 콜백과 분리, 프레임 버퍼는 SDRAM. 전체 프레임은 307.2KB(480×320×16비트)로 50MHz SPI에서 약 20fps라 바뀐 영역만 보낸다 |
 | MIDI IN | TRS 타입 A, H11L1 광커플러(3~15V 동작, Daisy Pod와 같은 계열) → UART RX. 6N137은 5V 전용이라 뺐다 | MIDI 규격의 절연 입력 |
-| EXP | TRS, 링에 3.3V 기준, 팁 와이퍼 → ADC, 꽂힘 감지 | 익스프레션 페달 |
+| EXP | TRS, 링에 3.3V 기준, 팁과 링을 각각 ADC로. 익스프레션 페달과 2버튼 외장 풋스위치(팁–슬리브 1번, 링–슬리브 2번, Boss FS-6 방식)를 둘 다 받고 링 전압으로 구분한다. 꽂힘 감지 | 익스프레션 페달, 발판이 모자랄 때 외장 풋스위치(자작 악보 페달 겸용, [page-pedal-design.md](page-pedal-design.md)) |
 | 스테레오 출력 | 출력단 한 채널 풋프린트, Seed3 Audio Out 2 배선 | 부품은 얹지 않는다 |
 | microSD | 4비트 SDMMC (Seed3 D1~D6) | 캐비닛 IR, 프리셋 백업, 샘플. Seed3 Pedal Dev Kit과 같은 핀 |
 | MIDI OUT | TRS 타입 A, UART TX(D13) | 다른 장비의 프리셋·템포 제어. THRU는 넣지 않는다 |
@@ -162,7 +162,7 @@ F(K1 바이패스)를 메인 기판으로 옮긴다. 값은 BLOCKS 그대로 시
 | 화면 SPI1 NSS, SCK, MOSI | D7, D8, D10 |
 | I2C1 SCL, SDA (MCP23017) | D11, D12 |
 | MIDI OUT USART1 TX / MIDI IN RX | D13 / D14 |
-| EXP (ADC) | D15 (A0) |
+| EXP 팁 / 링 (ADC) | D15 (A0) / D28 (A11) |
 | 화면 백라이트 PWM (TIM2_CH4) | D16 |
 | 화면 DC, RST | D17, D18 |
 | MCP23017 인터럽트 A, B | D19, D21 |
@@ -170,8 +170,8 @@ F(K1 바이패스)를 메인 기판으로 옮긴다. 값은 BLOCKS 그대로 시
 | 풋스위치 FS1~3 | D22, D23, D24 |
 | 풋스위치 LED 1~3 | D25, D26, D27 |
 
-합계 26핀. Seed3 GPIO는 D0~D30 31개이고 그중 A0~A11 12개가 ADC를 겸한다(Seed3 데이터시트 v2.1.0 표 2). 비운 핀은
-D9(화면 모듈이 쓰기 전용 4선 SPI라 MISO 불필요), D28(A11), D29·D30(외부 USB, USB 호스트 자리)이다.
+합계 27핀. Seed3 GPIO는 D0~D30 31개이고 그중 A0~A11 12개가 ADC를 겸한다(Seed3 데이터시트 v2.1.0 표 2). 비운 핀은
+D9(화면 모듈이 쓰기 전용 4선 SPI라 MISO 불필요), D29·D30(외부 USB, USB 호스트 자리)이다.
 
 Seed3 Pedal Dev Kit(Electro-Smith, Rev4 2026-09-15 공개, 회로도·BOM 공개)은 9V 단일 전원에 입력단 감쇠 -4.6dB, 출력 ×2.2라
 잭 기준 최대 입출력이 약 +9dBu다(부품값으로 계산). 보유 베이스 슬랩 피크(+10dBu)를 받지 못하므로 입출력단은 계승 회로를

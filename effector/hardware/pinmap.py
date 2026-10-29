@@ -74,6 +74,8 @@ PLATFORM = {
     "MCP_INT_B": "D21",
     "FS1": "D22", "FS2": "D23", "FS3": "D24",
     "LED1": "D25", "LED2": "D26", "LED3": "D27",
+    # EXP 잭 링. 2버튼 외장 풋스위치의 2번(링–슬리브)을 읽는다. 익스프레션 페달이면 링 전압이 일정해 구분된다
+    "EXP_RING_ADC": "D28",
 }
 PERIPHERAL_PREFIXES = ("SPI1_", "I2C1_", "USART1_", "SDMMC1_")
 
