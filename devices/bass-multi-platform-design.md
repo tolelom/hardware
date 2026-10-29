@@ -89,8 +89,8 @@ Hammond 1590R1. 외형 192 × 111.25 × 60.76mm, 벽 2.03mm(판매점 표기, Di
 | 뒷면 OUT, IN, EXP, MIDI OUT, MIDI IN, USB-C, DC 9V | x 76, 52, 26, 3, −17, −44, −72. y는 기판 장착 높이(메인 기판 스페이서 5mm + 1.6mm 위에 몸체가 앉는다): 1/4" −13.75, 3.5mm −16.75, USB-C −20, DC −16.25 |
 
 `enclosure.py --draft --design platform_1590r1 --dxf` 결과(2026-10-28): 검사 실패 0건, 미측정 35건(대표값 포함).
-면별 SVG·DXF는 `effector/hardware/enclosure/platform_1590r1/`. 미측정 값을 실측으로 채운 뒤 `--final`로 확정한다. 시안 비교는
-[멀티 이펙터 최종 시안](https://claude.ai/artifact/3eXMidmN25MHUvB5gkBLUX)에 있다.
+면별 SVG·DXF는 `effector/hardware/enclosure/platform_1590r1/`. 미측정 값을 실측으로 채운 뒤 `--final`로 확정한다. 실제 크기 패널 그림과 검토한 안은
+[베이스 멀티 이펙터](https://claude.ai/artifact/2HPDRA5qC6RFLpBZ9HcJTh) 정리 페이지의 C절과 부록에 있다.
 
 화면은 2026-10-28 조사에서 정했다.
 
