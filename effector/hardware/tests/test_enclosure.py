@@ -217,6 +217,20 @@ class DesignTest(unittest.TestCase):
         inner_back = values["case.length"] / 2 - values["case.wall"]
         self.assertLessEqual(seed.y1, inner_back - d.JACK_BAND_MM)
 
+    def test_page_pedal_design_draft_has_no_failures(self) -> None:
+        from designs import page_pedal_1590bb as d
+        values, _ = en.resolve(d.DESIGN.case, d.DESIGN.parts, [], draft=True)
+        findings = en.check(d.DESIGN.case, d.DESIGN.parts, d.DESIGN.placements, d.DESIGN.internal(values), values)
+        failed = [f for f in findings if not f.ok]
+        self.assertEqual(failed, [], failed)
+
+    def test_page_pedal_switches_are_far_enough_apart_for_a_foot(self) -> None:
+        # 한 발로 하나만 밟히려면 발판 중심 간격이 넉넉해야 한다(대표 기준 55mm 이상)
+        from designs import page_pedal_1590bb as d
+        switches = [p for p in d.DESIGN.placements if p.part == "fs"]
+        self.assertEqual(len(switches), 2)
+        self.assertGreaterEqual(abs(switches[0].x - switches[1].x), 55)
+
     def test_compressor_design_output_unchanged(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             with contextlib.redirect_stdout(io.StringIO()):

@@ -354,12 +354,15 @@ def main(argv: list[str] | None = None) -> int:
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--draft", action="store_true")
     mode.add_argument("--final", action="store_true")
-    parser.add_argument("--design", choices=("compressor_1590c", "platform_1590r1"), default="compressor_1590c")
+    parser.add_argument("--design", choices=("compressor_1590c", "platform_1590r1", "page_pedal_1590bb"), default="compressor_1590c")
     parser.add_argument("--out", default=None)
     parser.add_argument("--dxf", action="store_true", help="면마다 CNC용 DXF도 쓴다")
     args = parser.parse_args(argv)
     if args.design == "platform_1590r1":
         from designs.platform_1590r1 import DESIGN
+        return _run_design(DESIGN, args)
+    if args.design == "page_pedal_1590bb":
+        from designs.page_pedal_1590bb import DESIGN
         return _run_design(DESIGN, args)
     args.out = args.out or str(Path(__file__).resolve().parent / "enclosure")
     values, missing = resolve(CASE, PARTS, [], draft=args.draft)
