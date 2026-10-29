@@ -48,7 +48,7 @@ def _seed_socket() -> Part:
         nets[str(pinmap.SEED3_PINS[name].physical)] = pinmap.net(function)
     return Part("J4", "Connector_Generic", "Conn_01x40", "Daisy Seed3 2x20 소켓", nets,
                 note="핀 번호는 Seed3 데이터시트 v2.1.0 표 2 물리 핀. 배정은 pinmap.PLATFORM. "
-                     "17 Audio In 2, D9·D28~D30은 비움. 38 3V3D는 MIDI 회로 전원")
+                     "17 Audio In 2, D9·D29·D30은 비움. 38 3V3D는 MIDI 회로 전원")
 
 
 N = pinmap.net
@@ -67,7 +67,7 @@ def _link(ref: str, note: str) -> Part:
 
 
 def _exp_block() -> Block:
-    return Block("[메인] N. EXP 입력 (설계서 5.2절)", [
+    return Block("[메인] N. EXP 입력, 익스프레션 페달과 2버튼 풋스위치 겸용 (설계서 5.2절)", [
         Part("J12", "Connector_Audio", "AudioJack3", "EXP 6.35mm TRS", {"T": "EXP_TIP", "R": "EXP_RING", "S": "GND"},
              note="팁 와이퍼, 링 기준, 슬리브 GND"),
         Part("R50", "Device", "R", "10k", {"1": "SEED_3V3A", "2": "EXP_RING"},
@@ -77,6 +77,11 @@ def _exp_block() -> Block:
              note="팁 풀업. 뺐을 때 ADC가 전체 눈금 = 꽂힘 감지"),
         Part("R52", "Device", "R", "1k", {"1": "EXP_TIP", "2": N("EXP_ADC")}, note="ADC 직렬, 정전기 전류 제한"),
         Part("C50", "Device", "C", "100n", {"1": N("EXP_ADC"), "2": "GND"}, note="R52와 1.6kHz"),
+        Part("R59", "Device", "R", "1k", {"1": "EXP_RING", "2": N("EXP_RING_ADC")},
+             note="링 감지 ADC 직렬. 2버튼 풋스위치(팁–슬리브 1번, 링–슬리브 2번, Boss FS-6 방식)의 2번을 읽는다. "
+                  "링 전압으로 꽂힌 것을 구분: 익스프레션 페달이면 R/(R+10k)로 일정(10k 50%, 250k 96%), "
+                  "풋스위치면 떼면 100%·밟으면 0%, 아무것도 없으면 100%"),
+        Part("C53", "Device", "C", "100n", {"1": N("EXP_RING_ADC"), "2": "GND"}, note="R59와 1.6kHz"),
     ])
 
 

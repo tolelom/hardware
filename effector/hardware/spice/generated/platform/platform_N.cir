@@ -1,7 +1,9 @@
 * 자동 생성: gen_spice.py. 손으로 고치지 않는다.
-* [메인] N. EXP 입력 (설계서 5.2절)
-* BLOCKS b4b31ea4aa3a4076
+* [메인] N. EXP 입력, 익스프레션 페달과 2버튼 풋스위치 겸용 (설계서 5.2절)
+* BLOCKS f4b90206966105ab
 R50 seed_3v3a exp_ring 10000
 R51 seed_3v3a exp_tip 100000
 R52 exp_tip seed_d15_exp_adc 1000
 C50 seed_d15_exp_adc 0 1e-07
+R59 exp_ring seed_d28_exp_ring_adc 1000
+C53 seed_d28_exp_ring_adc 0 1e-07
