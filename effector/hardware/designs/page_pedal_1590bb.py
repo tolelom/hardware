@@ -1,4 +1,4 @@
-"""악보 페달(발판 2개, XIAO RP2040, TRS 겸용). 악보 페달 설계서 3절.
+"""악보 페달(발판 2개, XIAO nRF52840, 블루투스·USB, TRS 겸용). 악보 페달 설계서 3절.
 
 면 좌표는 면 중심 기준 mm, x는 바깥에서 볼 때 오른쪽, y는 위(윗면은 뒷면 쪽)다.
 발판은 연주자 쪽(앞)에 두고 케이블(USB-C, TRS)은 모두 뒷면으로 낸다.
@@ -46,7 +46,8 @@ def internal(values: dict[str, float]) -> list[Box]:
 
 
 def missing_extra() -> list[str]:
-    return ["XIAO 고정 방식과 높이(USB-C 중심이 뒷면 가운데에 오도록 받침 필요)"]
+    return ["XIAO 고정 방식과 높이(USB-C 중심이 뒷면 가운데에 오도록 받침 필요)",
+            "LiPo 배터리 자리(발판 몸체 뒤쪽, 풋스위치 단자와 떨어뜨려 고정)"]
 
 
 DESIGN = Design("page_pedal_1590bb", CASE, PARTS, PLACEMENTS, internal, missing_extra)
