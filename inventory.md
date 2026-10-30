@@ -30,7 +30,7 @@
 |---|---|---|
 | [PocketBeagle 2 Rev A1](parts/pocketbeagle2.md) (TI AM6254) | 1 | 브링업 1a~1e 완료, 1f 미착수 |
 | [Seeed XIAO RP2040](parts/xiao-rp2040.md) | 1 | 노출 GPIO 11. WiFi 없음 |
-| [Seeed XIAO nRF52840](parts/xiao-nrf52840.md) | 1 | 논-Sense |
+| [Seeed XIAO nRF52840](parts/xiao-nrf52840.md) | 1 | 논-Sense. 악보 페달에 쓴다([devices/page-pedal-design.md](devices/page-pedal-design.md)) |
 | [Seeed XIAO nRF52840 Sense](parts/xiao-nrf52840.md) | 1 | IMU(LSM6DS3TR-C) + PDM 마이크 |
 | [Seeed XIAO nRF54LM20A](parts/xiao-nrf54lm20.md) | 1 | 기본 버전. 외장 안테나 동봉 없음 |
 | [Seeed XIAO nRF54LM20A Sense](parts/xiao-nrf54lm20.md) | 1 | 외장 안테나 동봉 없음. GPIO 28(관통홀과 패드가 눈대중으로 반반), BLE 6.0, nPM1300 PMIC. IMU는 52840 Sense와 같은 LSM6DS3TR-C(문서 기준) |
