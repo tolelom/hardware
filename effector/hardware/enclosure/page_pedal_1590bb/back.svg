@@ -1,13 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="518" height="200" viewBox="-20 -20 518 216" font-family="sans-serif" font-size="10">
+<svg xmlns="http://www.w3.org/2000/svg" width="518" height="212" viewBox="-20 -20 518 216" font-family="sans-serif" font-size="10">
 <rect x="0" y="0" width="478.0" height="136.0" fill="none" stroke="black"/>
 <text x="239.0" y="68.0" font-size="28" fill="#c00" opacity="0.3" text-anchor="middle">초안</text>
 <text x="0" y="-6">뒷면(+Y, DC 잭 쪽). 바깥에서 본 면, 중심 기준 mm</text>
 <rect x="124.0" y="60.4" width="38.0" height="15.2" fill="none" stroke="blue"/>
 <line x1="139.0" y1="68.0" x2="147.0" y2="68.0" stroke="blue"/><line x1="143.0" y1="64.0" x2="143.0" y2="72.0" stroke="blue"/>
 <text x="149.0" y="62.0">USB-C</text>
+<circle cx="235.0" cy="68.0" r="12.0" fill="none" stroke="blue"/>
+<line x1="231.0" y1="68.0" x2="239.0" y2="68.0" stroke="blue"/><line x1="235.0" y1="64.0" x2="235.0" y2="72.0" stroke="blue"/>
+<text x="241.0" y="62.0">전원 스위치</text>
 <circle cx="327.0" cy="68.0" r="19.0" fill="none" stroke="blue"/>
 <line x1="323.0" y1="68.0" x2="331.0" y2="68.0" stroke="blue"/><line x1="327.0" y1="64.0" x2="327.0" y2="72.0" stroke="blue"/>
 <text x="333.0" y="62.0">TRS</text>
 <text x="0" y="152.0">USB-C: x -24.0, y +0.0, 사각 9.5 × 3.8</text>
-<text x="0" y="164.0">TRS: x +22.0, y +0.0, 지름 9.5</text>
+<text x="0" y="164.0">전원 스위치: x -1.0, y +0.0, 지름 6</text>
+<text x="0" y="176.0">TRS: x +22.0, y +0.0, 지름 9.5</text>
 </svg>

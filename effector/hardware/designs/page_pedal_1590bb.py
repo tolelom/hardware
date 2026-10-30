@@ -25,18 +25,21 @@ PARTS = {
                     _d(3, f"{REP}"), _d(3, f"{REP}"), _d(8, f"{REP}, 라이트 파이프 길이")),
     "trs": PartSpec("6.35mm 스테레오 잭", _d(9.5, "1호 설계서 5.2절"), _d(14, f"{REP}, 너트"),
                     _d(16, "1호 설계서 5.2절"), _d(16, "1호 설계서 5.2절"), _d(30, f"{REP}, 잭 몸체 길이")),
+    "pwr": PartSpec("미니 토글 전원 스위치", _d(6, f"{REP}, M6 부싱"), _d(10, f"{REP}, 너트"),
+                    _d(8, f"{REP}, 몸체"), _d(13, f"{REP}, 몸체"), _d(18, f"{REP}, 패널 안쪽 몸체와 단자")),
     "usb": PartSpec("XIAO USB-C", _d(0, "사각 타공"), _d(0, "사각"), _d(17.5, "Seeed XIAO 21 x 17.5mm"),
                     _d(4.5, f"{REP}, 기판과 커넥터 높이"), _d(21, "Seeed XIAO 21 x 17.5mm"),
                     cutout=(_d(9.5, REP), _d(3.8, REP)), outside_rect=(_d(12, REP), _d(7.2, REP))),
 }
 
 # 윗면: 발판 중심 간격 60mm, 앞쪽. LED 창은 XIAO 위
-# 뒷면(밖에서 볼 때): 왼쪽 USB-C, 오른쪽 TRS. 위에서 보면 좌우가 바뀐다(케이스 x = -뒷면 x)
+# 뒷면(밖에서 볼 때): 왼쪽 USB-C, 가운데 전원 스위치, 오른쪽 TRS. 위에서 보면 좌우가 바뀐다(케이스 x = -뒷면 x)
 PLACEMENTS = [
     Placement("발판 왼쪽", "fs", "top", -30, -12),
     Placement("발판 오른쪽", "fs", "top", 30, -12),
     Placement("키 세트 LED", "led", "top", 24, 34),
     Placement("USB-C", "usb", "back", -24, 0),
+    Placement("전원 스위치", "pwr", "back", -1, 0),
     Placement("TRS", "trs", "back", 22, 0),
 ]
 
