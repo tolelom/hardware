@@ -141,6 +141,14 @@ GPIO12의 WS2812가 유력한 대상이다. 대조는 안 했다.
 
 직접 다룰 용도는 아직 정하지 않았다.
 
+## 데이터시트
+
+| 문서 | 링크 |
+|---|---|
+| RP2040 Datasheet | [rp2040-datasheet.pdf](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf) |
+
+2026-08-31에 받은 파일과 2026-11-02에 위 URL에서 받은 파일의 SHA-256이 같다.
+
 ## 공장 출하 백업
 
 플래시 2 MB 전량을 [backups/xiao-rp2040/](../backups/xiao-rp2040/)에 보관한다.
