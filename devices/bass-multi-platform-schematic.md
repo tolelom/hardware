@@ -1,6 +1,6 @@
 # 멀티 이펙터 플랫폼 회로 설계
 
-설계서: [bass-multi-platform-design.md](bass-multi-platform-design.md). 계획서: [bass-multi-platform-plan.md](bass-multi-platform-plan.md)
+설계서: [bass-multi-platform-design.md](bass-multi-platform-design.md)
 회로도 파일: [effector/hardware/platform.kicad_sch](../effector/hardware/platform.kicad_sch)
 넷리스트(자동 생성): [effector/hardware/platform-netlist.md](../effector/hardware/platform-netlist.md)
 최종 갱신: 2026-10-28
