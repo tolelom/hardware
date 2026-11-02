@@ -12,7 +12,6 @@
 | 문서 | 내용 |
 |---|---|
 | `roadmap.md` | 브링업 0~8단계. 단계별 완료 기준 |
-| `applications.md` | 오디오 기기(플레이어, 이펙터) 계획 |
 | `00-setup` ~ `12-to-linux` | 구조 사실 13장 |
 
 ## 스펙
@@ -91,5 +90,4 @@ DFU는 SD를 건드리지 않는 구제 경로다.
   BT 동글이 붙는다. I2S를 안 거치므로 브링업과 독립이다
 - [devices/audio-player.md](../devices/audio-player.md). 1세대 거치형(2026-09-08). 로드맵 4단계 도달과
   PCM5102A 모듈이 선행이다. USB1 호스트 배선은 LDAC 동글과 공용
-- [devices/bass-effector.md](../devices/bass-effector.md). Teensy로 확정됐고 이 보드는 2세대 후보다.
-  `applications.md`의 이펙터 절은 그 시점에 쓴다
+- [devices/bass-effector.md](../devices/bass-effector.md). Seed3로 확정됐고 이 보드는 2세대 후보다

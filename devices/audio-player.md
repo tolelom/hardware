@@ -1,7 +1,5 @@
 # 오디오 플레이어 계획
 
-PocketBeagle 2 관점의 설계는 pocket-beagle2 저장소의 `applications.md`에 있다.
-작업 사본은 WSL `~/pocket-beagle2/applications.md`.
 부품 기준 문서: [parts/pocketbeagle2.md](../parts/pocketbeagle2.md)
 최종 갱신: 2026-09-08
 

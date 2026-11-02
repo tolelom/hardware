@@ -148,4 +148,4 @@ PSRAM(8MB)을 쓴다.
 
 넘어가는 조건: 신경망 앰프 모델링, 긴 임펄스 응답, 루퍼 대용량처럼 Seed3의 연산·저장 한계에 실제로
 부딪히는 것. 플레이어 1세대(거치형)가 McASP·코덱 연결을 먼저 확립하므로, 넘어가는 시점에는 그 결과를
-그대로 쓴다. 단계는 pocket-beagle2 저장소 [applications.md](https://github.com/tolelom/pocket-beagle2)의 이펙터 절을 따른다.
+그대로 쓴다.

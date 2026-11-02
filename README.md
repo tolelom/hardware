@@ -123,7 +123,7 @@ PB2는 WSL이다.
 
 | 문서 | 위치 | 이유 |
 |---|---|---|
-| PB2 브링업 13장, `roadmap.md`, `applications.md` | [GitHub](https://github.com/tolelom/pocket-beagle2). 작업 사본은 WSL `~/pocket-beagle2/` | 저장소가 곧 빌드 트리라 WSL에 있어야 한다. 아래 참조 |
+| PB2 브링업 13장, `roadmap.md` | [GitHub](https://github.com/tolelom/pocket-beagle2). 작업 사본은 WSL `~/pocket-beagle2/` | 저장소가 곧 빌드 트리라 WSL에 있어야 한다. 아래 참조 |
 | PB2 재현 트랙 계획 | WSL `~/pb2-repro/PLAN.md` | 작업장 로컬 |
 | 서버 인프라 (Mac Mini M2, M4) | Windows 데스크톱 `E:\dev\docs\server-migration.md` | 하드웨어가 아니라 인프라 |
 | 소프트웨어 프로젝트 인덱스 | Windows 데스크톱 `E:\dev\projects\docs\README.md` | 별도 계층 |
