@@ -1184,7 +1184,7 @@ git commit -m "[Feat] 이펙터 노브 파라미터 매핑"
 - 오디오 콜백은 입력 채널 0을 처리해 출력 두 채널에 같이 낸다. 파라미터 적용과 테스트 톤은 `__disable_irq`로 콜백과 겹치지 않게 복사한다
 - USB CDC 수신은 인터럽트에서 링 버퍼(256B)에 넣고 메인 루프가 꺼내 `feed`한다. 출력은 `TransmitInternal`
 - `dfu`는 `System::ResetToBootloader()`로 STM DFU에 들어간다(설계서 3.6절)
-- Ubuntu에서 `make`로 빌드를 확인했다(FLASH 106,736B, 128KB의 81%, 우리 코드 경고 0). 실기기 동작은 Task 8에서 처음 확인한다
+- Linux 개발 머신에서 `make`로 빌드를 확인했다(FLASH 106,736B, 128KB의 81%, 우리 코드 경고 0). 실기기 동작은 Task 8에서 처음 확인한다
 - 실기기에서 newlib-nano가 `%f`를 빼는 문제가 드러났다(status 숫자가 비고 명령 숫자를 못 읽음). 네이티브 테스트는 glibc라 못 잡는다. `-u _printf_float`를 링크하고 명령 파싱은 `strtof`로 바꿨다. FLASH 120,404B(91.9%, 2026-09-30 집 WSL, arm-none-eabi-gcc 10.3.1). 이 중 우리 코드는 약 4.9KB이고 나머지는 라이브러리다. 넘치면 `BOOT_SRAM`으로 간다
 - 내부 플래시가 차면 `APP_TYPE = BOOT_QSPI`로 바꾼다(`effector/README.md`)
 

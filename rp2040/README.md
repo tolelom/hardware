@@ -24,7 +24,7 @@ Pico SDK를 링크하지 않고 레지스터를 직접 다루는 펌웨어다. �
 
 ## 빌드
 
-빌드는 Ubuntu에서 한다. 호스트 도구는 `arm-none-eabi-gcc`와 `picotool`이다.
+빌드는 Linux 개발 머신에서 한다. 호스트 도구는 `arm-none-eabi-gcc`와 `picotool`이다.
 Windows 데스크톱의 WSL에는 둘 다 없고 보드도 그쪽에 연결하지 않는다.
 갖춰진 버전은 부품 기준 문서에 있다.
 

@@ -19,9 +19,6 @@
 | Mac Mini M4 (서버) | RAM 16GB / SSD 256GB | 앱 + 리버스 프록시. Colima VM 9GB 할당 |
 | Mac Mini M2 (서버) | RAM 8GB / SSD 256GB | DB + Git + CI/CD + 모니터링 |
 
-> 서버 2대의 역할 분담과 마이그레이션 계획은 Windows 데스크톱 `E:\dev\docs\server-migration.md`에 있다.
-> (`server-migration-v2.md`는 빈 파일이다.)
-
 ---
 
 ## 1. 보드 / 컴퓨트
