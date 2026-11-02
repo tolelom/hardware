@@ -97,7 +97,7 @@ Sense의 IMU와 마이크는 전원 핀이 따로 있고, IMU는 기본 I2C와 �
 `audiobusio.PDMIn`이 소리에 반응하지 않고 상수만 채우는 문제는 `MIC_PWR`을 안 켜서 생긴다.
 CircuitPython 이슈 #6602(2022)가 이 원인으로 닫혔다.
 
-`datasheets/`의 회로도 3쪽과 대조했다. 넷 이름이 `INTERNAL_I2C_SCL`(P0.27),
+[회로도](https://files.seeedstudio.com/wiki/XIAO-BLE/Seeed_Studio_XIAO_nRF52840_PDF.pdf) 3쪽과 대조했다. 넷 이름이 `INTERNAL_I2C_SCL`(P0.27),
 `INTERNAL_I2C_SDA`(P0.07), `6D_PWR`(P1.08), `6D_INT1`, `P1.10_MIC_PWR`, `P1.00_PDM_CLK`,
 `P0.16_PDM_DATA`, `P0.14_~READ_BAT`, `P0.31_AIN7_BAT`로 위 표와 맞는다.
 LSM6DS3TR-C의 I2C 주소는 `0x6A`다. SA0가 GND에 묶여 있어 고정이다.
@@ -143,15 +143,15 @@ SoftDevice는 Nordic이 바이너리로 배포하는 BLE 스택이다. CircuitPy
 
 ## 데이터시트
 
-2026-09-01에 받아 `datasheets/`에 두었다. 출처는 전부 Seeed 위키(files.seeedstudio.com) 미러다.
+전부 Seeed 위키가 올려 둔 사본이다. 2026-09-01에 받은 파일과 2026-11-02에 아래 URL에서 받은 파일의 SHA-256이 같다.
 
-| 문서 | 파일 | 비고 |
+| 문서 | 링크 | 비고 |
 |---|---|---|
-| nRF52840 Product Specification v1.5 | [datasheets/nrf52840_ps.pdf](datasheets/nrf52840_ps.pdf) | Nordic 공식 최신은 v1.11이나 직접 다운로드가 403이라 미러 v1.5를 받았다 |
-| LSM6DS3TR-C 데이터시트 | [datasheets/lsm6ds3tr-c.pdf](datasheets/lsm6ds3tr-c.pdf) | TR-C 변종 문서임을 내용으로 확인했다 |
-| PDM 마이크 MSM261D3526H1CPM | [datasheets/msm261d3526h1cpm-mic.pdf](datasheets/msm261d3526h1cpm-mic.pdf) | 부품번호는 Seeed 위키 기준. 실물 보드 리비전과 같은지는 확인 안 함 |
-| 충전 IC BQ25101 | [datasheets/bq25101-charger.pdf](datasheets/bq25101-charger.pdf) | |
-| XIAO nRF52840 회로도 | [datasheets/xiao-nrf52840-sense-schematic.pdf](datasheets/xiao-nrf52840-sense-schematic.pdf) | LSM6DS3TR-C가 포함돼 있어 Sense를 커버한다 |
+| nRF52840 Product Specification v1.5 | [nRF52840_PS_v1.5.pdf](https://files.seeedstudio.com/wiki/XIAO-BLE/nRF52840_PS_v1.5.pdf) | Nordic 공식 최신은 v1.11이나 직접 다운로드가 403이라 미러 v1.5를 받았다 |
+| LSM6DS3TR-C 데이터시트 | [ST_LSM6DS3TR_Datasheet.pdf](https://files.seeedstudio.com/wiki/XIAO-BLE/ST_LSM6DS3TR_Datasheet.pdf) | TR-C 변종 문서임을 내용으로 확인했다 |
+| PDM 마이크 MSM261D3526H1CPM | [mic-MSM261D3526H1CPM-ENG.pdf](https://files.seeedstudio.com/wiki/XIAO-BLE/mic-MSM261D3526H1CPM-ENG.pdf) | 2026-11-02 기준 위키 본문은 WMM7035DTTJ0 데이터시트로 바뀌었다. 실물 보드의 마이크가 어느 쪽인지는 확인 안 함 |
+| 충전 IC BQ25101 | [BQ25101.pdf](https://files.seeedstudio.com/wiki/XIAO-BLE/BQ25101.pdf) | |
+| XIAO nRF52840 회로도 | [Seeed_Studio_XIAO_nRF52840_PDF.pdf](https://files.seeedstudio.com/wiki/XIAO-BLE/Seeed_Studio_XIAO_nRF52840_PDF.pdf) | LSM6DS3TR-C가 포함돼 있어 Sense를 커버한다 |
 
 ## 이 보드로 하는 작업
 

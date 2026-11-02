@@ -1,3 +1,6 @@
 # Windows 탐색기가 만드는 것
 Thumbs.db
 desktop.ini
+
+# 데이터시트 로컬 사본. 출처 URL은 parts/xiao-nrf52840.md
+parts/datasheets/
