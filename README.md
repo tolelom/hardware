@@ -1,152 +1,53 @@
 # 하드웨어
 
-> 개인 하드웨어 프로젝트의 진입점. 최종 갱신: 2026-09-18
+> 개인 하드웨어 프로젝트 모음. 키보드, 무선 컨트롤러, 오디오 기기, 베이스 이펙터를 설계하고, 그에 쓰는 보드를 베어메탈과 CircuitPython으로 익힌다.
 
-## 폴더 규칙
+목적: 공부하면서, 끝나면 실제로 쓸 것을 만든다.
 
-| 위치 | 성격 |
+## 폴더
+
+| 위치 | 내용 |
 |---|---|
-| `parts/` | 부품 기준 문서. 스펙, 제약, 툴체인, 디버깅 경로. 한 부품이 여러 기기에 걸치므로 여기에 모은다 |
-| `devices/` | 기기 계획서. 단계와 판정 기준 중심. 상세 설계는 링크 |
-| `backups/` | 보드에서 채취한 원본. 공장 출하 플래시 등 |
-| `rp2040/` | RP2040 베어메탈 펌웨어. 빌드 트리다. 툴체인과 보드가 Ubuntu에 있어 거기서만 빌드한다 |
-| `nrf52840/` | XIAO nRF52840 Sense CircuitPython 트랙. 빌드가 없어 Windows에서 진행한다 |
-| `effector/` | 베이스 컴프레서 펌웨어와 회로도. 코어는 CMake로 네이티브 테스트, 보드 빌드는 libDaisy Makefile(서브모듈). `hardware/`는 KiCad 회로도와 생성기 |
+| `devices/` | 기기별 계획서와 설계서. 계획서는 단계와 판정 기준, 상세는 설계서 |
+| `parts/` | 부품 기준 문서. 스펙, 제약, 툴체인, 디버깅 경로. 한 부품이 여러 기기에 쓰여 여기에 모은다 |
+| `effector/` | 베이스 이펙터 펌웨어와 회로도. 코어는 CMake로 네이티브 테스트, 보드 빌드는 libDaisy Makefile(서브모듈). `hardware/`는 KiCad 회로도와 생성기 |
+| `rp2040/` | RP2040 베어메탈 펌웨어 빌드 트리 |
+| `nrf52840/` | XIAO nRF52840 Sense CircuitPython 학습 트랙 |
+| `backups/` | 보드에서 채취한 공장 출하 플래시 |
 | `inventory.md` | 보유 장비 목록 |
-
-확인된 것만 적는다. 안 해본 것은 "확인 필요", 모르는 것은 "모름"으로 남긴다.
-벤더 문서나 공개 저장소에서 읽었을 뿐 실물로는 안 해본 값은 "문서 기준"을 붙인다.
-`parts/`의 툴체인 표에 "검증됨"이 없다는 것은 아직 안 켜봤다는 뜻이다.
-
-목적: 공부하면서, 끝나면 실제로 쓸 것을 만든다. 포트폴리오는 기준이 아니다.
 
 ## 기기
 
-| 기기 | 부품 | 상태 | 막는 것 | 갱신 |
-|---|---|---|---|---|
-| [TKL 87키 키보드](devices/tkl-keyboard.md) | RP2040 베어칩 | 멈춤 | 없음 (설계 단계 기준). 케이스·플레이트 재고는 PCB 발주를 막는다 | 09-14 |
-| [분리형 무선 컨트롤러](devices/split-controller.md) | XIAO nRF52840 ×2 | 미착수 | 없음 | 09-07 |
-| [오디오 플레이어](devices/audio-player.md) | PocketBeagle 2 | 미착수 | PB2 브링업 로드맵 4단계 도달 | 09-08 |
-| PB2 브링업 (학습) | PocketBeagle 2 | 멈춤 (1e까지) | 재현 트랙 1c~1e 착수 | 09-02 |
-| [RP2040 베어메탈](rp2040/) (학습) | XIAO RP2040 | 진행 중 (3단계 완료) | 없음 | 09-07 |
-| [52840 CircuitPython](nrf52840/) (학습) | XIAO nRF52840 Sense | 미착수 | 없음 | 09-07 |
-| [베이스 이펙터](devices/bass-effector.md) | Daisy Seed3 (미보유) | 미착수 | 1단계 부품 조달 (DigiKey 결제는 T7 뒤로 보류) | 09-18 |
-| [LDAC 송신 동글](devices/ldac-dongle.md) | PocketBeagle 2, RPi 3B+(검증용) | 계획만 | 0단계 전제 검증 (지출 0) | 09-08 |
-| RPi 활용 | RPi 3B+ | 용도 미정 | 용도 결정 | 08-30 |
+| 기기 | 보드 | 문서 |
+|---|---|---|
+| TKL 87키 키보드 | RP2040 베어칩 | [계획](devices/tkl-keyboard.md), [설계](devices/tkl-keyboard-design.md) |
+| 분리형 무선 컨트롤러 | XIAO nRF52840 ×2 | [계획](devices/split-controller.md) |
+| 오디오 플레이어 | PocketBeagle 2 | [계획](devices/audio-player.md) |
+| LDAC 송신 동글 | PocketBeagle 2, RPi 3B+ | [계획](devices/ldac-dongle.md) |
+| 베이스 컴프레서 페달 | Daisy Seed3 | [계획](devices/bass-effector.md), [설계](devices/bass-effector-design.md), [회로](devices/bass-effector-schematic.md), [검증 도구](devices/bass-effector-tools-design.md), [펌웨어](effector/) |
+| 베이스 멀티 이펙터 플랫폼 | Daisy Seed3 | [설계](devices/bass-multi-platform-design.md), [회로](devices/bass-multi-platform-schematic.md) |
+| 악보 페달 | XIAO nRF52840 | [설계](devices/page-pedal-design.md) |
 
-상태 어휘는 여섯 개로 고정한다: 진행 중 / 멈춤 / 미착수 / 계획만 / 용도 미정 / 완료.
-막는 것에는 가장 앞의 하나만 적는다. 나머지는 해당 기기 문서에 둔다.
-갱신 칸의 날짜가 밀려 있으면 그 줄은 믿지 말고 기기 문서를 본다.
+학습 트랙
+
+| 트랙 | 보드 | 문서 |
+|---|---|---|
+| RP2040 베어메탈 | XIAO RP2040 | [rp2040/](rp2040/) |
+| CircuitPython | XIAO nRF52840 Sense | [nrf52840/](nrf52840/) |
 
 ## 부품
 
-| 부품 | 배정 | 실물 검증 | 갱신 |
-|---|---|---|---|
-| [PocketBeagle 2](parts/pocketbeagle2.md) | 브링업, LDAC 송신 동글, 오디오 플레이어 | 상당함 | 09-08 |
-| [XIAO nRF52840 / Sense](parts/xiao-nrf52840.md) | CircuitPython 학습, 컨트롤러 | 부트로더 진입까지 | 09-07 |
-| [XIAO nRF54LM20A / Sense](parts/xiao-nrf54lm20.md) | 컨트롤러 (도착 후 판단) | 없음 (도착 예정) | 09-07 |
-| [XIAO RP2040](parts/xiao-rp2040.md) | 베어메탈 학습, 키보드 펌웨어 검증 | 자작 펌웨어로 UART 출력까지 | 09-07 |
-| [RPi 3B+](parts/rpi-3bplus.md) | 미정. LDAC 동글 1~2단계 검증은 배정됨 | 없음 | 09-01 |
-| [Arduino Uno 클론](parts/arduino-uno.md) | 배정 없음 | - | 08-30 |
+| 부품 | 문서 |
+|---|---|
+| PocketBeagle 2 | [parts/pocketbeagle2.md](parts/pocketbeagle2.md) |
+| XIAO nRF52840 / Sense | [parts/xiao-nrf52840.md](parts/xiao-nrf52840.md) |
+| XIAO nRF54LM20A / Sense | [parts/xiao-nrf54lm20.md](parts/xiao-nrf54lm20.md) |
+| XIAO RP2040 | [parts/xiao-rp2040.md](parts/xiao-rp2040.md) |
+| Raspberry Pi 3B+ | [parts/rpi-3bplus.md](parts/rpi-3bplus.md) |
+| Arduino Uno 클론 | [parts/arduino-uno.md](parts/arduino-uno.md) |
 
-보유 수량은 [inventory.md](inventory.md)가 기준이다. 여기는 배정과 검증 상태만 본다.
+## 문서 표기
 
-## 순서를 정할 때 쓸 재료
-
-순서는 아직 정하지 않았다. 아래는 정할 때 필요한 사실이다.
-
-### 권고 (2026-09-07)
-
-확정이 아니다. 재료를 놓고 본 권고이며 다르게 정하면 이 절을 지운다.
-
-1. 키보드 1단계. 09-07 조사로 판매처 문의가 필요 없어졌다. Apollo87H 공개 파일을
-   KiCad에서 열어 외형을 확보하고, Frog TKL 재고 알림을 걸어 둔다. 재고 대기가
-   가장 길어서 먼저 걸어 두는 것이다. 계획서의 "케이스 후보" 절.
-2. 52840 CircuitPython 0~1단계. Windows에서 케이블만 꽂으면 되고 한나절이면 끝난다.
-   보드 판별(어느 것이 Sense인가)이 해소되고 컨트롤러 0단계가 같이 끝난다.
-3. RP2040 4단계. Ubuntu에 있을 때. 계획은 트랙 README에 있다.
-4. 이펙터 DigiKey 주문과 보유 베이스 피크 측정(M1). Seed3는 주문했다(09-15).
-5. LDAC 동글 0단계. 맥 협상 코덱 확인과 블라인드 비교. 지출 0이고 결과가 2단계 지출을 결정한다.
-
-PB2 재현 트랙은 위 다섯 뒤다. 플레이어 1단계는 재현 트랙과 로드맵 4단계 뒤라 순서에 없다. 손으로 재현하는 성격상 한 번에 길게 앉아야 하고,
-지금은 짧게 끊어 되는 것부터 치우는 편이 낫다.
-
-### 선행 조건
-
-```
-PB2 브링업 1f -> 로드맵 4단계 -> 오디오 플레이어 1단계(소리 내기)
-                      +-------> RPi 후보 B(TFTP/NFS)가 필요해지는 시점
-USB1 호스트 배선 -> 플레이어 2단계(WiFi 동글)와 LDAC 동글 3단계(BT 동글) 공용
-
-키보드: Apollo87H 외형 임포트 -> 회로도 -> 레이아웃 -> DRC (케이스 없이 진행)
-        케이스·플레이트 실물 보유 -> PCB 발주 -> 조립
-        XIAO 프로토타입은 병행 가능
-
-컨트롤러: 선행 조건 없음. 0~1단계는 52840 CircuitPython 트랙의 0·4단계와 같은 판정이다
-RP2040 베어메탈: 4단계(boot2)부터는 플래시를 덮어쓴다. 공장 백업이 있어 되돌릴 수 있다
-
-이펙터(Seed3): Seed3 주문, 베이스 피크 측정 -> 디지털 경로(T7 판정) -> DigiKey·페달파츠 주문 -> 아날로그단 -> 릴레이·제어 -> 케이스
-LDAC 동글: 0단계 전제 검증 -> 1~2단계는 RPi 3B+ -> 3단계 PB2 이식(USB1 배선, BT 동글). 브링업과 독립
-```
-
-### 지금 시작 가능한 것
-
-| 기기 | 첫 단계 | 필요한 것 | 어디서 |
-|---|---|---|---|
-| RP2040 베어메탈 | 4. boot2. 플래시에서 부팅 | 있음 | Ubuntu |
-| 52840 CircuitPython | 0. UF2 설치와 첫 구동. 절차는 트랙 README | 있음. USB 케이블만 | Windows |
-| 컨트롤러 | 0. 보드 첫 구동. 위 트랙 0단계와 같다 | 있음 | Windows |
-| PB2 브링업 | 재현 트랙 1c~1e. 그 뒤 1f. SD 쓰기와 부팅 | 있음. 재현 트랙 계획은 `~/pb2-repro/PLAN.md` | WSL |
-| 키보드 | 1. 케이스 선정과 외형 확보. 0단계(§13 답변)는 08-30에 끝났다 | Apollo87H 공개 파일과 KiCad. 케이스는 재고 대기 | 어디서나 |
-| 이펙터 | 0. 보유 베이스 피크 측정 (M1) | 있음. 스칼렛, 베이스 | 집 |
-| LDAC 동글 | 0. 전제 검증. 맥 협상 코덱 확인과 블라인드 비교 | 있음. iPhone, 맥, MTW4 | 집 |
-
-모두 부품 없이 시작된다.
-Windows에서 되는 것은 CircuitPython 트랙과 컨트롤러 0단계뿐이다. RP2040 빌드는 Ubuntu,
-PB2는 WSL이다.
-
-### 부품 리드타임
-
-| 항목 | 막는 것 | 리드타임 |
-|---|---|---|
-| 택트 스위치, KY-023 | 컨트롤러 2단계 (디바운싱) | 국내 며칠, 알리 2~3주 |
-| PCM5102A 모듈 | 오디오 플레이어 1단계 | 국내 며칠, 알리 2~3주 |
-| USB WiFi 동글 | 오디오 플레이어 2단계 | 커널 내장 드라이버 칩셋으로 선정 후 |
-| 이펙터 Seed3(daisy.audio, 네덜란드 발송, 주문함 09-15), DigiKey 부품(아날로그 IC, 릴레이, 저항·커패시터), 페달파츠(1590C 케이스와 타공, 포트), 악기점(9V 어댑터) | 이펙터 1단계 이후 | Seed3 처리 1~2일에 배송 5~8영업일(문서 기준). DigiKey 평균 1~3일(문서 기준). 페달파츠 국내 며칠 |
-| 케이스와 플레이트 (Frog TKL 후보) | 키보드 PCB 발주와 조립 | 케이스·플레이트 모두 재생산 대기(09-08 전 옵션 품절). 외형 파일은 공개돼 있어 설계는 먼저 간다 |
-| XIAO nRF52840 Sense 1개 | 컨트롤러 정식 구성 | Seeed |
-| LiPo, JST 1.25mm | 컨트롤러 6단계 | - |
-| 3D 프린터 | 컨트롤러 7단계 | 미보유. 구매 검토 중 |
-| 로직 애널라이저 | I2S/SPI 디버깅 시 | 미보유 |
-
-## 다른 곳이 기준인 문서
-
-| 문서 | 위치 | 이유 |
-|---|---|---|
-| PB2 브링업 13장, `roadmap.md` | [GitHub](https://github.com/tolelom/pocket-beagle2). 작업 사본은 WSL `~/pocket-beagle2/` | 저장소가 곧 빌드 트리라 WSL에 있어야 한다. 아래 참조 |
-| PB2 재현 트랙 계획 | WSL `~/pb2-repro/PLAN.md` | 작업장 로컬 |
-| 서버 인프라 (Mac Mini M2, M4) | Windows 데스크톱 `E:\dev\docs\server-migration.md` | 하드웨어가 아니라 인프라 |
-| 소프트웨어 프로젝트 인덱스 | Windows 데스크톱 `E:\dev\projects\docs\README.md` | 별도 계층 |
-
-이 저장소는 머신 두 대에 걸쳐 있다. 저장소 밖은 상대경로로 적지 않고 머신과 전체 경로를 적는다.
-
-### PB2 저장소를 여기로 합치지 않는 이유
-
-2026-08-30에 검토하고 보류했다. 재현 트랙이 끝난 뒤 다시 본다.
-
-빌드 스크립트가 `WS`를 스크립트가 놓인 자리로 잡는다. 의도된 설계이며 주석에 근거가 있다.
-따라서 저장소 위치가 곧 빌드 위치다. 저장소를 `E:\dev` 아래로 옮기면 빌드 트리도 따라온다.
-
-이 머신에서 측정한 값이다. 작은 파일 2000개 생성과 읽기.
-
-| 위치 | 쓰기 | 읽기 |
-|---|---|---|
-| WSL ext4 | 61 ms | 7 ms |
-| Windows 9p (`/mnt/e`) | 3132 ms | 3188 ms |
-
-쓰기 51배, 읽기 455배 차이다. u-boot 소스가 402M에 파일이 만 개 단위라 브링업 반복이 못 쓸 수준이 된다.
-
-합치려면 `hardware/`를 WSL로 옮기는 방향뿐인데, 그러면 문서 편집이 매번 `\\wsl$` 경유가 된다.
-얻는 것은 진입점 통합 하나이고 그것은 링크로 해결된다.
-
-발행은 그쪽에서 돌아간다. 저장소 깊이가 바뀌면 그쪽에서 깨진다.
+- 확인된 것만 적는다. 안 해본 것은 "확인 필요", 모르는 것은 "모름"으로 남긴다.
+- 벤더 문서나 공개 저장소에서 읽었을 뿐 실물로 해보지 않은 값에는 "문서 기준"을 붙인다.
+- `parts/`의 툴체인 표에 "검증됨"이 없으면 아직 실물로 켜보지 않았다는 뜻이다.
