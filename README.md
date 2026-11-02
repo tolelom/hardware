@@ -8,11 +8,9 @@
 
 | 위치 | 내용 |
 |---|---|
-| `devices/` | 기기별 계획서와 설계서. 계획서는 단계와 판정 기준, 상세는 설계서 |
-| `parts/` | 부품 기준 문서. 스펙, 제약, 툴체인, 디버깅 경로. 한 부품이 여러 기기에 쓰여 여기에 모은다 |
-| `effector/` | 베이스 이펙터 펌웨어와 회로도. 코어는 CMake로 네이티브 테스트, 보드 빌드는 libDaisy Makefile(서브모듈). `hardware/`는 KiCad 회로도와 생성기 |
-| `rp2040/` | RP2040 베어메탈 펌웨어 빌드 트리 |
-| `nrf52840/` | XIAO nRF52840 Sense CircuitPython 학습 트랙 |
+| `devices/` | 기기별 폴더. 기기 하나의 계획서·설계서와 펌웨어·회로가 한 폴더에 있다. 문서가 하나면 `README.md` |
+| `learning/` | 보드를 익히는 학습 트랙. `rp2040-baremetal/`(XIAO RP2040 베어메탈), `nrf52840-circuitpython/`(XIAO nRF52840 Sense CircuitPython) |
+| `parts/` | 부품 기준 문서. 스펙, 제약, 툴체인, 디버깅 경로, 데이터시트 출처. 한 부품이 여러 기기에 쓰여 여기에 모은다 |
 | `backups/` | 보드에서 채취한 공장 출하 플래시의 채취 기록과 해시. 덤프 원본은 비공개 저장소에 둔다 |
 | `inventory.md` | 보유 장비 목록 |
 
@@ -20,20 +18,20 @@
 
 | 기기 | 보드 | 문서 |
 |---|---|---|
-| TKL 87키 키보드 | RP2040 베어칩 | [계획](devices/tkl-keyboard.md), [설계](devices/tkl-keyboard-design.md) |
-| 분리형 무선 컨트롤러 | XIAO nRF52840 ×2 | [계획](devices/split-controller.md) |
-| 오디오 플레이어 | PocketBeagle 2 | [계획](devices/audio-player.md) |
-| LDAC 송신 동글 | PocketBeagle 2, RPi 3B+ | [계획](devices/ldac-dongle.md) |
-| 베이스 컴프레서 페달 | Daisy Seed3 | [계획](devices/bass-effector.md), [설계](devices/bass-effector-design.md), [회로](devices/bass-effector-schematic.md), [검증 도구](devices/bass-effector-tools-design.md), [펌웨어](effector/) |
-| 베이스 멀티 이펙터 플랫폼 | Daisy Seed3 | [설계](devices/bass-multi-platform-design.md), [회로](devices/bass-multi-platform-schematic.md) |
-| 악보 페달 | XIAO nRF52840 | [설계](devices/page-pedal-design.md) |
+| TKL 87키 키보드 | RP2040 베어칩 | [계획](devices/tkl-keyboard/README.md), [설계](devices/tkl-keyboard/design.md) |
+| 분리형 무선 컨트롤러 | XIAO nRF52840 ×2 | [계획](devices/split-controller/README.md) |
+| 오디오 플레이어 | PocketBeagle 2 | [계획](devices/audio-player/README.md) |
+| LDAC 송신 동글 | PocketBeagle 2, RPi 3B+ | [계획](devices/ldac-dongle/README.md) |
+| 베이스 컴프레서 페달 | Daisy Seed3 | [계획](devices/bass-effector/docs/plan.md), [설계](devices/bass-effector/docs/design.md), [회로](devices/bass-effector/docs/schematic.md), [검증 도구](devices/bass-effector/docs/tools-design.md), [펌웨어](devices/bass-effector/) |
+| 베이스 멀티 이펙터 플랫폼 | Daisy Seed3 | [설계](devices/bass-effector/docs/multi-platform-design.md), [회로](devices/bass-effector/docs/multi-platform-schematic.md) |
+| 악보 페달 | XIAO nRF52840 | [설계](devices/page-pedal/README.md) |
 
 학습 트랙
 
 | 트랙 | 보드 | 문서 |
 |---|---|---|
-| RP2040 베어메탈 | XIAO RP2040 | [rp2040/](rp2040/) |
-| CircuitPython | XIAO nRF52840 Sense | [nrf52840/](nrf52840/) |
+| RP2040 베어메탈 | XIAO RP2040 | [rp2040-baremetal](learning/rp2040-baremetal/) |
+| CircuitPython | XIAO nRF52840 Sense | [nrf52840-circuitpython](learning/nrf52840-circuitpython/) |
 
 ## 부품
 

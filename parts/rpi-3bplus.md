@@ -3,7 +3,7 @@
 부품 기준 문서. 확인된 것만 적는다. 모르는 것은 "모름"으로 남긴다.
 용도 미정이다. 아래 후보 비교에서 결정한 뒤 `devices/`로 승격한다.
 상시 용도와 별개로 일시 용도 하나가 배정돼 있다:
-LDAC 송신 동글의 1~2단계 검증. [devices/ldac-dongle.md](../devices/ldac-dongle.md) 참조.
+LDAC 송신 동글의 1~2단계 검증. [devices/ldac-dongle/README.md](../devices/ldac-dongle/README.md) 참조.
 최종 갱신: 2026-09-01
 
 ## 스펙

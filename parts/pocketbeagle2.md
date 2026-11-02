@@ -84,8 +84,8 @@ DFU는 SD를 건드리지 않는 구제 경로다.
 
 2026-09-01 오디오 트랙 재편 이후의 배정이다.
 
-- [devices/ldac-dongle.md](../devices/ldac-dongle.md). 최종 보드로 확정. 3단계에서 USB1 호스트 배선과
+- [devices/ldac-dongle/README.md](../devices/ldac-dongle/README.md). 최종 보드로 확정. 3단계에서 USB1 호스트 배선과
   BT 동글이 붙는다. I2S를 안 거치므로 브링업과 독립이다
-- [devices/audio-player.md](../devices/audio-player.md). 1세대 거치형(2026-09-08). 로드맵 4단계 도달과
+- [devices/audio-player/README.md](../devices/audio-player/README.md). 1세대 거치형(2026-09-08). 로드맵 4단계 도달과
   PCM5102A 모듈이 선행이다. USB1 호스트 배선은 LDAC 동글과 공용
-- [devices/bass-effector.md](../devices/bass-effector.md). Seed3로 확정됐고 이 보드는 2세대 후보다
+- [devices/bass-effector/docs/plan.md](../devices/bass-effector/docs/plan.md). Seed3로 확정됐고 이 보드는 2세대 후보다

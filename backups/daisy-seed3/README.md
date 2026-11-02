@@ -1,6 +1,6 @@
 # Daisy Seed3 공장 출하 내부 플래시 백업
 
-기기 계획서: [devices/bass-effector.md](../../devices/bass-effector.md)
+기기 계획서: [devices/bass-effector/docs/plan.md](../../devices/bass-effector/docs/plan.md)
 최종 갱신: 2026-09-30
 
 ## 무엇인가

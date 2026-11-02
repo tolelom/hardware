@@ -44,7 +44,7 @@ Plus 변종(미보유): GPIO 20, UART ×2, SPI ×2, I2S ×1.
 
 1. 노출 GPIO가 11개뿐이다. 칩 자체는 48 GPIO지만 XIAO 폼팩터에서 나오는 것은 11개다.
    컨트롤러 오른손 배치(버튼 8, 조이스틱 X/Y 2)가 10핀을 쓰므로 여유가 1핀이다.
-   계산은 [devices/split-controller.md](../devices/split-controller.md)에 있다.
+   계산은 [devices/split-controller/README.md](../devices/split-controller/README.md)에 있다.
 2. WiFi가 없다. 무선은 BLE, 802.15.4, 2.4GHz 독자 프로토콜뿐이다.
 3. BLE 버전은 Nordic 제품 브리프 v3.0 기준 Bluetooth 5.3이다. Seeed 위키에는 표기가 없다.
    보드에 실린 SoftDevice S140 7.3.0이 어느 버전으로 인증됐는지는 모름.
@@ -155,8 +155,8 @@ SoftDevice는 Nordic이 바이너리로 배포하는 BLE 스택이다. CircuitPy
 
 ## 이 보드로 하는 작업
 
-- [nrf52840/](../nrf52840/). CircuitPython 학습 트랙. 미착수. 0, 1단계가 컨트롤러 계획서와 겹친다
+- [learning/nrf52840-circuitpython/](../learning/nrf52840-circuitpython/). CircuitPython 학습 트랙. 미착수. 0, 1단계가 컨트롤러 계획서와 겹친다
 
 ## 쓰이는 기기
 
-- [devices/split-controller.md](../devices/split-controller.md). 분리형 무선 게임패드
+- [devices/split-controller/README.md](../devices/split-controller/README.md). 분리형 무선 게임패드

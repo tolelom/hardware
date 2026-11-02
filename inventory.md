@@ -27,16 +27,16 @@
 |---|---|---|
 | [PocketBeagle 2 Rev A1](parts/pocketbeagle2.md) (TI AM6254) | 1 | 브링업 1a~1e 완료, 1f 미착수 |
 | [Seeed XIAO RP2040](parts/xiao-rp2040.md) | 1 | 노출 GPIO 11. WiFi 없음 |
-| [Seeed XIAO nRF52840](parts/xiao-nrf52840.md) | 1 | 논-Sense. 악보 페달에 쓴다([devices/page-pedal-design.md](devices/page-pedal-design.md)) |
+| [Seeed XIAO nRF52840](parts/xiao-nrf52840.md) | 1 | 논-Sense. 악보 페달에 쓴다([devices/page-pedal/README.md](devices/page-pedal/README.md)) |
 | [Seeed XIAO nRF52840 Sense](parts/xiao-nrf52840.md) | 1 | IMU(LSM6DS3TR-C) + PDM 마이크 |
 | [Seeed XIAO nRF54LM20A](parts/xiao-nrf54lm20.md) | 1 | 기본 버전. 외장 안테나 동봉 없음 |
 | [Seeed XIAO nRF54LM20A Sense](parts/xiao-nrf54lm20.md) | 1 | 외장 안테나 동봉 없음. GPIO 28(관통홀과 패드가 눈대중으로 반반), BLE 6.0, nPM1300 PMIC. IMU는 52840 Sense와 같은 LSM6DS3TR-C(문서 기준) |
 | [Arduino Uno 클론](parts/arduino-uno.md) | 1 | 프로젝트 배정 없음 |
 | [Raspberry Pi 3B+](parts/rpi-3bplus.md) | 1 | 용도 미정 |
-| Daisy Seed3 | 2 | 이펙터용. daisy.audio 주문(2026-09-15), 2026-09-30 도착. 핀 헤더 납땜된 상태로 왔다. 둘 다 DFU 열거 확인, 공장 플래시는 바이트 단위로 같다. 1번에는 이펙터 펌웨어를 올렸다. ROM DFU serial이 둘 다 같아 물리 표시로 구분한다. [devices/bass-effector.md](devices/bass-effector.md) |
+| Daisy Seed3 | 2 | 이펙터용. daisy.audio 주문(2026-09-15), 2026-09-30 도착. 핀 헤더 납땜된 상태로 왔다. 둘 다 DFU 열거 확인, 공장 플래시는 바이트 단위로 같다. 1번에는 이펙터 펌웨어를 올렸다. ROM DFU serial이 둘 다 같아 물리 표시로 구분한다. [devices/bass-effector/docs/plan.md](devices/bass-effector/docs/plan.md) |
 
 > 컨트롤러 프로젝트는 nRF52840 Sense 2개를 전제로 설계돼 있어 1개 부족하다.
-> 단 IMU를 안 쓰는 프로토타입은 현 보유분으로 가능하다. → [devices/split-controller.md](devices/split-controller.md)
+> 단 IMU를 안 쓰는 프로토타입은 현 보유분으로 가능하다. → [devices/split-controller/README.md](devices/split-controller/README.md)
 
 ---
 
@@ -137,18 +137,18 @@
 
 | # | 항목 | 막는 것 |
 |---|---|---|
-| 1 | 키보드 케이스와 플레이트 | 키보드 PCB 발주와 조립. 설계는 Apollo87H 공개 파일로 케이스 없이 진행된다(09-07). 후보 Geonworks Frog TKL, 09-08 시점 플레이트 전 옵션 품절. [devices/tkl-keyboard.md](devices/tkl-keyboard.md) |
+| 1 | 키보드 케이스와 플레이트 | 키보드 PCB 발주와 조립. 설계는 Apollo87H 공개 파일로 케이스 없이 진행된다(09-07). 후보 Geonworks Frog TKL, 09-08 시점 플레이트 전 옵션 품절. [devices/tkl-keyboard/README.md](devices/tkl-keyboard/README.md) |
 | 2 | 6mm DIP 택트 스위치 (부족분), KY-023 조이스틱 모듈 ×2 | 컨트롤러 2단계(디바운싱 검증). 스위치는 소량 보유가 확인돼(09-10) 부족분만 사면 된다. 약 ₩5,000 |
-| 3 | PCM5102A 모듈 (GY-PCM5102) | 오디오 플레이어 1단계(소리 내기). 브링업 로드맵 4단계 뒤에 필요. 품명·구매처는 [devices/audio-player.md](devices/audio-player.md) |
+| 3 | PCM5102A 모듈 (GY-PCM5102) | 오디오 플레이어 1단계(소리 내기). 브링업 로드맵 4단계 뒤에 필요. 품명·구매처는 [devices/audio-player/README.md](devices/audio-player/README.md) |
 | 4 | 키보드 부품 (스위치 87, 키캡, 핫스왑 소켓, 다이오드, 스테빌) | 키보드 조립. PCB 발주와 함께 |
 | 5 | XIAO nRF52840 Sense 1개 추가 | 컨트롤러 정식 구성 |
 | 6 | LiPo와 JST 1.25mm 커넥터 ×2 | 컨트롤러 6단계. 5단계까지는 USB 전원으로 진행된다 |
 | 7 | 로직 애널라이저 (저가 8ch) | I2S/SPI 디버깅 시. 아직 그 단계 아님 |
 | 8 | 3D 프린터 | 컨트롤러 7단계(케이스). 구매 검토 중 |
-| - | 이펙터 부품 (아날로그 입출력단 부품, 릴레이, 9V 어댑터, 페달화 부품). Seed3는 주문함 | 이펙터 전체. 표는 [devices/bass-effector.md](devices/bass-effector.md) |
+| - | 이펙터 부품 (아날로그 입출력단 부품, 릴레이, 9V 어댑터, 페달화 부품). Seed3는 주문함 | 이펙터 전체. 표는 [devices/bass-effector/docs/plan.md](devices/bass-effector/docs/plan.md) |
 | - | USB-A 소켓 (USB1 배선용) | 오디오 플레이어 2단계와 LDAC 동글 3단계 공용 |
 | - | USB WiFi 동글 (MT7612U 계열), 헤드폰 앰프 | 오디오 플레이어 2·3단계 |
-| - | Bluetooth 동글 (RTL8761B 계열), Lightning 어댑터 A1619, LDAC 수신기 | LDAC 동글 2·3단계. 0단계 판정 뒤에 산다. 품명은 [devices/ldac-dongle.md](devices/ldac-dongle.md) |
+| - | Bluetooth 동글 (RTL8761B 계열), Lightning 어댑터 A1619, LDAC 수신기 | LDAC 동글 2·3단계. 0단계 판정 뒤에 산다. 품명은 [devices/ldac-dongle/README.md](devices/ldac-dongle/README.md) |
 | - | SPI LCD, 로터리 인코더 | 오디오 플레이어 2세대 |
 
 > JST는 1.25mm다. PH 2.0mm와 혼동하지 않는다.

@@ -110,4 +110,4 @@ nPM1300이 구동한다. Seeed 위키 기준.
 
 ## 쓰이는 기기
 
-- [devices/split-controller.md](../devices/split-controller.md). 도착 후 판단한다. 현재는 nRF52840으로 진행
+- [devices/split-controller/README.md](../devices/split-controller/README.md). 도착 후 판단한다. 현재는 nRF52840으로 진행

@@ -49,7 +49,7 @@ flash id는 `picotool info -a`가 보고하는 값이다. 부트로더 모드의
 
 | 스택 | 상태 |
 |---|---|
-| 베어메탈 (gcc, ld, objcopy, picotool) | 검증됨. SRAM 적재로 UART 출력까지 확인. [rp2040/](../rp2040/) |
+| 베어메탈 (gcc, ld, objcopy, picotool) | 검증됨. SRAM 적재로 UART 출력까지 확인. [learning/rp2040-baremetal/](../learning/rp2040-baremetal/) |
 | picotool | 검증됨. 2.3.0을 소스 빌드해 PICOBOOT로 플래시 읽기와 `load -x` 적재·실행까지 확인 |
 | Arduino | 확인 필요. 공장 펌웨어가 arduino-pico 4.4.0 산출물이라 동작은 하나 직접 빌드는 안 함 |
 | CircuitPython / MicroPython | 확인 필요 |
@@ -156,11 +156,11 @@ GPIO12의 WS2812가 유력한 대상이다. 대조는 안 했다.
 
 ## 이 보드로 하는 작업
 
-- [rp2040/](../rp2040/). SDK를 링크하지 않는 베어메탈 펌웨어. 빌드 트리다.
+- [learning/rp2040-baremetal/](../learning/rp2040-baremetal/). SDK를 링크하지 않는 베어메탈 펌웨어. 빌드 트리다.
   툴체인과 보드가 Linux 개발 머신에 있어 거기서만 빌드한다. 3단계(UART)까지 끝났고
   다음은 4단계(boot2, 플래시 부팅)다.
 
 ## 쓰이는 기기
 
-- [devices/tkl-keyboard.md](../devices/tkl-keyboard.md). 최종품은 베어 RP2040 QFN-56 칩이므로
+- [devices/tkl-keyboard/README.md](../devices/tkl-keyboard/README.md). 최종품은 베어 RP2040 QFN-56 칩이므로
   이 XIAO 보드는 발주 전 펌웨어 검증용이지 완성품 부품이 아니다.
