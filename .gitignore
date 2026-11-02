@@ -4,3 +4,6 @@ desktop.ini
 
 # 데이터시트 로컬 사본. 출처 URL은 parts/xiao-nrf52840.md
 parts/datasheets/
+
+# 공장 출하 플래시 덤프. 원본은 비공개 저장소 hardware-private
+backups/**/*.bin

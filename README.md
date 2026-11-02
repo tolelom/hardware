@@ -13,7 +13,7 @@
 | `effector/` | 베이스 이펙터 펌웨어와 회로도. 코어는 CMake로 네이티브 테스트, 보드 빌드는 libDaisy Makefile(서브모듈). `hardware/`는 KiCad 회로도와 생성기 |
 | `rp2040/` | RP2040 베어메탈 펌웨어 빌드 트리 |
 | `nrf52840/` | XIAO nRF52840 Sense CircuitPython 학습 트랙 |
-| `backups/` | 보드에서 채취한 공장 출하 플래시 |
+| `backups/` | 보드에서 채취한 공장 출하 플래시의 채취 기록과 해시. 덤프 원본은 비공개 저장소에 둔다 |
 | `inventory.md` | 보유 장비 목록 |
 
 ## 기기
