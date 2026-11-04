@@ -158,6 +158,8 @@ int main(void) {
     spi_case(16, 2, 0, 0);
     spi_case(16, 2, 0, 1);
     spi_case(4, 2, 0, 1);
+    spi_case(4, 2, 1, 1); /* 3 Mbit/s: 프레임당 CPU 시간이 두 배일 때 이론값에 붙는지 */
+    spi_case(8, 2, 0, 1);
     spi_case(8, 2, 5, 0);
     spi_case(8, 2, 5, 1);
     uart_case(115200u);

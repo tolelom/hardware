@@ -85,10 +85,10 @@ flash에 명령 0x9F를 보내면 JEDEC ID 3바이트(제조사, 메모리 종�
 
 | 자료 | flash 칩 |
 | --- | --- |
-| 회로도 v1.3 U3 | GD25Q16CEIG (GigaDevice). 제조사 코드 0xC8은 로컬 자료로 확인하지 않음 |
-| 칩이 보낸 JEDEC ID | `85 60 15`. 제조사 0x85 Puya, 0x60 P25Q 계열, 0x15 = 2MB(2^21). 세 바이트의 해석은 공개 자료 기준이고 Puya 데이터시트로는 확인하지 않음 |
+| 회로도 v1.3 U3 | GD25Q16CEIG (GigaDevice). Linux `drivers/mtd/spi-nor/gigadevice.c`의 gd25q16 ID는 `c8 40 15` |
+| 칩이 보낸 JEDEC ID | `85 60 15`. 제조사 0x85 Puya, 0x60 P25Q 계열, 0x15 = 2MB(2^21). Puya P25Q16H 데이터시트 Ver1.3 10.35 표의 RDID 값(85, 60, 15)과 같음 |
 
-0x85 6015를 P25Q16H로 대응시킨 근거는 Xradio의 flash 지원 목록과 Puya 칩을 읽은 공개 기록입니다.
+0x85 6015는 P25Q16H 데이터시트의 RDID 값과 같습니다. 데이터시트에 0x15가 2MB라는 문장은 없고, SFDP 밀도(16 Mbit)와 맞는 해석입니다.
 
 boot2는 flash 칩에 맞춰 XIP를 설정하므로, SDK 기본 boot2(`boot2_w25q080.S`)가 이 칩에 맞는다는 보장은 없습니다. 공장 펌웨어가 이 보드에서 flash 부팅되므로, 공장 백업의 앞 256바이트는 이 칩에서 동작하는 boot2입니다.
 
@@ -257,7 +257,7 @@ core1의 스택은 `.bss`의 1KB 배열이고, 끝 주소를 8바이트 정렬�
 | SM0_INSTR | `set pindirs, 1`(0xe081)로 GPIO12를 출력으로, `jmp 0`(0x0000) |
 | GPIO12 CTRL | FUNCSEL 6(PIO0) |
 
-TXF0에는 `(G << 24) | (R << 16) | (B << 8)`을 씁니다. 왼쪽 시프트라 OSR의 bit 31부터 나갑니다. 초록, 빨강, 파랑 순서는 SDK 예제와 같고, WS2812 데이터시트로는 확인하지 않았으며 보드에서 색이 맞게 나오는 것으로 확인했습니다.
+TXF0에는 `(G << 24) | (R << 16) | (B << 8)`을 씁니다. 왼쪽 시프트라 OSR의 bit 31부터 나갑니다. 초록, 빨강, 파랑 순서와 상위 비트 먼저는 WS2812B 데이터시트("Follow the order of GRB to sent data and the high bit sent at first")와 같고, 보드에서 색이 맞게 나오는 것으로 확인했습니다. 보드에 실린 칩이 WS2812B인지는 확인하지 않았습니다.
 
 보드 결과:
 
@@ -287,7 +287,7 @@ TXF0에는 `(G << 24) | (R << 16) | (B << 8)`을 씁니다. 왼쪽 시프트라 
 | 요청 | 처리 |
 | --- | --- |
 | GET_DESCRIPTOR 장치·설정·문자열 | EP0 IN으로 64바이트씩. 설정 디스크립터 67바이트는 64 + 3 |
-| GET_DESCRIPTOR device qualifier (0x06) | STALL. EP_STALL_ARM과 버퍼 제어 STALL을 함께 세움(4.1.2.8.1). full speed 전용 장치가 STALL로 답하는 것은 USB 2.0 규격 기억에 따른 것이고, 호스트는 3회 다시 묻고 넘어감 |
+| GET_DESCRIPTOR device qualifier (0x06) | STALL. EP_STALL_ARM과 버퍼 제어 STALL을 함께 세움(4.1.2.8.1). bcdUSB 0x0200인 full speed 전용 장치는 request error로 답해야 하고(USB 2.0 9.6.2), request error는 STALL로 답함(9.2.7). 호스트는 3회 다시 묻고 넘어감 |
 | SET_ADDRESS | 길이 0 IN으로 상태 단계를 끝낸 뒤 ADDR_ENDP를 바꿈 |
 | SET_CONFIGURATION | EP2 데이터 PID를 DATA0으로 되돌리고 EP2 OUT을 받을 준비 |
 | SET_LINE_CODING (0x21 0x20) | EP0 OUT으로 7바이트를 받고 길이 0 IN으로 상태 단계 |
@@ -299,7 +299,7 @@ SETUP 뒤의 데이터·상태 단계는 DATA1부터 시작합니다. IN 데이�
 
 ### 64바이트 패킷과 길이 0 패킷
 
-첫 버전에서는 64바이트를 보내면 돌려받지 못했습니다. 그 데이터는 다음 시험 데이터 앞에 붙어서 늦게 나왔습니다. 64바이트를 보낸 뒤 길이 0 패킷을 한 번 더 보내고 나서 다음 OUT을 받도록 고치자 64바이트도 바로 돌아왔습니다. 원인은 bulk 전송이 최대 크기보다 짧은 패킷으로 끝을 알린다는 USB 규칙과, 호스트 읽기 요청이 64바이트보다 크게 걸려 있어 다음 패킷을 기다렸기 때문으로 봅니다. USB 규격과 Linux cdc_acm 소스로는 확인하지 않았습니다.
+첫 버전에서는 64바이트를 보내면 돌려받지 못했습니다. 그 데이터는 다음 시험 데이터 앞에 붙어서 늦게 나왔습니다. 64바이트를 보낸 뒤 길이 0 패킷을 한 번 더 보내고 나서 다음 OUT을 받도록 고치자 64바이트도 바로 돌아왔습니다. bulk 전송은 기대한 길이를 다 옮기거나, wMaxPacketSize보다 짧은 패킷 또는 길이 0 패킷을 받을 때 끝납니다(USB 2.0 5.8.3). Linux `drivers/usb/class/cdc-acm.c`의 `acm_probe`는 읽기 요청 크기를 `usb_endpoint_maxp(epread) * 2`(이 장치에서 128바이트)로 잡습니다. 그래서 64바이트 패킷 하나로는 요청이 끝나지 않고 다음 패킷을 기다렸습니다.
 
 `lab/flash-boot/echo_test.py`의 결과입니다(호스트 Linux, 포트 `/dev/serial/by-id/usb-tolelom_RP2040_0to1_CDC_0001-if00`).
 
@@ -411,11 +411,22 @@ PSM WDSEL의 리셋값이 0이라 설정하지 않으면 watchdog이 울려도 �
 | 부팅 횟수 | 리셋 4회 동안 0, 1, 2, 3, 4로 이어짐 |
 | LOAD 1000000 | 먹이를 끊고 약 0.5초 뒤 리셋 (`alive 400 ms`까지 찍힘) |
 | LOAD 1500000 | 약 0.75초 뒤 리셋 (`alive 700 ms`까지 찍힘) |
-| CTRL 원값 | LOAD와 경과 시간에 관계없이 0x4007a120 (TIME 500000) |
+| CTRL 원값 | LOAD와 경과 시간에 관계없이 0x4007a120 (TIME 500000). `watchdog_time.c` 실행에서는 10000 |
 
-리셋까지의 시간이 LOAD / 2 us라 RP2040-E1(카운터가 tick당 2씩 줄어듦, 4.7.3)과 맞습니다. CTRL.TIME은 카운트다운 중에도 값이 변하지 않았습니다. 데이터시트는 TIME을 리셋까지 남은 tick / 2라고 설명하므로 설명과 다르고, 원인은 확인하지 못했습니다.
+리셋까지의 시간이 LOAD / 2 us라 RP2040-E1(카운터가 tick당 2씩 줄어듦, 4.7.3)과 맞습니다. CTRL.TIME은 카운트다운 중에도 값이 변하지 않았습니다. 데이터시트는 TIME을 리셋까지 남은 tick / 2라고 설명하므로(4.7.6) 설명과 다릅니다. errata 목록에 TIME 항목은 없습니다.
 
-`picotool load -x` 직후 첫 부팅의 REASON도 0x1(timer)입니다. picotool이 watchdog으로 재부팅시키기 때문으로 보며, picotool 소스로는 확인하지 않았습니다. 리셋 뒤 첫 줄 앞에 공백 한 글자가 붙어 나오는 일이 있었습니다. 리셋 중 TX 핀 상태가 바뀌어 수신 쪽이 한 글자로 읽은 것으로 추정합니다.
+`lab/flash-boot/watchdog_time.c`는 LOAD를 3000000, 6000000, 9000000으로 바꾸고 LOAD와 ENABLE의 순서도 바꿔 가며 TIME을 0, 10, 100 ms에 읽습니다. 마지막에는 LOAD 600000으로 만료시켜 다음 부팅에서 다시 읽습니다. `make MAIN=watchdog_time.c`로 빌드합니다.
+
+| 시점 | TIME |
+| --- | --- |
+| 부팅 직후, 어떤 쓰기도 하기 전 | 10000. ENABLE이 이미 1 |
+| LOAD를 쓴 뒤, ENABLE 전후, 10 ms·100 ms 뒤 | 10000 |
+| LOAD 600000 만료 중 50 ms 간격 6회 | 10000. 약 300 ms 뒤 리셋, REASON 0x1 |
+| 만료 리셋 뒤 다음 부팅 | 10000 |
+
+이 프로그램이 쓴 LOAD는 리셋 시간에는 반영되었지만 TIME에는 한 번도 나타나지 않았습니다. bootrom의 `watchdog_reboot`(pico-bootrom-rp2040 `usb_device_tiny/runtime.c`)는 `watchdog_hw->load = delay_ms * 1000`을 씁니다. picotool은 RP2040에 지연 500 ms(`con.reboot(..., 500)`)를, bootrom `reset_usb_boot`는 지연 10 ms를 넘기므로 두 값이 500000과 10000에 맞습니다. 다만 이번 실행에서는 `reset_usb_boot`(10 ms) 뒤에 picotool 재부팅(500 ms)이 있었는데도 10000이 읽혔으므로, 마지막 bootrom LOAD가 남는다는 설명으로는 맞지 않습니다. TIME이 어느 쓰기를 붙잡는지는 판정하지 않았습니다. 전원을 다시 넣은 뒤 첫 LOAD가 남는지는 전원 재투입 시험으로 가를 수 있습니다.
+
+`picotool load -x` 직후 첫 부팅의 REASON도 0x1(timer)입니다. picotool은 RP2040에 PC_REBOOT 명령(지연 500 ms)을 보내고, bootrom은 이를 `watchdog_reboot`로 처리해 지연이 끝날 때 watchdog 타이머로 리셋합니다(picotool `main.cpp`, bootrom `usb_boot_device.c`). 리셋 뒤 첫 줄 앞에 공백 한 글자가 붙어 나오는 일이 있었습니다. 리셋 중 TX 핀 상태가 바뀌어 수신 쪽이 한 글자로 읽은 것으로 추정합니다.
 
 ## flash 부팅 기록
 
@@ -459,7 +470,7 @@ spinlock은 SIO 0xd0000100 + 번호 × 4입니다. 읽어서 0이 아니면 잡�
 | SRAM에서 실행 | 200000 / 200000, 13.6 ms | 200000 / 200000, 69.6 ms |
 | SRAM, 반복마다 LCG로 0~7회 지연 | 184481 / 200000, 59.2 ms | 200000 / 200000, 105.2 ms |
 
-두 코어의 시작·끝 시각을 TIMER로 기록해 세 조건 모두 두 코어가 같은 구간에서 돌았음을 확인했습니다. 같은 코드를 같은 순간 시작한 처음 두 조건에서는 lock 없이도 유실이 없었습니다. 두 코어의 박자가 고정되어 읽기와 쓰기 사이에 상대 코어의 접근이 끼지 않은 것으로 봅니다. core1에만 규칙적인 지연을 넣었을 때는 지연 위치에 따라 2040회 유실과 유실 없음이 갈렸습니다. 코어마다 다른 씨앗의 LCG로 지연을 흩뜨리자 15519회(7.8%)가 샜고, 두 번 실행해 같은 숫자가 나왔습니다.
+두 코어의 시작·끝 시각을 TIMER로 기록해 세 조건 모두 두 코어가 같은 구간에서 돌았음을 확인했습니다. 같은 코드를 같은 순간 시작한 처음 두 조건에서는 lock 없이도 유실이 없었습니다. 두 코어의 박자가 고정되어 읽기와 쓰기 사이에 상대 코어의 접근이 끼지 않은 것으로 추정하며, 접근 시점은 재지 않았습니다. core1에만 규칙적인 지연을 넣었을 때는 지연 위치에 따라 2040회 유실과 유실 없음이 갈렸습니다. 코어마다 다른 씨앗의 LCG로 지연을 흩뜨리자 15519회(7.8%)가 샜고, 두 번 실행해 같은 숫자가 나왔습니다.
 
 UART 20줄은 두 코어가 한 줄씩 번갈아 썼고 섞인 줄이 없습니다.
 
@@ -479,9 +490,18 @@ UART 20줄은 두 코어가 한 줄씩 번갈아 썼고 섞인 줄이 없습니�
 | 날짜 넘김 | 11-04 Wed 23:59:59 다음 11-05 Thu 00:00:00 |
 | 초 간격 | 첫 간격 991176~999926 us, 그 뒤 1000000 us |
 | 켠 직후 첫 읽기 | 1969-12-16 Mon 09:00:00. 50 us 뒤부터 설정값 |
-| 설정한 57초 | 읽히지 않음. 첫 유효값이 58초 |
+| 설정한 57초 | 설정 100 us 뒤 읽기로는 보이지 않음. 첫 값이 58초 |
 
-clk_rtc와 TIMER가 모두 XOSC에서 나오므로 간격이 정확히 1000000us로 나옵니다. RTC 쓰기는 clk_rtc 2주기(약 43us) 뒤 반영된다는 4.8.4 NOTE가 켠 직후의 이전 값과 맞아, 설정 뒤 100us를 기다린 다음 읽습니다. 57초를 건너뛰는 이유는 확인하지 못했습니다.
+clk_rtc와 TIMER가 모두 XOSC에서 나오므로 간격이 정확히 1000000us로 나옵니다. RTC 쓰기는 clk_rtc 2주기(약 43us) 뒤 반영된다는 4.8.4 NOTE가 켠 직후의 이전 값과 맞아, 설정 뒤 100us를 기다린 다음 읽습니다.
+
+`lab/flash-boot/rtc_first.c`는 LOAD 직후부터 RTC_0을 계속 읽어 초 값이 바뀌는 시각을 TIMER로 적습니다. `make MAIN=rtc_first.c`로 빌드합니다. 두 번 돌려 같은 모양이었습니다.
+
+| 순서 | 57초가 보인 시각 | 58초 | 59초 |
+| --- | --- | --- | --- |
+| SDK와 같이 LOAD 바로 뒤 ENABLE | +48~57 us | +69~78 us | +1000069~1000078 us |
+| LOAD 뒤 끈 채 1 ms, 그다음 ENABLE | 끈 동안 57, ENABLE 뒤 +2432 us | +2498~2516 us | +1002498~1002516 us |
+
+설정한 57초는 읽히지만 약 21 us(clk_rtc 한 주기) 뒤 58초로 넘어갑니다. RTC는 켜진 직후 초를 한 번 올리고, 그 뒤 1초마다 올립니다. rtc.c는 100us를 기다린 뒤 읽으므로 57초를 보지 못했습니다.
 
 ## ROSC 난수 비트
 
@@ -628,7 +648,7 @@ DORMANT에서는 모든 발진기가 멈추고 GPIO 이벤트나 RTC 인터럽�
 
 깨우는 신호는 Debug Probe가 GPIO1(UART RX)로 보내는 바이트의 시작 비트(falling edge)입니다. PC가 dormant 진입 줄을 받고 3초 뒤와 5초 뒤 0x00을 보낸 두 경우 모두 깨어났고, TIMER는 두 경우 모두 36us만 늘었습니다. TIMER의 1us tick은 clk_ref에서 나오므로 발진기가 멈춘 동안 TIMER도 멈춘 것입니다. 깨어난 뒤에는 clk_sys가 12MHz로 남습니다.
 
-처음 버전은 6번에서 ROSC를 다시 켜지 않았습니다. 그 상태로 UART "BOOTSEL"을 보내자 보드가 USB 장치로 다시 나타나지 않았고, USB-C를 뽑았다 꽂은 뒤 부팅 직후 "BOOTSEL"을 반복해 보내 BOOTSEL 모드로 되돌렸습니다. bootrom 재부팅은 watchdog 리셋이고, SDK 방식대로 WDSEL에서 ROSC와 XOSC를 빼면 리셋 뒤에도 ROSC가 꺼진 채 남는데 리셋 직후 clk_ref와 clk_sys는 ROSC에서 시작하기 때문으로 봅니다. bootrom `_reset_to_usb_boot`의 WDSEL 값은 확인하지 않았습니다. ROSC를 다시 켜도록 고친 뒤에는 같은 시험 뒤 BOOTSEL 전환이 됐습니다.
+처음 버전은 6번에서 ROSC를 다시 켜지 않았습니다. 그 상태로 UART "BOOTSEL"을 보내자 보드가 USB 장치로 다시 나타나지 않았고, USB-C를 뽑았다 꽂은 뒤 부팅 직후 "BOOTSEL"을 반복해 보내 BOOTSEL 모드로 되돌렸습니다. bootrom 재부팅은 watchdog 리셋이고, SDK 방식대로 WDSEL에서 ROSC와 XOSC를 빼면 리셋 뒤에도 ROSC가 꺼진 채 남는데 리셋 직후 clk_ref와 clk_sys는 ROSC에서 시작하기 때문으로 봅니다. bootrom `watchdog_reboot`도 WDSEL을 `PSM_WDSEL_BITS & ~(ROSC | XOSC)`로 둡니다(pico-bootrom-rp2040 `usb_device_tiny/runtime.c`). 이 리셋은 ROSC를 다시 켜지 않습니다. ROSC를 다시 켜도록 고친 뒤에는 같은 시험 뒤 BOOTSEL 전환이 됐습니다.
 
 ## SysTick·PendSV 문맥 전환
 
@@ -665,7 +685,7 @@ SIO 나눗셈기는 작업 0만 씁니다. 두 작업이 함께 쓰면 전환 �
 | SFDP | 0x5a, 주소 3바이트 0, dummy 1바이트 | 256바이트 (아래) |
 | 고유 ID | 0x4b, dummy 4바이트 | 16바이트. 앞 7바이트가 ASCII "AP4R680", 나머지 9바이트는 공개 저장소라 적지 않음 |
 
-SFDP 해석은 JESD216의 필드 배치를 따른 것이고 규격 원문과 Puya 데이터시트로는 확인하지 않았습니다.
+아래 해석은 Puya P25Q16H 데이터시트 Ver1.3의 SFDP 표(10.42)와 Linux `drivers/mtd/spi-nor/sfdp.c`의 필드 배치로 확인했습니다. JESD216 원문은 보지 않았습니다. 데이터시트 표는 DW1 byte 2가 0xf1(DTR 0)이지만 이 칩은 0xf9(bit 19 DTR 1)를 보냈습니다.
 
 | 위치 | 값 | 해석 |
 | --- | --- | --- |
@@ -714,7 +734,7 @@ GPIO25 INTR3 비트(bit 7:4)는 인터럽트를 켜지 않고 읽었습니다.
 | `cpsid i` 안에서 엣지를 만들고 `cpsie i` | 480 클럭 | 29 클럭 (7회) |
 | 인터럽트를 켠 채 엣지를 만듦 | 177 클럭 | 29 클럭 (3회) |
 
-29클럭에는 main의 CVR 읽기 뒤 명령 4개, Cortex-M0+ 예외 진입, 핸들러의 `push`, `sub sp`, 리터럴 읽기, CVR 읽기가 들어 있습니다. 엣지가 인터럽트 대기까지 가는 시간만 따로 떼어 재지는 않았습니다. 두 조건이 같은 29클럭이므로 `cpsie i` 시점에는 대기가 이미 걸려 있었습니다. 1회째가 긴 것은 핸들러와 루프 코드가 XIP 캐시에 없었기 때문으로 보며, 캐시 상태는 확인하지 않았습니다.
+29클럭에는 main의 CVR 읽기 뒤 명령 4개, Cortex-M0+ 예외 진입, 핸들러의 `push`, `sub sp`, 리터럴 읽기, CVR 읽기가 들어 있습니다. 엣지가 인터럽트 대기까지 가는 시간만 따로 떼어 재지는 않았습니다. 두 조건이 같은 29클럭이므로 `cpsie i` 시점에는 대기가 이미 걸려 있었습니다. 같은 시험을 매번 XIP FLUSH 직후에 하면 4회 모두 480클럭이 나왔으므로, 1회째의 긴 지연은 핸들러와 루프 코드가 XIP 캐시에 없었기 때문입니다.
 
 우선순위는 NVIC_IPR(0xe000e400부터, IRQ마다 8비트 중 bit 7:6)에 0~3을 씁니다. GPIO 핸들러는 들어올 때 G, 나갈 때 g를 기록하고, 안에서 NVIC_ISPR로 IRQ 0(TIMER 알람 0)을 대기시킵니다. IRQ 0 핸들러는 T를 기록합니다. "둘 다 대기"는 인터럽트를 끈 채 NVIC_ISPR로 두 IRQ를 함께 대기시킨 뒤 켠 경우입니다.
 
@@ -803,7 +823,17 @@ flash 명령 동안에는 XIP를 쓸 수 없으므로 core1의 코드(`.ramfunc`
 
 core1은 flash 명령 동안 멈추지 않았습니다. 다시 읽은 섹터는 쓴 64워드가 모두 맞고 나머지 960워드가 0xffffffff였습니다. 끝난 뒤 UART "BOOTSEL" 전환도 됐습니다.
 
-flash 명령 구간에서 core1이 1 us당 3% 더 돌았습니다. 평소 구간에서는 core0도 `sleep_us`로 TIMER를 계속 읽어 같은 APB 경로를 두고 다투기 때문으로 보며, 확인하지 않았습니다.
+flash 명령 구간에서 core1이 1 us당 3% 더 돌았습니다. 평소 구간의 core0 동작을 바꿔 다시 쟀습니다. 두 번 실행해 값이 같았습니다.
+
+| core0 동작 (인터럽트 끔) | core1 루프 / ms |
+| --- | --- |
+| flash 코드 `sleep_us` (TIMER 읽기) | 4167 |
+| SRAM 빈 루프 (레지스터만) | 4166 |
+| SRAM에서 TIMER 읽기 | 4166 |
+| flash 빈 루프 (캐시 hit, 레지스터만) | 4310 |
+| bootrom flash 지우기·쓰기 | 4290 |
+
+core0이 SRAM에서 명령을 읽거나 TIMER를 읽으면 core1이 느려지고, 둘 다 하지 않으면 빨라졌습니다. core1의 코드·변수는 SRAM, 루프 안에서 TIMER를 읽습니다. 버스 중재 안의 어느 지점에서 다투는지는 나누지 않았습니다.
 
 ## 코어별 NVIC
 
@@ -818,7 +848,7 @@ flash 명령 구간에서 core1이 1 us당 3% 더 돌았습니다. 평소 구간
 
 같은 IRQ를 두 코어가 켜면 알람 한 번에 두 핸들러가 모두 돌고, 둘 다 INTR 비트를 지우기 전에 읽었습니다. 한 이벤트를 한 코어만 처리하려면 NVIC를 한쪽에서만 켭니다.
 
-첫 버전은 core1이 IRQ 16을 켜자마자 멈췄습니다. 각 코어의 SIO IRQ는 자기 FIFO_ST의 VLD, WOF, ROE의 OR이고 WOF와 ROE는 sticky입니다(2.3.1.4, 2.3.1.7 FIFO_ST). core1 진입 직후 FIFO_ST는 0xa(RDY, ROE)였으므로 빈 FIFO를 읽은 기록이 남아 있었고, 핸들러가 VLD만 비우고 ROE를 지우지 않아 IRQ 16이 계속 걸린 것입니다. 누가 빈 FIFO를 읽었는지는 확인하지 않았습니다. core1 시작 때와 핸들러 끝에서 FIFO_ST에 써서 WOF와 ROE를 지우도록 고친 뒤 위 결과가 나왔습니다.
+첫 버전은 core1이 IRQ 16을 켜자마자 멈췄습니다. 각 코어의 SIO IRQ는 자기 FIFO_ST의 VLD, WOF, ROE의 OR이고 WOF와 ROE는 sticky입니다(2.3.1.4, 2.3.1.7 FIFO_ST). core1 진입 직후 FIFO_ST는 0xa(RDY, ROE)였으므로 빈 FIFO를 읽은 기록이 남아 있었고, 핸들러가 VLD만 비우고 ROE를 지우지 않아 IRQ 16이 계속 걸린 것입니다. pico-bootrom-rp2040 `bootrom_rt0.S`의 core1 대기 루프 `wait_for_vector`는 VLD를 보지 않고 FIFO_RD를 한 번 읽으며, 주석이 이 읽기를 해가 없다고 적습니다. 리셋 직후 FIFO가 비어 있으므로 이 읽기가 ROE를 세운 것으로 보고, 런타임에서 따로 확인하지는 않았습니다. core1 시작 때와 핸들러 끝에서 FIFO_ST에 써서 WOF와 ROE를 지우도록 고친 뒤 위 결과가 나왔습니다.
 
 ## USB 대용량 저장장치
 
@@ -834,7 +864,7 @@ flash 명령 구간에서 core1이 1 us당 3% 더 돌았습니다. 평소 구간
 | 4 | README.TXT (클러스터 2, 181바이트) |
 | 5~100 | PATTERN.BIN (클러스터 3~98, 49152바이트). 리틀 엔디언 워드 i의 값이 i ^ 0xa5a5a5a5 |
 
-Bulk-Only Transport는 호스트가 31바이트 CBW(서명 "USBC", tag, 데이터 길이, 방향, SCSI 명령)를 보내고, 장치가 데이터 단계를 거쳐 13바이트 CSW(서명 "USBS", 같은 tag, 남은 길이, 상태)로 답하는 구조입니다. 장치가 보낼 데이터가 호스트 요청보다 짧으면 짧은 패킷으로 데이터 단계를 끝내고 CSW의 남은 길이에 차이를 적습니다. 보낸 길이가 64의 배수면 길이 0 패킷을 붙입니다. 실패한 명령은 CSW 상태 1로 답하고, 이어지는 REQUEST SENSE에서 sense key와 ASC를 돌려줍니다. BOT와 SCSI 필드 배치는 규격 원문이 아니라 기억에 따른 것이고, 아래 호스트 결과로만 확인했습니다.
+Bulk-Only Transport는 호스트가 31바이트 CBW(서명 "USBC", tag, 데이터 길이, 방향, SCSI 명령)를 보내고, 장치가 데이터 단계를 거쳐 13바이트 CSW(서명 "USBS", 같은 tag, 남은 길이, 상태)로 답하는 구조입니다. 장치가 보낼 데이터가 호스트 요청보다 짧으면 짧은 패킷으로 데이터 단계를 끝내고 CSW의 남은 길이에 차이를 적습니다. 보낸 길이가 64의 배수면 길이 0 패킷을 붙입니다. 실패한 명령은 CSW 상태 1로 답하고, 이어지는 REQUEST SENSE에서 sense key와 ASC를 돌려줍니다. CBW 31바이트·서명 0x43425355, CSW 13바이트·서명 0x53425355, dCSWDataResidue의 뜻은 BOT 1.0 규격 원문과 같습니다. 같은 규격 6.7.2는 장치가 요청보다 적게 보낼 때 짧은 패킷으로 끝내도 되지만(may) Bulk-In을 STALL해야 한다고(shall) 적고, 이 장치는 STALL하지 않습니다. Linux 호스트는 그대로 진행했습니다. SCSI 쪽 INQUIRY 36바이트·RMB, MODE SENSE WP, 응답 코드 0x70, sense key 5·7은 Seagate SCSI Commands Reference Manual로, ASC 0x20·0x21·0x27은 T10 ASC 목록으로 확인했습니다.
 
 | SCSI 명령 | 답 |
 | --- | --- |
@@ -855,9 +885,9 @@ Linux 커널 로그입니다(`journalctl -k`).
 | 용량 | 128 512-byte logical blocks: (65.5 kB/64.0 KiB) |
 | 쓰기 금지 | Write Protect is on, Mode Sense: 03 00 80 00 |
 
-자동 마운트는 되지 않았고 `udisksctl mount -b /dev/sda -o ro`로 일반 사용자 권한으로 마운트했습니다. 디렉터리에 README.TXT(181바이트)와 PATTERN.BIN(49152바이트)이 보였고, PATTERN.BIN 12288워드는 모두 기대값과 같았습니다. 파일 시각은 FAT에 0:00으로 적었는데 09:00으로 보였습니다. vfat 마운트가 FAT 시각을 UTC로 읽어 KST로 표시한 것으로 보며, 마운트 옵션은 확인하지 않았습니다.
+자동 마운트는 되지 않았고 `udisksctl mount -b /dev/sda -o ro`로 일반 사용자 권한으로 마운트했습니다. 디렉터리에 README.TXT(181바이트)와 PATTERN.BIN(49152바이트)이 보였고, PATTERN.BIN 12288워드는 모두 기대값과 같았습니다. 파일 시각은 FAT에 0:00으로 적었는데 09:00으로 보였습니다. 다시 마운트해 보니 `TZ=UTC ls`로는 00:00 +0000이었으므로 커널이 FAT 시각을 UTC로 읽었습니다. `/proc/mounts`의 마운트 옵션에 `tz`와 `time_offset`은 없었고, `timedatectl`의 RTC in local TZ는 no입니다.
 
-연결 직후 호스트가 보낸 명령은 INQUIRY, TEST UNIT READY, READ CAPACITY(10), READ(10) LBA 0, MODE SENSE(6) 순서였습니다. 그 뒤 0xa1 명령이 한 번 와서 ILLEGAL REQUEST로 답했고 호스트는 REQUEST SENSE를 보낸 뒤 계속 진행했습니다. 0xa1을 ATA PASS-THROUGH(12)로 보내는 것이 udev 쪽 검사라는 것은 추측이고 확인하지 않았습니다. 연결되어 있는 동안 호스트는 TEST UNIT READY와 PREVENT ALLOW MEDIUM REMOVAL을 주기적으로 보냈습니다.
+연결 직후 호스트가 보낸 명령은 INQUIRY, TEST UNIT READY, READ CAPACITY(10), READ(10) LBA 0, MODE SENSE(6) 순서였습니다. 그 뒤 0xa1 명령이 한 번 와서 ILLEGAL REQUEST로 답했고 호스트는 REQUEST SENSE를 보낸 뒤 계속 진행했습니다. 0xa1은 ATA PASS-THROUGH(12)입니다(Linux `include/scsi/scsi_proto.h`의 `ATA_12`). 이 호스트의 `/lib/udev/rules.d/60-persistent-storage.rules`는 `ATTR{removable}=="0"`일 때만 ata_id를 부르고 이 장치는 RMB 1이라, ata_id는 아닙니다. 보낸 프로그램은 찾지 않았습니다. 연결되어 있는 동안 호스트는 TEST UNIT READY와 PREVENT ALLOW MEDIUM REMOVAL을 주기적으로 보냈습니다.
 
 마운트한 뒤 PATTERN.BIN을 처음 읽을 때 장치는 READ(10) LBA 5부터 96섹터 한 번을 받았습니다. 호스트에서 잰 읽기 시간은 63.5 ms로 약 756 KiB/s이고, 이 값에는 호스트의 파일 시스템 처리가 들어 있습니다. 마운트를 푼 뒤 UART "BOOTSEL"로 BOOTSEL 모드 전환도 됐습니다.
 
@@ -944,7 +974,7 @@ SPI0은 Motorola 형식 마스터로 1024 프레임을 보내고 받습니다. �
 | 8비트 | 1 Mbit/s (2, 5) | 0 | 0 | 9727 us | 8192 us |
 | 8비트 | 1 Mbit/s | 1 | 0 | 8193 us | 8192 us |
 
-SPH=1에서는 이론값과 1us 안으로 같아 프레임이 빈틈없이 이어졌습니다. SPH=0에서는 프레임마다 1.5비트 시간이 더 걸렸고(6 Mbit/s에서 266 us / 1024, 1 Mbit/s에서 1535 us / 1024), 프레임 크기와 비트 속도가 달라도 같았습니다. 데이터시트는 SPH=0이면 연속 전송에서도 워드마다 SSPFSSOUT(CS)을 HIGH로 펄스해야 한다고 적습니다(4.4.3.10). 그 간격의 길이는 데이터시트에 없고 1.5비트는 이 시험의 값입니다. 4비트 프레임이 이론값보다 15 us 늦은 것은 프레임당 83 클럭 안에 CPU 루프가 FIFO를 다 채우지 못했기 때문으로 보며, 확인하지 않았습니다. 마스터의 최대 비트 속도는 SSPCLK/2이므로(4.4.3.4) clk_peri 12MHz에서는 6 Mbit/s가 상한입니다.
+SPH=1에서는 이론값과 1us 안으로 같아 프레임이 빈틈없이 이어졌습니다. SPH=0에서는 프레임마다 1.5비트 시간이 더 걸렸고(6 Mbit/s에서 266 us / 1024, 1 Mbit/s에서 1535 us / 1024), 프레임 크기와 비트 속도가 달라도 같았습니다. 데이터시트는 SPH=0이면 연속 전송에서도 워드마다 SSPFSSOUT(CS)을 HIGH로 펄스해야 한다고 적습니다(4.4.3.10). 그 간격의 길이는 데이터시트에 없고 1.5비트는 이 시험의 값입니다. 4비트 프레임은 이론값보다 15 us 늦었습니다. 같은 4비트를 3 Mbit/s로 보내면 1366 us(이론값 1365 us)로 맞았습니다. 프레임 수와 프레임 간격이 8비트 6 Mbit/s와 같은 조건이므로, 늦어진 것은 비트 수가 아니라 프레임당 CPU 루프 시간(6 Mbit/s 4비트에서 83 클럭) 때문입니다. 마스터의 최대 비트 속도는 SSPCLK/2이므로(4.4.3.4) clk_peri 12MHz에서는 6 Mbit/s가 상한입니다.
 
 UART1은 8N1로 256바이트를 보내고 받습니다. 분주값은 SDK `uart_set_baudrate`와 같은 계산(8 × clk / baud를 반올림해 정수부와 소수부 6비트)이고, 실제 보드레이트는 4 × clk / (64 × IBRD + FBRD)입니다.
 
@@ -969,7 +999,7 @@ RTC를 00:00:00으로 맞추고, IRQ_SETUP_1에 SEC_ENA와 초 2, IRQ_SETUP_0에
 | DORMANT, 5초 뒤 UART 바이트 | GPIO1 엣지로 깨어남. TIMER 36 us, RTC INTR 0, RTC 0:0:1 |
 | 깨어난 뒤 12MHz로 2.5초 | RTC INTR 1, RTC 0:0:3 |
 
-RTC는 DORMANT 5초 동안 멈췄고 알람으로 깨어나지 않았습니다. 깨어난 뒤에는 다시 흘러 알람 조건에 닿았습니다. 대조 구간에서 알람이 2초가 아니라 999 ms에 온 것은 RTC 절의 "설정한 첫 초가 읽히지 않음"과 같은 모양입니다. 설정한 0초가 곧 1초로 넘어간 것으로 보이며, 원인은 여전히 확인하지 못했습니다.
+RTC는 DORMANT 5초 동안 멈췄고 알람으로 깨어나지 않았습니다. 깨어난 뒤에는 다시 흘러 알람 조건에 닿았습니다. 대조 구간에서 알람이 2초가 아니라 999 ms에 온 것은 RTC 절의 "설정한 첫 초가 읽히지 않음"과 같은 모양입니다. RTC는 켜진 직후 초를 한 번 올리므로 설정한 0초가 약 21 us 만에 1초가 되고, 알람 2초까지는 1초가 남습니다.
 
 ## DMA와 PIO0·PIO1
 
@@ -1006,7 +1036,7 @@ PIO 하나일 때는 워드당 3클럭으로, 3명령 프로그램 한 바퀴와
 | 인터페이스 2 | MSC, EP3 IN·OUT bulk |
 | DPRAM 버퍼 | EP1 IN 0x180, EP2 OUT 0x1c0, EP2 IN 0x200, EP3 IN 0x240, EP3 OUT 0x280 |
 
-CDC 두 인터페이스를 묶는 IAD와 0xef/0x02/0x01 장치 class는 USB-IF의 IAD 규칙을 기억으로 따른 것이고, 규격 원문으로는 확인하지 않았습니다. 커널 로그에서 cdc_acm이 인터페이스 1-2.2:1.0에 붙어 ttyACM1이 됐고, usb-storage가 1-2.2:1.2에 붙어 MSC 단독 때와 같은 64KiB 쓰기 금지 디스크가 나왔습니다. CDC 포트는 `/dev/serial/by-id/usb-tolelom_RP2040_0to1_CDC+MSC_000000000003-if00`입니다.
+IAD의 필드 8개(8바이트)와 타입 11(0x0b)은 USB-IF IAD ECN과 같습니다. USB-IF "Interface Association Descriptor Device Class Code and Use Model" Table 1-1은 IAD를 쓰는 장치가 0xef/0x02/0x01을 써야 한다고 적습니다. 커널 로그에서 cdc_acm이 인터페이스 1-2.2:1.0에 붙어 ttyACM1이 됐고, usb-storage가 1-2.2:1.2에 붙어 MSC 단독 때와 같은 64KiB 쓰기 금지 디스크가 나왔습니다. CDC 포트는 `/dev/serial/by-id/usb-tolelom_RP2040_0to1_CDC+MSC_000000000003-if00`입니다.
 
 두 기능을 PC에서 스레드 두 개로 동시에 썼습니다.
 
