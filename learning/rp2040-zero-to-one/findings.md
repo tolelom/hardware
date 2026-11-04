@@ -11,6 +11,7 @@
 | clk_sys | PLL_SYS 125MHz | FC0 주파수 카운터, PC 시계로 1초 간격 |
 | 인터럽트 | TIMER 알람 IRQ 0, 0.5초 간격 | UART 줄 간격 |
 | core1 | FIFO 순서로 기동, CPUID 1, 0.25초 간격 LED | UART 줄 간격 |
+| NeoPixel | GPIO12 데이터, GPIO11 전원, PIO0 800kHz | 눈으로 색 확인 |
 
 ## UART
 
@@ -201,3 +202,36 @@ core1의 스택은 `.bss`의 1KB 배열이고, 끝 주소를 8바이트 정렬�
 | core1 CPUID (core1이 FIFO로 보냄) | 1 |
 | core1 SP, entry | 0x20000400, 0x10000445 |
 | `core1 toggles N` 줄 간격 (PC 시계) | 0.249~0.255초, 12회 |
+
+## NeoPixel (PIO)
+
+회로도 v1.3의 RGB1은 DIN이 GPIO12(NEOPIXEL), VCC가 GPIO11(NEO_PWR)에 직접 연결됩니다. LED 전원을 GPIO가 주므로 GPIO11을 high로 두어야 켜지고, 패드 최대 구동 전류가 12mA라 색 값을 16/255로 낮게 둡니다. GPIO11 패드는 DRIVE = 12mA(2.19.6.3)로 설정합니다.
+
+`lab/flash-boot/neopixel.c`는 PIO0 SM0으로 WS2812 신호를 만듭니다. `make MAIN=neopixel.c`로 빌드합니다. PIO 프로그램은 pico-sdk `pico_status_led/ws2812.pio`(T1 3, T2 3, T3 4)를 데이터시트 3.4 Table 366의 형식으로 직접 인코딩했습니다. side-set 1비트가 Delay/side-set 필드의 bit 12, delay가 bit 11:8입니다.
+
+| 주소 | 명령 | 인코딩 |
+| --- | --- | --- |
+| 0 | `out x, 1 side 0 [3]` | 0x6321 |
+| 1 | `jmp !x 3 side 1 [2]` | 0x1223 |
+| 2 | `jmp 0 side 1 [2]` | 0x1200 |
+| 3 | `nop side 0 [2]` (`mov y, y`) | 0xa242 |
+
+한 비트는 10사이클입니다. 1은 high 5사이클, 0은 high 3사이클이고 나머지는 low입니다.
+
+| 레지스터 | 값 |
+| --- | --- |
+| SM0_CLKDIV | INT 15, FRAC 160. 125MHz / 15.625 = 8MHz, 비트당 10사이클 = 800kHz |
+| SM0_EXECCTRL | WRAP_TOP 3, WRAP_BOTTOM 0, SIDE_EN 0 |
+| SM0_SHIFTCTRL | FJOIN_TX, PULL_THRESH 24, OUT_SHIFTDIR 0(왼쪽), AUTOPULL |
+| SM0_PINCTRL | SIDESET_COUNT 1, SIDESET_BASE 12, SET_COUNT 1, SET_BASE 12 |
+| SM0_INSTR | `set pindirs, 1`(0xe081)로 GPIO12를 출력으로, `jmp 0`(0x0000) |
+| GPIO12 CTRL | FUNCSEL 6(PIO0) |
+
+TXF0에는 `(G << 24) | (R << 16) | (B << 8)`을 씁니다. WS2812는 초록, 빨강, 파랑 순서로 MSB부터 받고, 왼쪽 시프트라 OSR의 bit 31부터 나갑니다.
+
+보드 결과:
+
+| 항목 | 결과 |
+| --- | --- |
+| FDEBUG TXSTALL(bit 24) | 매 색마다 1. SM이 24비트를 내보낸 뒤 빈 FIFO에서 멈춤 |
+| NeoPixel 색 (눈으로 확인) | 1초마다 빨강, 초록, 파랑, 흰색, 꺼짐 순서. 빨강과 초록이 바뀌지 않음 |
