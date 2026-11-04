@@ -12,6 +12,7 @@
 | 인터럽트 | TIMER 알람 IRQ 0, 0.5초 간격 | UART 줄 간격 |
 | core1 | FIFO 순서로 기동, CPUID 1, 0.25초 간격 LED | UART 줄 간격 |
 | NeoPixel | GPIO12 데이터, GPIO11 전원, PIO0 800kHz | 눈으로 색 확인 |
+| USB CDC | 1209:0001로 열거, 에코 64 KiB 일치, 1200 baud로 BOOTSEL | `echo_test.py`, `lsusb` |
 
 ## UART
 
@@ -235,3 +236,52 @@ TXF0에는 `(G << 24) | (R << 16) | (B << 8)`을 씁니다. WS2812는 초록, �
 | --- | --- |
 | FDEBUG TXSTALL(bit 24) | 매 색마다 1. SM이 24비트를 내보낸 뒤 빈 FIFO에서 멈춤 |
 | NeoPixel 색 (눈으로 확인) | 1초마다 빨강, 초록, 파랑, 흰색, 꺼짐 순서. 빨강과 초록이 바뀌지 않음 |
+
+## USB CDC
+
+`lab/flash-boot/usb_cdc.c`는 USB CDC ACM 장치입니다. 받은 바이트를 그대로 돌려보냅니다. 데이터시트 4.1과 그 안에 실린 pico-examples `dev_lowlevel` 발췌를 따르고, 인터럽트 대신 main 루프에서 USB INTS를 확인합니다. `make MAIN=usb_cdc.c`로 빌드합니다.
+
+| 항목 | 값 |
+| --- | --- |
+| clk_usb | PLL_USB 12MHz × 100 / 5 / 5 = 48MHz, CLK_USB_CTRL AUXSRC 0 |
+| clk_sys | 125MHz. RP2040-E16에 따라 USB를 쓰려면 48MHz보다 빨라야 함 (4.1.2.1) |
+| VID:PID | 1209:0001 (pid.codes 시험용 번호) |
+| 인터페이스 | 0: CDC 통신(ACM), EP1 IN interrupt. 1: CDC 데이터, EP2 OUT·IN bulk 64바이트 |
+| DPRAM (0x50100000) | 0x00 SETUP 8바이트, EP 제어 0x08~, 버퍼 제어 0x80~, EP0 버퍼 0x100, EP1 IN 0x180, EP2 OUT 0x1c0, EP2 IN 0x200 |
+
+초기화 순서는 USBCTRL 리셋 해제, DPRAM 0 채움, USB_MUXING = TO_PHY | SOFTCON, USB_PWR = VBUS_DETECT | VBUS_DETECT_OVERRIDE_EN, MAIN_CTRL = CONTROLLER_EN, SIE_CTRL = EP0_INT_1BUF, 엔드포인트 제어 기록, 마지막으로 SIE_CTRL PULLUP_EN입니다. D+ 풀업을 켜는 순간 호스트가 장치 연결을 감지합니다. 이 보드는 VBUS 감지 핀이 없어 VBUS를 강제로 켭니다.
+
+버퍼 제어 레지스터는 clk_sys와 clk_usb가 다르면 AVAILABLE 비트를 나머지보다 늦게 써야 합니다(4.1.2.7.4). 값을 AVAILABLE 없이 한 번 쓰고 짧게 기다린 뒤 AVAILABLE을 포함해 다시 씁니다.
+
+제어 전송에서 처리하는 요청:
+
+| 요청 | 처리 |
+| --- | --- |
+| GET_DESCRIPTOR 장치·설정·문자열 | EP0 IN으로 64바이트씩. 설정 디스크립터 67바이트는 64 + 3 |
+| GET_DESCRIPTOR device qualifier (0x06) | STALL. EP_STALL_ARM과 버퍼 제어 STALL을 함께 세움 |
+| SET_ADDRESS | 길이 0 IN으로 상태 단계를 끝낸 뒤 ADDR_ENDP를 바꿈 |
+| SET_CONFIGURATION | EP2 데이터 PID를 DATA0으로 되돌리고 EP2 OUT을 받을 준비 |
+| SET_LINE_CODING (0x21 0x20) | EP0 OUT으로 7바이트를 받고 길이 0 IN으로 상태 단계 |
+| SET_CONTROL_LINE_STATE 등 데이터 없는 OUT 요청 | 길이 0 IN |
+
+SETUP 뒤의 데이터·상태 단계는 DATA1부터 시작합니다. IN 데이터 단계가 끝나면 호스트의 길이 0 OUT 상태 패킷을 받도록 EP0 OUT을 엽니다.
+
+연결 직후 UART 로그에 찍힌 요청 순서입니다. 장치 디스크립터 64바이트 요청, 버스 리셋, SET_ADDRESS, 장치 디스크립터 18바이트, device qualifier 3회(STALL), 설정 디스크립터 9바이트와 67바이트, 문자열 0·2·1·3, SET_CONFIGURATION, SET_LINE_CODING 순서로 진행합니다.
+
+### 64바이트 패킷과 길이 0 패킷
+
+첫 버전에서는 64바이트를 보내면 돌려받지 못했습니다. 그 데이터는 다음 시험 데이터 앞에 붙어서 늦게 나왔습니다. bulk IN 전송은 최대 크기보다 짧은 패킷으로 끝을 알립니다. 64바이트 패킷으로 끝나면 호스트 쪽 읽기 요청이 다음 데이터를 기다리며 끝나지 않습니다. 64바이트를 보낸 뒤에는 길이 0 패킷을 한 번 더 보내고 나서 다음 OUT을 받도록 고쳤습니다.
+
+`lab/flash-boot/echo_test.py`의 결과입니다(호스트 Linux, 포트 `/dev/serial/by-id/usb-tolelom_RP2040_0to1_CDC_0001-if00`).
+
+| 길이 | 결과 | 시간 |
+| --- | --- | --- |
+| 5, 63, 64, 65, 128바이트 | 일치 | 각 0.6 ms |
+| 1024바이트 | 일치 | 4.5 ms |
+| 64 KiB 무작위 | 일치 | 261.7 ms, 245 KiB/s |
+
+패킷을 하나씩 받고 돌려보낸 뒤 다음을 받는 방식이라 full speed(12Mbps) 한계보다 느립니다.
+
+### 버튼 없이 BOOTSEL로
+
+호스트가 CDC 포트를 1200 baud로 설정하면(SET_LINE_CODING) 상태 단계를 끝낸 뒤 bootrom `_reset_to_usb_boot`('U','B', 2.8.3)를 `(0, 0)`으로 부릅니다. watchdog으로 리셋되어 BOOTSEL 모드로 다시 뜹니다. `make bootsel`이 `stty -F <포트> 1200`을 실행하고, 그 뒤 `make load`로 올립니다. usb_cdc.c가 돌고 있을 때만 쓸 수 있습니다.
