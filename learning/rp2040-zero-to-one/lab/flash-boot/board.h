@@ -1,7 +1,7 @@
 /*
  * lab/flash-boot 프로그램의 공통 부분. 주소와 비트는 RP2040 데이터시트 기준이고
  * 괄호 안은 절 번호다. board_init()은 clk_sys 125MHz, clk_peri 12MHz(XOSC),
- * UART0 115200, TIMER 1us를 준비하고, UART0로 "BOOTSEL"을 받으면 BOOTSEL
+ * UART0 115200, TIMER 1us를 준비하고, RGB2 세 색을 꺼 두고, UART0로 "BOOTSEL"을 받으면 BOOTSEL
  * 모드로 재부팅하는 인터럽트를 켠다.
  */
 #ifndef BOARD_H

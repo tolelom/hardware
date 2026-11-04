@@ -271,8 +271,13 @@ void led_init(uint32_t pin) {
     SIO_GPIO_OE_SET = 1u << pin;
 }
 
+/* 리셋 직후 패드는 pull-down이 켜져 있어(PADS PDE 리셋값 1), 구동하지 않은
+   active low LED가 희미하게 켜진다. 세 색을 high로 구동해 꺼 둔다 */
 void board_init(void) {
     unreset(RESETS_IO_BANK0 | RESETS_PADS_BANK0);
+    led_init(LED_GREEN);
+    led_init(LED_RED);
+    led_init(LED_BLUE);
     clocks_init();
     WATCHDOG_TICK = WATCHDOG_TICK_ENABLE | 12u;
     reset_block(RESETS_TIMER);

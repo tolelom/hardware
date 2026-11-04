@@ -306,11 +306,21 @@ full speed(12Mbps) 한계보다 느린 이유는 패킷 하나를 돌려보낸 �
 
 | 함수 | 내용 |
 | --- | --- |
-| `board_init` | IO·PADS 리셋 해제, XOSC, PLL_SYS 125MHz, clk_peri = XOSC, watchdog tick 1us, TIMER, UART0 115200 |
+| `board_init` | IO·PADS 리셋 해제, RGB2 세 색을 SIO high로 꺼 둠, XOSC, PLL_SYS 125MHz, clk_peri = XOSC, watchdog tick 1us, TIMER, UART0 115200 |
 | `clocks_48mhz_init` | PLL_USB 48MHz, clk_usb와 clk_adc를 PLL_USB로 |
 | `uart_flush` | UARTFR BUSY(bit 3)가 0이 될 때까지 대기 |
 | `isr_irq20` | UART0 수신 인터럽트. "BOOTSEL"이 연속으로 들어오면 bootrom `_reset_to_usb_boot` 호출 |
 | `__aeabi_uidivmod` 등 4개 | SIO 하드웨어 나눗셈기(2.3.1.5)로 `/`, `%` 처리 |
+
+처음 board_init은 LED 핀을 건드리지 않았습니다. dma_pwm.c를 돌리는 동안 쓰지 않는 파랑(GPIO25)이 켜져 보여, 임시 프로그램으로 GPIO25를 세 상태로 4초씩 바꿔 보았습니다. 리셋 직후 값은 PADS 0x56(IE, DRIVE 4mA, PDE, SCHMITT), GPIO CTRL FUNCSEL 0x1f(연결 없음)입니다.
+
+| GPIO25 상태 | 파랑 (눈으로 확인) |
+| --- | --- |
+| 구동 없음, pull-down (리셋 상태) | 켜짐 |
+| 구동 없음, pull 없음 | 판정 안 함 |
+| SIO high 구동 | 꺼짐 |
+
+구동하지 않는 핀의 pull-down이 active low LED에 전류를 흘린 것으로 봅니다. pull 없음 상태가 high 구동과 같은지는 눈으로 구분하지 않았습니다. 세 색을 board_init에서 high로 구동하도록 바꾼 뒤 dma_pwm.c에서 파랑이 꺼진 것을 확인했습니다.
 
 UART로 "BOOTSEL"을 보내 재부팅하는 방식은 USB CDC가 없는 프로그램에서도 버튼 없이 다시 올리기 위한 것입니다. Debug Probe의 UART 포트에 문자열을 쓰면 BOOTSEL 모드로 다시 뜹니다.
 
@@ -539,6 +549,7 @@ SM0을 켜고 `set pins, 1`로 TX를 high로 둔 뒤에 GPIO0·1의 FUNCSEL을 U
 | 0.5초마다 읽은 채널 0 표 위치 | 63~64칸씩 진행. 127.2Hz × 0.5초 = 63.6 |
 | 한 바퀴 | 2003~2501 ms 간격으로 위치가 처음으로 돌아감(0.5초 단위로 읽은 값). 계산값 256 / 127.2Hz = 2.01초 |
 | 6초 뒤 CPU `wfi` | DMA와 PWM만으로 계속 동작 |
+| 색 변화 (눈으로 확인) | 빨강과 초록이 번갈아 밝아짐, 깜빡임 안 보임 |
 
 ## ADC 연속 변환과 DMA
 
