@@ -31,6 +31,7 @@
 | 문맥 전환 | SysTick·PendSV로 두 작업 500 / 500 | SysTick 횟수, 지역 변수 주소 |
 | flash SFDP | 2MB, 1-4-4 읽기 0xeb·dummy 4. 공장 boot2 설정과 같음 | 직접 명령 |
 | GPIO 인터럽트 | 엣지 래치, 진입 29 클럭, 같은 우선순위끼리는 끼어들지 않음 | SysTick, 핸들러 순서 기록 |
+| watchdog 부팅 | SCRATCH4~7로 SRAM 함수 진입, bootrom이 SCRATCH4를 지움 | scratch에 남긴 값 |
 
 ## UART
 
@@ -717,3 +718,31 @@ GPIO25 INTR3 비트(bit 7:4)는 인터럽트를 켜지 않고 읽었습니다.
 | 3 | 0 | 둘 다 대기 | TGg |
 
 우선순위 값이 더 작은 인터럽트만 실행 중인 핸들러에 끼어들었습니다. 값이 같으면 IRQ 번호가 작은 TIMER도 끼어들지 못하고, 둘이 함께 대기 중일 때 먼저 실행되는 순서만 정합니다(2.3.2).
+
+## watchdog 부팅
+
+bootrom은 POR·BOR가 아닌 리셋 뒤 watchdog SCRATCH4~7을 보고, 값이 맞으면 flash 부팅 대신 적힌 주소로 갑니다(2.8.1.1). `lab/flash-boot/watchdog_boot.c`는 SRAM에 둔 함수로 들어간 뒤 그 순간의 상태를 scratch에 남기고, 다시 리셋해 일반 flash 부팅으로 돌아와 그 값을 보냅니다. `make MAIN=watchdog_boot.c`로 빌드합니다.
+
+| 레지스터 | 쓴 값 |
+| --- | --- |
+| SCRATCH4 (0x4005801c) | 0xb007c0d3 |
+| SCRATCH5 | entry ^ -0xb007c0d3 |
+| SCRATCH6 | SP 0x20040000 |
+| SCRATCH7 | entry 0x20000001 (`.ramfunc`에 둔 `sram_entry`, Thumb 비트 포함) |
+| PSM_WDSEL | 0x1fffc (ROSC, XOSC를 뺀 전부) |
+| WATCHDOG CTRL | TRIGGER(bit 31) |
+
+`sram_entry`가 실행될 때는 XIP가 설정되지 않은 상태이므로, 역어셈블로 함수 본문과 리터럴 풀이 모두 0x20000000~0x20000087 안에 있고 flash 주소를 부르지 않는 것을 확인했습니다. 함수는 읽은 값을 SCRATCH0~3, 5~7에 쓰고 PSM_WDSEL을 다시 쓴 뒤 TRIGGER로 리셋합니다. bootrom이 SCRATCH4를 지웠으므로 이 리셋은 일반 flash 부팅이 됩니다.
+
+| `sram_entry`가 본 값 | 결과 |
+| --- | --- |
+| SCRATCH4 | 0x00000000. bootrom이 진입 전에 지움 (2.8.1.1) |
+| PSM_WDSEL | 0x0001fffc. 리셋 전에 쓴 값이 남음 |
+| SP | 0x20040000. SCRATCH6 값 |
+| CLK_SYS_SELECTED, CLK_REF_SELECTED | 0x1, 0x1. clk_sys = clk_ref, clk_ref = ROSC |
+| WATCHDOG REASON | 0x2 (FORCE) |
+| SIO CPUID | 0 |
+
+PSM_WDSEL에 SRAM0~5가 들어 있었지만 리셋 전에 `.data`로 복사해 둔 `sram_entry` 코드는 리셋 뒤에도 남아 실행됐습니다. PSM_WDSEL 자체도 watchdog 리셋으로 지워지지 않았습니다. 진입 시점에 clk_ref와 clk_sys는 ROSC에서 돌고 있었고, DORMANT 기록에서 ROSC를 꺼 둔 채 재부팅하면 멈춘 현상과 맞는 조건입니다.
+
+리셋 명령부터 두 번째 flash 부팅의 첫 줄까지 PC 기준 16ms였습니다. 이 시간에는 bootrom의 watchdog 부팅, `sram_entry`, 두 번째 bootrom과 boot2, `board_init`이 모두 들어 있습니다.
