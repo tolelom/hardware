@@ -811,4 +811,4 @@ flash 명령 구간에서 core1이 1 us당 3% 더 돌았습니다. 평소 구간
 
 같은 IRQ를 두 코어가 켜면 알람 한 번에 두 핸들러가 모두 돌고, 둘 다 INTR 비트를 지우기 전에 읽었습니다. 한 이벤트를 한 코어만 처리하려면 NVIC를 한쪽에서만 켭니다.
 
-첫 버전은 core1이 IRQ 16을 켜자마자 멈췄습니다. 각 코어의 SIO IRQ는 자기 FIFO_ST의 VLD, WOF, ROE의 OR이고 WOF와 ROE는 sticky입니다(2.3.1.3 FIFO_ST). core1 진입 직후 FIFO_ST는 0xa(RDY, ROE)였으므로 빈 FIFO를 읽은 기록이 남아 있었고, 핸들러가 VLD만 비우고 ROE를 지우지 않아 IRQ 16이 계속 걸린 것입니다. 누가 빈 FIFO를 읽었는지는 확인하지 않았습니다. core1 시작 때와 핸들러 끝에서 FIFO_ST에 써서 WOF와 ROE를 지우도록 고친 뒤 위 결과가 나왔습니다.
+첫 버전은 core1이 IRQ 16을 켜자마자 멈췄습니다. 각 코어의 SIO IRQ는 자기 FIFO_ST의 VLD, WOF, ROE의 OR이고 WOF와 ROE는 sticky입니다(2.3.1.4, 2.3.1.7 FIFO_ST). core1 진입 직후 FIFO_ST는 0xa(RDY, ROE)였으므로 빈 FIFO를 읽은 기록이 남아 있었고, 핸들러가 VLD만 비우고 ROE를 지우지 않아 IRQ 16이 계속 걸린 것입니다. 누가 빈 FIFO를 읽었는지는 확인하지 않았습니다. core1 시작 때와 핸들러 끝에서 FIFO_ST에 써서 WOF와 ROE를 지우도록 고친 뒤 위 결과가 나왔습니다.
