@@ -34,10 +34,12 @@ SECTIONS
         . = ALIGN(4);
     } > FLASH
 
-    /* 실행 주소는 SRAM, 초기값은 flash. 시작 코드가 복사한다 */
+    /* 실행 주소는 SRAM, 초기값은 flash. 시작 코드가 복사한다.
+       .ramfunc는 flash를 지우거나 쓰는 동안 실행할 SRAM 함수다 */
     .data : {
         . = ALIGN(4);
         __data_start = .;
+        *(.ramfunc*)
         *(.data*)
         . = ALIGN(4);
         __data_end = .;
