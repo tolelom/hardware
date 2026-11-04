@@ -30,6 +30,7 @@
 | SLEEP·DORMANT | SLEEP_EN으로 PWM 클럭 멈춤, DORMANT 3초·5초 모두 TIMER 36 us | PWM CTR, TIMER |
 | 문맥 전환 | SysTick·PendSV로 두 작업 500 / 500 | SysTick 횟수, 지역 변수 주소 |
 | flash SFDP | 2MB, 1-4-4 읽기 0xeb·dummy 4. 공장 boot2 설정과 같음 | 직접 명령 |
+| GPIO 인터럽트 | 엣지 래치, 진입 29 클럭, 같은 우선순위끼리는 끼어들지 않음 | SysTick, 핸들러 순서 기록 |
 
 ## UART
 
@@ -669,3 +670,50 @@ SFDP 해석은 JESD216의 필드 배치를 따른 것이고 규격 원문과 Puy
 | 0x50 dword 9 | 0x8108d810 | 지우기 단위 64KB(0xd8), 256바이트(0x81) |
 
 용량 2MB는 JEDEC ID의 0x15(2^21바이트)와 같습니다. 공장 boot2의 원본인 pico-sdk `boot2_w25q080.S`는 CMD_READ 0xeb, MODE_CONTINUOUS_READ 0xa0(4선에서 8비트 = 2클럭), WAIT_CYCLES 4로 읽기를 설정하고, 이 값이 칩이 SFDP로 밝힌 1-4-4 읽기 조건과 같습니다. 회로도와 다른 Puya 칩에서 공장 boot2가 동작하는 것과 맞습니다. 0x60의 Puya 표 3 dword(0x23003600, 0x6477f99e, 0xffffe8d9)는 해석하지 않았습니다.
+
+## GPIO 인터럽트와 우선순위
+
+`lab/flash-boot/gpio_irq.c`는 파랑 LED 핀 GPIO25를 SIO 출력으로 0과 1로 바꿔 같은 핀에 엣지를 만들고, IO_BANK0 인터럽트(IRQ 13)를 봅니다. `make MAIN=gpio_irq.c`로 빌드합니다. 외부 배선은 쓰지 않습니다. 패드 리셋값 0x56에 IE(bit 6)가 들어 있어 출력 중에도 같은 핀의 입력을 읽습니다.
+
+처음에는 핀을 구동하지 않으려고 GPIO26 CTRL의 INOVER(bit 17:16)로 입력만 바꿨지만 인터럽트에 반영되지 않았습니다.
+
+| GPIO26 상태 | STATUS INFROMPAD | STATUS INTOPERI | INTR EDGE_HIGH | INTR LEVEL_HIGH |
+| --- | --- | --- | --- | --- |
+| 오버라이드 없음, 풀다운 | 0 | 0 | 0 | 0 |
+| INOVER = HIGH | 0 | 1 | 0 | 0 |
+
+INOVER는 주변장치로 가는 입력(INTOPERI)만 바꾸고 인터럽트 감지는 패드 입력을 따릅니다. 인터럽트 쪽에는 별도의 IRQOVER(bit 29:28)가 있습니다(2.19.6.1 GPIO_CTRL).
+
+GPIO25 INTR3 비트(bit 7:4)는 인터럽트를 켜지 않고 읽었습니다.
+
+| 동작 | EDGE_HIGH | EDGE_LOW | LEVEL_HIGH | LEVEL_LOW |
+| --- | --- | --- | --- | --- |
+| 0으로 두고 INTR 지움 | 0 | 0 | 0 | 1 |
+| 1로 바꿈 | 1 | 0 | 1 | 0 |
+| 다시 0 | 1 | 1 | 0 | 1 |
+| INTR에 1을 써서 지움 | 0 | 0 | 0 | 1 |
+| 연속한 두 store로 1 → 0 | 1 | 1 | 0 | 1 |
+
+엣지 비트는 지울 때까지 남고 레벨 비트는 현재 값을 따릅니다(2.19.3). SIO store 두 개 사이의 짧은 펄스도 두 엣지가 모두 잡혔습니다.
+
+진입 지연은 SysTick을 인터럽트 없이 clk_sys로 돌려 잽니다. main이 SYST_CVR을 읽고 SIO_GPIO_OUT_SET에 쓴 뒤, 핸들러가 첫 동작으로 SYST_CVR을 읽어 두 값의 차를 냅니다.
+
+| 조건 | 1회째 | 2회째부터 |
+| --- | --- | --- |
+| `cpsid i` 안에서 엣지를 만들고 `cpsie i` | 480 클럭 | 29 클럭 (7회) |
+| 인터럽트를 켠 채 엣지를 만듦 | 177 클럭 | 29 클럭 (3회) |
+
+29클럭에는 main의 CVR 읽기 뒤 명령 4개, Cortex-M0+ 예외 진입, 핸들러의 `push`, `sub sp`, 리터럴 읽기, CVR 읽기가 들어 있습니다. 엣지가 인터럽트 대기까지 가는 시간만 따로 떼어 재지는 않았습니다. 두 조건이 같은 29클럭이므로 `cpsie i` 시점에는 대기가 이미 걸려 있었습니다. 1회째가 긴 것은 핸들러와 루프 코드가 XIP 캐시에 없었기 때문으로 보며, 캐시 상태는 확인하지 않았습니다.
+
+우선순위는 NVIC_IPR(0xe000e400부터, IRQ마다 8비트 중 bit 7:6)에 0~3을 씁니다. GPIO 핸들러는 들어올 때 G, 나갈 때 g를 기록하고, 안에서 NVIC_ISPR로 IRQ 0(TIMER 알람 0)을 대기시킵니다. IRQ 0 핸들러는 T를 기록합니다. "둘 다 대기"는 인터럽트를 끈 채 NVIC_ISPR로 두 IRQ를 함께 대기시킨 뒤 켠 경우입니다.
+
+| GPIO(IRQ 13) | TIMER(IRQ 0) | 시험 | 순서 |
+| --- | --- | --- | --- |
+| 3 | 0 | GPIO 안에서 TIMER 대기 | GTg |
+| 0 | 0 | GPIO 안에서 TIMER 대기 | GgT |
+| 0 | 3 | GPIO 안에서 TIMER 대기 | GgT |
+| 0 | 0 | 둘 다 대기 | TGg |
+| 0 | 3 | 둘 다 대기 | GgT |
+| 3 | 0 | 둘 다 대기 | TGg |
+
+우선순위 값이 더 작은 인터럽트만 실행 중인 핸들러에 끼어들었습니다. 값이 같으면 IRQ 번호가 작은 TIMER도 끼어들지 못하고, 둘이 함께 대기 중일 때 먼저 실행되는 순서만 정합니다(2.3.2).
