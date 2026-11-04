@@ -23,6 +23,10 @@
 | RTC | 날짜·요일 넘김, 초 간격 1000000 us | TIMER |
 | ROSC 난수 | 원래 비트는 1이 46%, von Neumann 보정 뒤 50% | 10만 비트 통계 |
 | interpolator | 데이터시트 예제 세 가지의 출력과 일치 | UART |
+| PIO UART | 115200 에코 일치, framing 오류 검출 | 호스트 시험 스크립트 |
+| DMA로 PWM | chain으로 밝기 표 반복, CPU는 wfi | 표 위치 읽기 |
+| ADC + DMA | 500000 sps, 1000 sps | TIMER |
+| HardFault | 네 가지 오류 모두 원인 명령의 pc 보고 | `addr2line` |
 
 ## UART
 
@@ -478,3 +482,94 @@ clk_rtc와 TIMER가 모두 XOSC에서 나오므로 간격이 정확히 1000000us
 | blend | LANE0 BLEND, BASE0 500, BASE1 1000, ACCUM1 = 255 × i / 6, PEEK_LANE1 | 500 582 666 748 832 914 998 |
 
 세 예제 모두 데이터시트의 출력과 같습니다. blend의 끝값이 1000이 아니라 998인 것은 alpha가 최대일 때 BASE0 + 255/256 × (BASE1 - BASE0)이기 때문입니다.
+
+## PIO UART
+
+`lab/flash-boot/pio_uart.c`는 UART0를 끄고 PIO0의 SM0(송신, GPIO0)과 SM1(수신, GPIO1)로 8n1 115200 UART를 만듭니다. 받은 바이트를 돌려보내고, CR을 받으면 받은 바이트 수와 framing 오류 수를 보냅니다. `make MAIN=pio_uart.c`로 빌드합니다.
+
+프로그램은 데이터시트 3.6.3·3.6.4에 실린 pico-examples `uart_tx`와 `uart_rx`(framing 검사 포함)를 Table 366 형식으로 직접 인코딩했습니다. 두 프로그램 모두 한 비트를 SM 8사이클로 보내고 받으므로 SM 클럭은 115200 × 8입니다.
+
+| 주소 | 명령 | 인코딩 |
+| --- | --- | --- |
+| 0 | `pull side 1 [7]` | 0x9fa0 |
+| 1 | `set x, 7 side 0 [7]` | 0xf727 |
+| 2 | `out pins, 1` | 0x6001 |
+| 3 | `jmp x-- 2 [6]` | 0x0642 |
+| 4 | `wait 0 pin 0` | 0x2020 |
+| 5 | `set x, 7 [10]` | 0xea27 |
+| 6 | `in pins, 1` | 0x4001 |
+| 7 | `jmp x-- 6 [6]` | 0x0646 |
+| 8 | `jmp pin 12` | 0x00cc |
+| 9 | `irq 4 rel` | 0xc014 |
+| 10 | `wait 1 pin 0` | 0x20a0 |
+| 11 | `jmp 4` | 0x0004 |
+| 12 | `push` | 0x8020 |
+
+| 레지스터 | SM0 (TX) | SM1 (RX) |
+| --- | --- | --- |
+| CLKDIV | INT 135, FRAC 162. 125MHz / 135.63 = 921.6kHz | 같음 |
+| EXECCTRL | SIDE_EN, WRAP 0~3 | JMP_PIN 1, WRAP 4~12 |
+| SHIFTCTRL | OUT_SHIFTDIR 오른쪽(LSB 먼저) | IN_SHIFTDIR 오른쪽, 바이트는 RXF의 bit 31:24 |
+| PINCTRL | OUT·SET 0 1개, SIDESET 0 2비트(enable 포함) | IN_BASE 1 |
+
+SM0을 켜고 `set pins, 1`로 TX를 high로 둔 뒤에 GPIO0·1의 FUNCSEL을 UART(2)에서 PIO0(6)으로 바꿉니다. GPIO1은 pico-examples와 같이 pull-up을 켭니다. 수신 SM의 `irq 4 rel`은 SM1에서 IRQ flag 5가 되고(3.4.9, 하위 2비트에 SM 번호를 4로 나눈 나머지로 더함), main 루프가 PIO IRQ 레지스터(0x50200030)의 bit 5를 세고 지웁니다.
+
+| 시험 (호스트 Linux, `/dev/ttyACM0`) | 결과 |
+| --- | --- |
+| 115200으로 53바이트 | 에코 일치, `[rx 53, frame errors 0]` |
+| 115200으로 출력 가능한 문자 380바이트 | 에코 일치 |
+| 38400으로 32바이트를 보낸 뒤 115200으로 CR | framing 오류 24 |
+| "BOOTSEL" 전송 (`to_bootsel.sh`) | BOOTSEL 모드로 재부팅 |
+
+## DMA로 PWM 밝기 반복
+
+`lab/flash-boot/dma_pwm.c`는 PWM 밝기 표를 DMA가 계속 옮기게 하고 CPU는 `wfi`로 잠듭니다. `make MAIN=dma_pwm.c`로 빌드합니다.
+
+| 구성 | 설정 |
+| --- | --- |
+| PWM 슬라이스 0 | LED 구동. DIV 1, TOP 4095(30.5kHz), A_INV·B_INV |
+| PWM 슬라이스 1 | 핀 연결 없음. DIV 15, TOP 65535로 127.2Hz wrap. DMA 박자용 |
+| DMA 채널 0 | 밝기 표 256워드 → 슬라이스 0 CC. 읽기 주소 증가, TREQ 25(DREQ_PWM_WRAP1), CHAIN_TO 1 |
+| DMA 채널 1 | 표 주소 1워드 → 채널 0의 CH0_AL3_READ_ADDR_TRIG(0x5000003c). TREQ 0x3f, 별칭 1의 CTRL로 설정만 함 |
+
+채널 0이 256워드를 옮기고 끝나면 채널 1이 시작되어 표 시작 주소를 채널 0의 READ_ADDR 트리거 별칭에 씁니다. 이 쓰기가 채널 0을 다시 띄우고, TRANS_COUNT는 마지막으로 쓴 256으로 다시 채워집니다(2.5.1.2). 별칭 배치는 2.5.2.1 Table 118입니다. 표의 CC 값은 초록(A)과 빨강(B)이 반 바퀴 어긋난 삼각파의 제곱이라 두 색이 번갈아 밝아집니다.
+
+| 항목 | 결과 |
+| --- | --- |
+| 0.5초마다 읽은 채널 0 표 위치 | 63~64칸씩 진행. 127.2Hz × 0.5초 = 63.6 |
+| 한 바퀴 | 2003~2501 ms 간격으로 위치가 처음으로 돌아감(0.5초 단위로 읽은 값). 계산값 256 / 127.2Hz = 2.01초 |
+| 6초 뒤 CPU `wfi` | DMA와 PWM만으로 계속 동작 |
+
+## ADC 연속 변환과 DMA
+
+`lab/flash-boot/adc_dma.c`는 온도 센서 채널을 CS START_MANY로 연속 변환하고, FIFO에 결과가 들어올 때마다 DREQ_ADC(36)로 DMA가 16비트씩 SRAM으로 옮깁니다. 1만 개를 받는 데 걸린 시간을 TIMER로 잽니다. `make MAIN=adc_dma.c`로 빌드합니다.
+
+| 레지스터 | 값 |
+| --- | --- |
+| ADC FCS (0x4004c008) | EN(bit 0), DREQ_EN(bit 3), THRESH 1(bit 27:24). OVER(bit 11)로 넘침 확인 |
+| ADC DIV (0x4004c010) | INT(bit 23:8). 0이면 변환이 끝나자마자 다음 변환, n이면 n + 1사이클마다 (4.9.2.2) |
+| DMA 채널 0 | 읽기 FIFO(0x4004c00c) 고정, 쓰기 증가, 16비트, TREQ 36 |
+
+| DIV | 1만 개에 걸린 시간 | 샘플링 속도 | raw 평균, 최소, 최대 | FIFO 넘침 |
+| --- | --- | --- | --- | --- |
+| 0 | 20002 us | 500000 sps | 852, 852, 860 | 없음 |
+| 47999 | 10000001 us | 1000 sps | 850, 850, 853 | 없음 |
+
+clk_adc 48MHz에서 변환 하나가 96사이클이라는 데이터시트 값(500ksps)과, DIV 47999가 1ksps라는 데이터시트 예와 같습니다.
+
+## HardFault 보고
+
+`lab/flash-boot/fault.c`는 HardFault를 일부러 내고, 예외 진입 때 스택에 쌓인 r0~r3, r12, lr, pc, xPSR을 UART로 보냅니다. 보고한 뒤 watchdog으로 재부팅해 SCRATCH0/1에 둔 순번으로 다음 경우를 실행합니다. `make MAIN=fault.c`로 빌드합니다.
+
+핸들러 `isr_hardfault`는 naked 함수로, EXC_RETURN(lr) bit 2가 1이면 PSP, 0이면 MSP를 r0에 넣고 C 함수 `hardfault_report`로 갑니다. 쌓이는 레지스터의 순서와 EXC_RETURN의 의미는 ARMv6-M 아키텍처 규칙이고 RP2040 데이터시트에는 없습니다.
+
+| 경우 | 쌓인 pc | `addr2line` | 단서 |
+| --- | --- | --- | --- |
+| 정렬 안 된 주소에서 `ldr` | 0x10000232 | `case_unaligned` | `ldr r2, [r3]`, r3 = 0x20000201 |
+| 0x30000000 읽기 | 0x10000248 | `case_unmapped` | `ldr r2, [r3]`, r3 = 0x30000000 |
+| bit 0이 0인 주소로 `blx` | 0x10000254 | `target` | xPSR의 T(bit 24)가 0 |
+| MPU 접근 금지 영역에 쓰기 | 0x10000290 | `case_mpu` | `strb r3, [r2, #16]`, r2 = 0x20000100 |
+
+MPU는 영역 0을 256바이트 정렬 배열에 두고 RASR SIZE 7(2^8 = 256바이트), XN, AP 000으로 설정했습니다. AP 000이 접근 금지라는 것은 ARMv6-M 규칙이고, 데이터시트 2.4.6에는 AP 필드 위치만 있습니다. MPU_CTRL은 ENABLE과 PRIVDEFENA를 켜서 나머지 주소는 기본 메모리 맵을 따릅니다.
+
+0x30000000은 데이터시트 주소 맵에 블록이 없는 구역이고, 읽기가 HardFault로 이어졌습니다.

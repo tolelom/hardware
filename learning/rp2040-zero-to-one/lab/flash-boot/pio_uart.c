@@ -1,5 +1,5 @@
 /*
- * PIO로 만든 UART 8n1 115200 (데이터시트 3.6.3, pico-examples uart_tx·uart_rx).
+ * PIO로 만든 UART 8n1 115200 (데이터시트 3.6.3·3.6.4, pico-examples uart_tx·uart_rx).
  * UART0 대신 PIO0 SM0이 GPIO0(TX), SM1이 GPIO1(RX)을 맡아 받은 바이트를 돌려보낸다.
  * CR을 받으면 지금까지 받은 바이트 수와 framing 오류 수를 보낸다.
  * "BOOTSEL"을 받으면 BOOTSEL 모드로 재부팅한다 (UART0 인터럽트 대신 여기서 확인).
