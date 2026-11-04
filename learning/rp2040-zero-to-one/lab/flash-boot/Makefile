@@ -29,6 +29,10 @@ CFLAGS  := $(ARCH) -nostdlib -ffreestanding -Og -g -Wall -Wextra \
 LDFLAGS := --gc-sections
 
 OBJS := $(BUILD)/boot2.S.o $(BUILD)/start.S.o $(BUILD)/$(MAIN).o
+# board.h를 include하는 프로그램만 board.c를 함께 링크한다
+ifneq ($(shell grep -l '"board.h"' $(MAIN)),)
+OBJS += $(BUILD)/board.c.o
+endif
 
 .PHONY: all check dump load bootsel clean
 all: $(UF2)
@@ -39,7 +43,7 @@ $(BUILD):
 $(BUILD)/%.S.o: %.S | $(BUILD)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD)/%.c.o: %.c | $(BUILD)
+$(BUILD)/%.c.o: %.c board.h | $(BUILD)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(ELF): $(OBJS) $(LDSCRIPT)
