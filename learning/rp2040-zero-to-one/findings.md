@@ -13,6 +13,16 @@
 | core1 | FIFO 순서로 기동, CPUID 1, 0.25초 간격 LED | UART 줄 간격 |
 | NeoPixel | GPIO12 데이터, GPIO11 전원, PIO0 800kHz | 눈으로 색 확인 |
 | USB CDC | 1209:0001로 열거, 에코 64 KiB 일치, 1200 baud로 BOOTSEL | `echo_test.py`, `lsusb` |
+| UART로 BOOTSEL | "BOOTSEL" 수신 시 bootrom으로 재부팅 | 재부팅 뒤 2e8a:0003 열거 |
+| ADC 온도 | 38.8도 안팎, ERR 0. 정확도 미판정 | UART |
+| PWM | 1kHz wrap 1000회/초, duty 기대값과 ±6/1000 | INTR 횟수, 핀 입력 샘플 |
+| DMA | 4 KiB 복사 10 us, sniffer CRC가 boot2 CRC와 일치, UART TX | UART |
+| watchdog | REASON timer/force 구분, scratch 유지, 타임아웃 LOAD / 2 us | UART 줄 간격 |
+| flash 기록 | 마지막 섹터에 부팅 순번 누적, 쓰기 1.74 ms | UART, `picotool save` |
+| spinlock | lock 없이 7.8% 유실(지연을 흩뜨린 경우), lock으로 0 | UART |
+| RTC | 날짜·요일 넘김, 초 간격 1000000 us | TIMER |
+| ROSC 난수 | 원래 비트는 1이 46%, von Neumann 보정 뒤 50% | 10만 비트 통계 |
+| interpolator | 데이터시트 예제 세 가지의 출력과 일치 | UART |
 
 ## UART
 
@@ -285,3 +295,180 @@ full speed(12Mbps) 한계보다 느린 이유는 패킷 하나를 돌려보낸 �
 ### 버튼 없이 BOOTSEL로
 
 호스트가 CDC 포트를 1200 baud로 설정하면(SET_LINE_CODING) 상태 단계를 끝낸 뒤 bootrom `_reset_to_usb_boot`('U','B', 2.8.3)를 `(0, 0)`으로 부릅니다. watchdog으로 리셋되어 BOOTSEL 모드로 다시 뜹니다. `make bootsel`이 `stty -F <포트> 1200`을 실행하고, 그 뒤 `make load`로 올립니다. usb_cdc.c가 돌고 있을 때만 쓸 수 있습니다.
+
+## 공통 코드 (board.c)
+
+`lab/flash-boot/board.c`와 `board.h`는 아래 절의 프로그램이 함께 쓰는 초기화와 출력 함수입니다. 소스에 `#include "board.h"`가 있으면 Makefile이 board.c를 같이 링크합니다. 그 전에 만든 main.c, clock.c, irq.c, core1.c, neopixel.c, usb_cdc.c는 각자 함수를 갖고 있어 board.c를 쓰지 않습니다.
+
+| 함수 | 내용 |
+| --- | --- |
+| `board_init` | IO·PADS 리셋 해제, XOSC, PLL_SYS 125MHz, clk_peri = XOSC, watchdog tick 1us, TIMER, UART0 115200 |
+| `clocks_48mhz_init` | PLL_USB 48MHz, clk_usb와 clk_adc를 PLL_USB로 |
+| `uart_flush` | UARTFR BUSY(bit 3)가 0이 될 때까지 대기 |
+| `isr_irq20` | UART0 수신 인터럽트. "BOOTSEL"이 연속으로 들어오면 bootrom `_reset_to_usb_boot` 호출 |
+| `__aeabi_uidivmod` 등 4개 | SIO 하드웨어 나눗셈기(2.3.1.5)로 `/`, `%` 처리 |
+
+UART로 "BOOTSEL"을 보내 재부팅하는 방식은 USB CDC가 없는 프로그램에서도 버튼 없이 다시 올리기 위한 것입니다. Debug Probe의 UART 포트에 문자열을 쓰면 BOOTSEL 모드로 다시 뜹니다.
+
+gcc는 M0+에서 `/`와 `%`를 `__aeabi_uidiv` 같은 함수 호출로 바꿉니다. `-nostdlib`라 libgcc의 구현이 없으므로 board.c가 같은 이름으로 정의합니다. 피제수와 제수를 쓰고 CSR READY(bit 0)를 기다린 뒤 나머지, 몫 순서로 읽습니다. 몫을 마지막에 읽는 순서는 SDK를 따른 것입니다.
+
+`uart_flush`는 처음에 TXFE(FIFO 비었음)를 기다렸습니다. watchdog 시험에서 리셋 직전에 보낸 줄의 `\r\n`이 사라졌고, BUSY를 기다리도록 바꾼 뒤 사라지지 않았습니다. 데이터시트 4.2의 UARTFR 설명대로 BUSY는 마지막 바이트의 정지 비트까지 시프트 레지스터에서 나가야 0이 됩니다.
+
+## ADC 온도 센서
+
+`lab/flash-boot/adc_temp.c`는 ADC 채널 4(칩 내장 온도 센서)를 64회 읽어 평균하고 1초마다 온도로 바꿔 보냅니다. `make MAIN=adc_temp.c`로 빌드합니다.
+
+| 항목 | 값 |
+| --- | --- |
+| clk_adc | PLL_USB 48MHz. ADC는 48MHz를 요구함 (4.9.2) |
+| ADC CS (0x4004c000) | EN(bit 0), TS_EN(bit 1), START_ONCE(bit 2), READY(bit 8) 대기, ERR(bit 9), AINSEL(bit 14:12) = 4 |
+| 전압 환산 | 결과 × 3.3V / 4096. ADC_AVDD를 3.3V로 가정 |
+| 온도 환산 | T = 27 - (V - 0.706) / 0.001721 (4.9.5) |
+
+보드 결과는 raw 850 안팎, 0.6856V, 38.8도 안팎이고 ERR는 0입니다. 기준 온도계로 비교하지 않았고 센서를 보정하지 않았으며 ADC_AVDD를 재지 않았으므로 정확도는 판정하지 않습니다.
+
+## PWM (RGB2 밝기)
+
+`lab/flash-boot/pwm.c`는 RGB2 세 색을 PWM으로 밝기 조절합니다. `make MAIN=pwm.c`로 빌드합니다.
+
+| LED | GPIO | PWM (4.5.2 Table 515) |
+| --- | --- | --- |
+| 초록 | 16 | 슬라이스 0 A |
+| 빨강 | 17 | 슬라이스 0 B |
+| 파랑 | 25 | 슬라이스 4 B |
+
+출력은 카운터가 CC보다 작을 때 high이고 주기는 TOP + 1 카운트입니다(4.5.2.1). LED가 active low라 CSR의 A_INV·B_INV로 출력을 뒤집어 CC가 클수록 밝게 합니다. 슬라이스 레지스터는 0x40050000 + 슬라이스 × 0x14에서 CSR, DIV, CTR, CC, TOP 순서입니다.
+
+먼저 DIV INT 125(1MHz 카운트), TOP 999(1kHz), 초록 CC 250, 빨강 CC 750으로 두고 1초 동안 INTR의 wrap 플래그를 세고, SIO GPIO_IN으로 핀을 20만 번 읽어 high 비율을 셉니다. 출력이 뒤집혀 있으므로 핀 high 비율의 기대값은 초록 750/1000, 빨강 250/1000입니다. 이어서 DIV 1, TOP 4095(약 30.5kHz)로 빨강, 초록, 파랑 순서로 2초씩 밝아졌다 어두워집니다.
+
+| 항목 | 결과 |
+| --- | --- |
+| wrap 횟수 | 1000회/초 |
+| GPIO16 high 비율 | 746/1000 |
+| GPIO17 high 비율 | 244/1000 |
+
+## DMA
+
+`lab/flash-boot/dma.c`는 DMA 채널 0으로 세 가지를 합니다. `make MAIN=dma.c`로 빌드합니다. 채널 레지스터는 0x50000000 + 채널 × 0x40에서 READ_ADDR, WRITE_ADDR, TRANS_COUNT, CTRL_TRIG 순서이고, CTRL_TRIG를 쓰면 시작합니다. CHAIN_TO를 자기 채널로 두어 연결을 끕니다(2.5.7 CH0_CTRL_TRIG).
+
+| 시험 | 설정 | 결과 |
+| --- | --- | --- |
+| SRAM 4 KiB 복사 | 워드, 읽기·쓰기 주소 증가, TREQ 0x3f(제한 없음) | DMA 10 us, CPU 루프 143 us, 내용 일치 |
+| boot2 CRC | flash 0x10000000부터 252바이트, 바이트 단위, SNIFF_EN. SNIFF_CTRL CALC 0(CRC-32), 초기값 0xffffffff | 0x7a4eb274. boot2 끝 4바이트와 같음 |
+| UART TX | 39바이트를 UART0 DR로, 쓰기 주소 고정, TREQ 20(DREQ_UART0_TX), UARTDMACR TXDMAE | 줄이 그대로 나옴. 채널이 끝나기까지 605 us |
+
+복사 10us는 1024워드를 클럭당 1워드로 옮길 때의 8.2us(125MHz)에 가깝습니다. UART는 TX FIFO가 32바이트라, 채널은 마지막 바이트를 FIFO에 넣는 순간 끝납니다. 39 - 32 = 7바이트가 115200 baud로 나갈 시간 7 × 86.8us = 608us가 잰 값과 맞습니다.
+
+sniffer CRC는 bootrom이 boot2를 검사하는 CRC와 같은 값이 나왔으므로, bootrom의 CRC도 다항식 0x04c11db7, MSB 우선, 초기값 0xffffffff, 최종 반전 없음입니다.
+
+## watchdog
+
+`lab/flash-boot/watchdog.c`는 부팅마다 REASON과 SCRATCH0의 부팅 횟수를 보내고 횟수를 1 늘린 뒤, 짝수 회차는 CTRL.TRIGGER로, 홀수 회차는 먹이를 끊어 타임아웃으로 리셋합니다. 4회 리셋한 뒤 멈춥니다. `make MAIN=watchdog.c`로 빌드합니다.
+
+| 레지스터 | 주소 | 용도 |
+| --- | --- | --- |
+| CTRL | 0x40058000 | TRIGGER(bit 31), ENABLE(bit 30), TIME(bit 23:0) |
+| LOAD | 0x40058004 | 쓰면 카운터를 다시 채움 |
+| REASON | 0x40058008 | TIMER(bit 0), FORCE(bit 1) |
+| SCRATCH0, 1 | 0x4005800c, 010 | 부팅 횟수와 그 보수. 보수가 맞지 않으면 0부터 셈 |
+| PSM WDSEL | 0x40010008 | watchdog이 리셋할 블록. 리셋값 0. ROSC·XOSC를 뺀 0x1fffc |
+
+PSM WDSEL의 리셋값이 0이라 설정하지 않으면 watchdog이 울려도 리셋되는 블록이 없습니다. SDK `_watchdog_enable`과 같이 ROSC와 XOSC만 빼고 모두 켭니다. SCRATCH4~7은 bootrom이 부팅 때 검사하는 자리라 쓰지 않습니다(2.8.1.1).
+
+| 항목 | 결과 |
+| --- | --- |
+| REASON | TRIGGER 뒤 0x2(force), 타임아웃 뒤 0x1(timer) |
+| 부팅 횟수 | 리셋 4회 동안 0, 1, 2, 3, 4로 이어짐 |
+| LOAD 1000000 | 먹이를 끊고 약 0.5초 뒤 리셋 (`alive 400 ms`까지 찍힘) |
+| LOAD 1500000 | 약 0.75초 뒤 리셋 (`alive 700 ms`까지 찍힘) |
+| CTRL 원값 | LOAD와 경과 시간에 관계없이 0x4007a120 (TIME 500000) |
+
+리셋까지의 시간이 LOAD / 2 us라 RP2040-E1(카운터가 tick당 2씩 줄어듦, 4.7.3)과 맞습니다. CTRL.TIME은 카운트다운 중에도 값이 변하지 않았습니다. 데이터시트는 TIME을 리셋까지 남은 tick / 2라고 설명하므로 설명과 다르고, 원인은 확인하지 못했습니다.
+
+`picotool load -x` 직후 첫 부팅의 REASON도 0x1(timer)입니다. picotool이 watchdog으로 재부팅시키기 때문으로 보며, picotool 소스로는 확인하지 않았습니다. 리셋 뒤 첫 줄 앞에 공백 한 글자가 붙어 나오는 일이 있었습니다. 리셋 중 TX 핀 상태가 바뀌어 수신 쪽이 한 글자로 읽은 것으로 추정합니다.
+
+## flash 부팅 기록
+
+`lab/flash-boot/flash_counter.c`는 flash 마지막 섹터(offset 0x1ff000, 4 KiB)에 부팅 기록을 남깁니다. `make MAIN=flash_counter.c`로 빌드합니다. 섹터를 워드 1024개로 보고 부팅마다 첫 빈 워드(0xffffffff)에 그 순번을 씁니다. flash 쓰기는 비트를 1에서 0으로만 바꾸므로, 빈 워드에 쓰는 동안은 섹터를 지우지 않습니다. 섹터가 차거나 순번이 어긋나 있으면 지우고 0부터 씁니다.
+
+flash를 지우고 쓰는 동안 XIP로 읽을 수 없으므로, 그 구간을 SRAM 함수 `flash_update`로 두고 인터럽트를 끕니다. 순서는 데이터시트 2.8.3.1.3의 예와 같습니다.
+
+| 순서 | bootrom 함수 | 내용 |
+| --- | --- | --- |
+| 1 | `_connect_internal_flash` ('I','F') | QSPI 패드를 SSI에 연결 |
+| 2 | `_flash_exit_xip` ('E','X') | XIP에서 나와 직렬 명령 모드로 |
+| 3 | `_flash_range_erase` ('R','E') | 섹터가 찼을 때만. 4096바이트, 블록 명령 0xd8 |
+| 4 | `flash_range_program` ('R','P') | 256바이트 페이지. 쓸 워드 외에는 0xff |
+| 5 | `_flash_flush_cache` ('F','C') | XIP 캐시 비움, CS 강제 해제 |
+| 6 | SRAM에 복사해 둔 boot2 호출 | 빠른 XIP 설정으로 복귀. boot2는 lr이 0이 아니면 돌아옴 |
+
+함수 포인터, boot2 사본, 페이지 버퍼는 모두 SRAM에 있고, 디스어셈블로 `flash_update` 안에서 flash 주소를 부르지 않는 것을 확인했습니다. SRAM 함수는 `.ramfunc` 섹션으로 두고 링커 스크립트가 `.data`에 넣어 시작 코드가 복사합니다. flash에서 SRAM까지는 `bl`이 닿지 않으므로 `long_call` 속성으로 부릅니다.
+
+| 시험 | 결과 |
+| --- | --- |
+| 세 번 연속 올려 실행 | 기록 0 → 1 → 2 → 3. 쓰기 1회 1.74 ms |
+| BOOTSEL에서 `picotool save -r 0x101ff000 0x10200000` | 워드 0, 1, 2 뒤로 모두 0xffffffff |
+| 워드 4개로 줄인 임시 빌드로 섹터 채움 | `sector full, erase` 뒤 0부터 기록. 지우기와 쓰기 19.0 ms |
+
+`picotool load`는 이미지 범위만 쓰므로 다시 올려도 마지막 섹터의 기록이 남습니다. 전원을 뽑았다 꽂은 뒤의 확인은 아직 하지 않았습니다.
+
+## 두 코어와 spinlock
+
+`lab/flash-boot/spinlock.c`는 core1을 깨운 뒤 두 코어가 공유 변수를 각각 10만 번 1씩 올립니다. lock 없이 한 번, SPINLOCK0으로 감싸서 한 번입니다. 이어서 두 코어가 UART에 10줄씩 쓰며 한 줄 전체를 SPINLOCK1로 감쌉니다. `make MAIN=spinlock.c`로 빌드합니다.
+
+spinlock은 SIO 0xd0000100 + 번호 × 4입니다. 읽어서 0이 아니면 잡은 것이고 0이면 이미 잡혀 있으며, 아무 값이나 쓰면 풉니다(2.3.1.3). M0+에는 원자적 읽기-수정-쓰기 명령이 없어 `shared = shared + 1`은 읽기, 더하기, 쓰기 세 명령입니다.
+
+| 조건 | lock 없음 | SPINLOCK0 |
+| --- | --- | --- |
+| flash에서 실행 | 200000 / 200000, 17.6 ms | 200000 / 200000, 54.4 ms |
+| SRAM에서 실행 | 200000 / 200000, 13.6 ms | 200000 / 200000, 69.6 ms |
+| SRAM, 반복마다 LCG로 0~7회 지연 | 184481 / 200000, 59.2 ms | 200000 / 200000, 105.2 ms |
+
+두 코어의 시작·끝 시각을 TIMER로 기록해 세 조건 모두 두 코어가 같은 구간에서 돌았음을 확인했습니다. 같은 코드를 같은 순간 시작한 처음 두 조건에서는 lock 없이도 유실이 없었습니다. 두 코어의 박자가 고정되어 읽기와 쓰기 사이에 상대 코어의 접근이 끼지 않은 것으로 봅니다. core1에만 규칙적인 지연을 넣었을 때는 지연 위치에 따라 2040회 유실과 유실 없음이 갈렸습니다. 코어마다 다른 씨앗의 LCG로 지연을 흩뜨리자 15519회(7.8%)가 샜고, 두 번 실행해 같은 숫자가 나왔습니다.
+
+UART 20줄은 두 코어가 한 줄씩 번갈아 썼고 섞인 줄이 없습니다.
+
+## RTC
+
+`lab/flash-boot/rtc.c`는 RTC를 2026-11-04 수 23:59:57로 맞추고 초가 바뀔 때마다 날짜와 TIMER 간격을 보냅니다. `make MAIN=rtc.c`로 빌드합니다.
+
+| 항목 | 값 |
+| --- | --- |
+| clk_rtc | XOSC 12MHz / 256 = 46875Hz. CLK_RTC_CTRL AUXSRC 3, CLK_RTC_DIV INT 256 |
+| CLKDIV_M1 | 46874. 1초 기준 (4.8.4) |
+| 설정 | CTRL 0으로 끄고 RTC_ACTIVE가 0이 되길 기다림, SETUP_0·1 기록, CTRL LOAD, CTRL ENABLE, RTC_ACTIVE 대기 |
+| 읽기 | RTC_0을 먼저 읽고 RTC_1. RTC_0을 읽을 때 RTC_1이 같은 순간으로 잡힘 (4.8.5.3) |
+
+| 항목 | 결과 |
+| --- | --- |
+| 날짜 넘김 | 11-04 Wed 23:59:59 다음 11-05 Thu 00:00:00 |
+| 초 간격 | 첫 간격 991176~999926 us, 그 뒤 1000000 us |
+| 켠 직후 첫 읽기 | 1969-12-16 Mon 09:00:00. 50 us 뒤부터 설정값 |
+| 설정한 57초 | 읽히지 않음. 첫 유효값이 58초 |
+
+clk_rtc와 TIMER가 모두 XOSC에서 나오므로 간격이 정확히 1000000us로 나옵니다. RTC 쓰기는 clk_rtc 2주기(약 43us) 뒤 반영된다는 4.8.4 NOTE가 켠 직후의 이전 값과 맞아, 설정 뒤 100us를 기다린 다음 읽습니다. 57초를 건너뛰는 이유는 확인하지 못했습니다.
+
+## ROSC 난수 비트
+
+`lab/flash-boot/rosc_random.c`는 ROSC RANDOMBIT(0x4006001c bit 0, 2.17.5)를 읽기 간격별로 10만 번 읽어 1의 비율과 이웃 비트가 바뀐 비율을 1000분율로 보냅니다. `make MAIN=rosc_random.c`로 빌드합니다. 데이터시트는 이 비트가 보안 용도의 난수 요건을 만족하지 않는다고 밝힙니다.
+
+| 읽기 사이 빈 루프 | 1의 비율 | 바뀐 비율 |
+| --- | --- | --- |
+| 0 | 456~467 | 74~113 |
+| 10 | 462~463 | 320, 458, 682, 739 (실행마다 다름) |
+| 100 | 462~467 | 493~498 |
+| 100 + von Neumann 보정 | 500 | 500~501 |
+
+연달아 읽으면 같은 비트가 이어지고, 간격을 100으로 늘려도 1이 46% 안팎으로 치우칩니다. von Neumann 보정은 두 비트를 읽어 01이면 0, 10이면 1을 내고 같으면 버립니다. 보정 뒤에는 두 비율 모두 500이 됐습니다. 두 비율만 본 것이라 난수 품질을 판정한 것은 아닙니다.
+
+## interpolator
+
+`lab/flash-boot/interp.c`는 SIO INTERP0(0xd0000080~)으로 데이터시트 2.3.1.6에 실린 pico-examples `hello_interp`의 세 예제를 레지스터로 재현하고, 데이터시트에 적힌 출력과 대조합니다. `make MAIN=interp.c`로 빌드합니다. SDK `interp_default_config`에 해당하는 CTRL 값은 SHIFT 0, MASK_LSB 0, MASK_MSB 31입니다.
+
+| 예제 | 설정 | 결과 |
+| --- | --- | --- |
+| 9단 곱셈표 | ACCUM0 0, BASE0 9. POP_LANE0을 읽을 때마다 ACCUM0 += 9 | 9 18 27 … 90 |
+| 니블 마스킹 | ACCUM0 0x1234abcd, MASK 4i..4i+3, ACCUM0_ADD 읽기(BASE 없이 shift·mask 값) | 0000000d ~ 10000000, SIGNED는 fffffffd ~ 10000000 |
+| blend | LANE0 BLEND, BASE0 500, BASE1 1000, ACCUM1 = 255 × i / 6, PEEK_LANE1 | 500 582 666 748 832 914 998 |
+
+세 예제 모두 데이터시트의 출력과 같습니다. blend의 끝값이 1000이 아니라 998인 것은 alpha가 최대일 때 BASE0 + 255/256 × (BASE1 - BASE0)이기 때문입니다.
