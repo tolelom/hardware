@@ -35,6 +35,7 @@
 | SRAM·XIP 속도 | 캐시 hit면 SRAM과 같음, 캐시를 끄면 27배, miss는 워드 단위 | SysTick, XIP 카운터 |
 | core1과 flash 쓰기 | SRAM의 core1은 지우기·쓰기 19 ms 동안 최대 간격 1 us | TIMER, 다시 읽기 |
 | 코어별 NVIC | 켠 코어만 받음, 둘 다 켜면 둘 다 실행, FIFO ROE가 IRQ를 계속 검 | 핸들러 횟수 |
+| USB MSC | Linux가 64KiB 읽기 전용 FAT12로 인식, 48KiB 파일 일치 | 커널 로그, 파일 비교 |
 
 ## UART
 
@@ -812,3 +813,46 @@ flash 명령 구간에서 core1이 1 us당 3% 더 돌았습니다. 평소 구간
 같은 IRQ를 두 코어가 켜면 알람 한 번에 두 핸들러가 모두 돌고, 둘 다 INTR 비트를 지우기 전에 읽었습니다. 한 이벤트를 한 코어만 처리하려면 NVIC를 한쪽에서만 켭니다.
 
 첫 버전은 core1이 IRQ 16을 켜자마자 멈췄습니다. 각 코어의 SIO IRQ는 자기 FIFO_ST의 VLD, WOF, ROE의 OR이고 WOF와 ROE는 sticky입니다(2.3.1.4, 2.3.1.7 FIFO_ST). core1 진입 직후 FIFO_ST는 0xa(RDY, ROE)였으므로 빈 FIFO를 읽은 기록이 남아 있었고, 핸들러가 VLD만 비우고 ROE를 지우지 않아 IRQ 16이 계속 걸린 것입니다. 누가 빈 FIFO를 읽었는지는 확인하지 않았습니다. core1 시작 때와 핸들러 끝에서 FIFO_ST에 써서 WOF와 ROE를 지우도록 고친 뒤 위 결과가 나왔습니다.
+
+## USB 대용량 저장장치
+
+`lab/flash-boot/usb_msc.c`는 USB MSC(Bulk-Only Transport, SCSI) 장치로, 128섹터(64KB) 읽기 전용 FAT12 디스크를 보입니다. `make MAIN=usb_msc.c`로 빌드합니다. 장치 쪽 레지스터 처리와 EP0 제어 전송은 USB CDC와 같고, 인터페이스 하나(class 0x08, subclass 0x06, protocol 0x50)에 EP1 bulk IN·OUT 64바이트를 둡니다. VID:PID는 CDC와 같은 1209:0001이고 bcdDevice를 2.00으로 다르게 둡니다.
+
+섹터 내용은 저장하지 않고 READ(10)이 올 때 64바이트씩 만듭니다.
+
+| LBA | 내용 |
+| --- | --- |
+| 0 | 부트 섹터. 512바이트 섹터, 클러스터 1섹터, 예약 1, FAT 2벌, 루트 항목 16, 총 128섹터, 라벨 "RP2040 0TO1" |
+| 1, 2 | FAT12 두 벌 |
+| 3 | 루트 디렉터리. 볼륨 라벨, README.TXT, PATTERN.BIN |
+| 4 | README.TXT (클러스터 2, 181바이트) |
+| 5~100 | PATTERN.BIN (클러스터 3~98, 49152바이트). 리틀 엔디언 워드 i의 값이 i ^ 0xa5a5a5a5 |
+
+Bulk-Only Transport는 호스트가 31바이트 CBW(서명 "USBC", tag, 데이터 길이, 방향, SCSI 명령)를 보내고, 장치가 데이터 단계를 거쳐 13바이트 CSW(서명 "USBS", 같은 tag, 남은 길이, 상태)로 답하는 구조입니다. 장치가 보낼 데이터가 호스트 요청보다 짧으면 짧은 패킷으로 데이터 단계를 끝내고 CSW의 남은 길이에 차이를 적습니다. 보낸 길이가 64의 배수면 길이 0 패킷을 붙입니다. 실패한 명령은 CSW 상태 1로 답하고, 이어지는 REQUEST SENSE에서 sense key와 ASC를 돌려줍니다. BOT와 SCSI 필드 배치는 규격 원문이 아니라 기억에 따른 것이고, 아래 호스트 결과로만 확인했습니다.
+
+| SCSI 명령 | 답 |
+| --- | --- |
+| INQUIRY (0x12) | 36바이트. 직접 접근 장치, 이동식, vendor "tolelom", product "RP2040 0to1 MSC", rev "1.00" |
+| TEST UNIT READY (0x00), PREVENT ALLOW MEDIUM REMOVAL (0x1e), START STOP UNIT (0x1b) | 성공 |
+| READ CAPACITY(10) (0x25) | 마지막 LBA 127, 블록 512 |
+| MODE SENSE(6) (0x1a) | 4바이트 `03 00 80 00`. 0x80은 쓰기 금지(WP) |
+| READ(10) (0x28) | 섹터를 64바이트씩 생성 |
+| WRITE(10) (0x2a) | 실패, DATA PROTECT(0x07) / ASC 0x27 |
+| 그 밖 | 실패, ILLEGAL REQUEST(0x05) / ASC 0x20 |
+
+Linux 커널 로그입니다(`journalctl -k`).
+
+| 항목 | 커널 출력 |
+| --- | --- |
+| 장치 | idVendor=1209, idProduct=0001, bcdDevice= 2.00, usb-storage가 붙음 |
+| SCSI | Direct-Access tolelom RP2040 0to1 MSC 1.00, ANSI: 4 |
+| 용량 | 128 512-byte logical blocks: (65.5 kB/64.0 KiB) |
+| 쓰기 금지 | Write Protect is on, Mode Sense: 03 00 80 00 |
+
+자동 마운트는 되지 않았고 `udisksctl mount -b /dev/sda -o ro`로 일반 사용자 권한으로 마운트했습니다. 디렉터리에 README.TXT(181바이트)와 PATTERN.BIN(49152바이트)이 보였고, PATTERN.BIN 12288워드는 모두 기대값과 같았습니다. 파일 시각은 FAT에 0:00으로 적었는데 09:00으로 보였습니다. vfat 마운트가 FAT 시각을 UTC로 읽어 KST로 표시한 것으로 보며, 마운트 옵션은 확인하지 않았습니다.
+
+연결 직후 호스트가 보낸 명령은 INQUIRY, TEST UNIT READY, READ CAPACITY(10), READ(10) LBA 0, MODE SENSE(6) 순서였습니다. 그 뒤 0xa1 명령이 한 번 와서 ILLEGAL REQUEST로 답했고 호스트는 REQUEST SENSE를 보낸 뒤 계속 진행했습니다. 0xa1을 ATA PASS-THROUGH(12)로 보내는 것이 udev 쪽 검사라는 것은 추측이고 확인하지 않았습니다. 연결되어 있는 동안 호스트는 TEST UNIT READY와 PREVENT ALLOW MEDIUM REMOVAL을 주기적으로 보냈습니다.
+
+마운트한 뒤 PATTERN.BIN을 처음 읽을 때 장치는 READ(10) LBA 5부터 96섹터 한 번을 받았습니다. 호스트에서 잰 읽기 시간은 63.5 ms로 약 756 KiB/s이고, 이 값에는 호스트의 파일 시스템 처리가 들어 있습니다. 마운트를 푼 뒤 UART "BOOTSEL"로 BOOTSEL 모드 전환도 됐습니다.
+
+HID는 보드가 키 입력을 보내지 않는 vendor 정의 장치로 시험하려 했지만, 이 PC의 `/dev/hidraw*`가 root 전용(0600)이라 일반 사용자 권한으로는 보고서를 주고받을 수 없어 만들지 않았습니다.
