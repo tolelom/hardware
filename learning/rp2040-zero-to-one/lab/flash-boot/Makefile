@@ -4,6 +4,7 @@
 #   make check    uf2가 flash 부팅 조건을 만족하는지 확인한다
 #   make dump     역어셈블을 본다
 #   make load     보드 flash에 쓴다 (BOOTSEL 모드여야 한다. 공장 펌웨어를 덮어쓴다)
+#   make bootsel  usb_cdc.c가 돌고 있을 때 1200 baud 설정으로 BOOTSEL 모드로 재부팅한다
 #   make clean    산출물을 지운다
 #
 #   MAIN=<파일>   main.c 대신 그 파일로 빌드한다. 예: make MAIN=clock.c load
@@ -14,6 +15,7 @@ LD       := $(CROSS)ld
 OBJDUMP  := $(CROSS)objdump
 NM       := $(CROSS)nm
 PICOTOOL := picotool
+CDC_PORT ?= /dev/serial/by-id/usb-tolelom_RP2040_0to1_CDC_0001-if00
 
 MAIN     ?= main.c
 BUILD    := build/$(basename $(MAIN))
@@ -28,7 +30,7 @@ LDFLAGS := --gc-sections
 
 OBJS := $(BUILD)/boot2.S.o $(BUILD)/start.S.o $(BUILD)/$(MAIN).o
 
-.PHONY: all check dump load clean
+.PHONY: all check dump load bootsel clean
 all: $(UF2)
 
 $(BUILD):
@@ -54,6 +56,9 @@ dump: $(ELF)
 
 load: $(UF2)
 	$(PICOTOOL) load -x $(UF2)
+
+bootsel:
+	stty -F $(CDC_PORT) 1200
 
 clean:
 	rm -rf build
