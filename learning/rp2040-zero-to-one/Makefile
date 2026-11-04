@@ -5,6 +5,9 @@
 #   make dump     역어셈블을 본다
 #   make load     보드에 올린다 (BOOTSEL 모드여야 한다)
 #   make clean    산출물을 지운다
+#
+#   APP=<폴더>    main.c를 src 대신 그 폴더에서 가져온다. 시작 코드는 src/start.S 그대로
+#                 예: make APP=tools/jedec-id load
 
 CROSS    := arm-none-eabi-
 CC       := $(CROSS)gcc
@@ -14,7 +17,12 @@ NM       := $(CROSS)nm
 PICOTOOL := picotool
 
 TARGET   := firmware
+APP      ?= src
+ifeq ($(APP),src)
 BUILD    := build
+else
+BUILD    := build/$(notdir $(APP))
+endif
 LDSCRIPT := ld/sram.ld
 
 ARCH    := -mcpu=cortex-m0plus -mthumb
@@ -25,8 +33,8 @@ CFLAGS  := $(ARCH) -nostdlib -ffreestanding -Og -g -Wall -Wextra \
            -ffunction-sections -fdata-sections
 LDFLAGS := --gc-sections
 
-SRCS := $(wildcard src/*.S) $(wildcard src/*.c)
-OBJS := $(patsubst src/%,$(BUILD)/%.o,$(SRCS))
+SRCS := $(wildcard src/*.S) $(wildcard $(APP)/*.c)
+OBJS := $(addprefix $(BUILD)/,$(addsuffix .o,$(notdir $(SRCS))))
 
 ELF := $(BUILD)/$(TARGET).elf
 UF2 := $(BUILD)/$(TARGET).uf2
@@ -40,7 +48,7 @@ $(BUILD):
 $(BUILD)/%.S.o: src/%.S | $(BUILD)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD)/%.c.o: src/%.c | $(BUILD)
+$(BUILD)/%.c.o: $(APP)/%.c | $(BUILD)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # 링커 스크립트가 바뀌어도 다시 링크한다
