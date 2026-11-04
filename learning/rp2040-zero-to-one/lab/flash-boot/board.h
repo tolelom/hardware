@@ -68,6 +68,7 @@
 #define UART0_IMSC REG(UART0_BASE + 0x038u)
 #define UART0_ICR REG(UART0_BASE + 0x044u)
 #define UART0_DMACR REG(UART0_BASE + 0x048u)
+#define UART_FR_BUSY (1u << 3)
 #define UART_FR_RXFE (1u << 4)
 #define UART_FR_TXFF (1u << 5)
 #define UART_FR_TXFE (1u << 7)

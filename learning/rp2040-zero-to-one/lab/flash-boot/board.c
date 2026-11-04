@@ -148,8 +148,10 @@ void uart_puts(const char *s) {
     }
 }
 
+/* TXFE는 FIFO가 비었다는 뜻일 뿐이라, 마지막 바이트가 시프트 레지스터를
+   다 나갈 때까지 BUSY를 기다린다 (4.2 UARTFR) */
 void uart_flush(void) {
-    while (!(UART0_FR & UART_FR_TXFE)) {
+    while (UART0_FR & UART_FR_BUSY) {
     }
 }
 
