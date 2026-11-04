@@ -27,6 +27,9 @@
 | DMA로 PWM | chain으로 밝기 표 반복, CPU는 wfi | 표 위치 읽기 |
 | ADC + DMA | 500000 sps, 1000 sps | TIMER |
 | HardFault | 네 가지 오류 모두 원인 명령의 pc 보고 | `addr2line` |
+| SLEEP·DORMANT | SLEEP_EN으로 PWM 클럭 멈춤, DORMANT 3초·5초 모두 TIMER 36 us | PWM CTR, TIMER |
+| 문맥 전환 | SysTick·PendSV로 두 작업 500 / 500 | SysTick 횟수, 지역 변수 주소 |
+| flash SFDP | 2MB, 1-4-4 읽기 0xeb·dummy 4. 공장 boot2 설정과 같음 | 직접 명령 |
 
 ## UART
 
@@ -584,3 +587,85 @@ clk_adc 48MHz에서 변환 하나가 96사이클이라는 데이터시트 값(50
 MPU는 영역 0을 256바이트 정렬 배열에 두고 RASR SIZE 7(2^8 = 256바이트), XN, AP 000으로 설정했습니다. AP 000이 접근 금지라는 것은 ARMv6-M 규칙이고, 데이터시트 2.4.6에는 AP 필드 위치만 있습니다. MPU_CTRL은 ENABLE과 PRIVDEFENA를 켜서 나머지 주소는 기본 메모리 맵을 따릅니다.
 
 0x30000000은 데이터시트 주소 맵에 블록이 없는 구역이고, 읽기가 HardFault로 이어졌습니다.
+
+## SLEEP과 DORMANT
+
+`lab/flash-boot/sleep_dormant.c`는 두 저전력 상태를 차례로 시험합니다. `make MAIN=sleep_dormant.c`로 빌드합니다. 전류는 재지 않았으므로 전력이 줄었는지는 판정하지 않고, 클럭이 멈췄는지만 봅니다.
+
+SLEEP은 두 코어가 모두 WFI/WFE이고 DMA가 쉴 때 들어가며, 그동안 클럭 게이트가 WAKE_ENx 대신 SLEEP_ENx를 따릅니다(2.11.2). 핀에 연결하지 않은 PWM 슬라이스 2를 125MHz / 255로 돌리고, TIMER 알람 0으로 50ms 뒤 깨어나 그동안 CTR이 움직인 양을 셉니다. core1은 bootrom 안에서 WFE로 잠들어 있습니다.
+
+| SCR.SLEEPDEEP | SLEEP_EN0 | 잠든 시간 | PWM CTR 이동 |
+| --- | --- | --- | --- |
+| 0 | 모두 1 | 50002 us | 24512 |
+| 0 | CLK_SYS_PWM(bit 17)만 0 | 50000 us | 0 |
+| 1 | 모두 1 | 50000 us | 24510 |
+| 1 | CLK_SYS_PWM만 0 | 50000 us | 1 |
+
+PWM 클럭이 돌면 50ms에 24510카운트입니다. SLEEP_EN0에서 PWM을 끄면 SLEEPDEEP과 관계없이 카운터가 멈췄으므로, 이 조건에서는 `wfi`만으로 SLEEP 상태가 됐습니다. 데이터시트의 hello_sleep 설명은 deep sleep을 켜지만, 클럭 게이트가 바뀌는 데 SLEEPDEEP이 필요하지는 않았습니다.
+
+DORMANT에서는 모든 발진기가 멈추고 GPIO 이벤트나 RTC 인터럽트로 깨어납니다(2.11.3). 순서는 다음과 같습니다.
+
+| 순서 | 동작 |
+| --- | --- |
+| 1 | clk_sys SRC를 clk_ref(XOSC 12MHz)로 바꾸고 CLK_SYS_SELECTED 대기 |
+| 2 | PLL_SYS PWR = 0x2d(VCOPD, POSTDIVPD, DSMPD, PD). DORMANT는 PLL을 멈추지 않음 (2.11.3) |
+| 3 | ROSC CTRL ENABLE = 0xd1e(끔) |
+| 4 | IO_BANK0 INTR0 GPIO1_EDGE_LOW를 지우고 DORMANT_WAKE_INTE0(0x40014160)의 bit 6을 켬 |
+| 5 | XOSC DORMANT(0x40024008) = 0x636f6d61. 여기서 멈춤 |
+| 6 | 깨어나면 XOSC STATUS STABLE 대기, 깨움 설정과 INTR 지움, ROSC CTRL ENABLE = 0xfab(켬) |
+
+깨우는 신호는 Debug Probe가 GPIO1(UART RX)로 보내는 바이트의 시작 비트(falling edge)입니다. PC가 dormant 진입 줄을 받고 3초 뒤와 5초 뒤 0x00을 보낸 두 경우 모두 깨어났고, TIMER는 두 경우 모두 36us만 늘었습니다. TIMER의 1us tick은 clk_ref에서 나오므로 발진기가 멈춘 동안 TIMER도 멈춘 것입니다. 깨어난 뒤에는 clk_sys가 12MHz로 남습니다.
+
+처음 버전은 6번에서 ROSC를 다시 켜지 않았습니다. 그 상태로 UART "BOOTSEL"을 보내자 보드가 USB 장치로 다시 나타나지 않았고, USB-C를 뽑았다 꽂은 뒤 부팅 직후 "BOOTSEL"을 반복해 보내 BOOTSEL 모드로 되돌렸습니다. bootrom 재부팅은 watchdog 리셋이고, SDK 방식대로 WDSEL에서 ROSC와 XOSC를 빼면 리셋 뒤에도 ROSC가 꺼진 채 남는데 리셋 직후 clk_ref와 clk_sys는 ROSC에서 시작하기 때문으로 봅니다. bootrom `_reset_to_usb_boot`의 WDSEL 값은 확인하지 않았습니다. ROSC를 다시 켜도록 고친 뒤에는 같은 시험 뒤 BOOTSEL 전환이 됐습니다.
+
+## SysTick·PendSV 문맥 전환
+
+`lab/flash-boot/threads.c`는 SysTick 1ms마다 PendSV를 걸고, PendSV 핸들러가 두 작업의 r4~r11과 PSP를 바꿔 번갈아 실행합니다. `make MAIN=threads.c`로 빌드합니다.
+
+| 레지스터 | 주소 | 값 |
+| --- | --- | --- |
+| SYST_RVR | 0xe000e014 | 124999. clk_sys 125MHz에서 1ms |
+| SYST_CSR | 0xe000e010 | ENABLE, TICKINT, CLKSOURCE(프로세서 클럭) |
+| SHPR3 | 0xe000ed20 | PRI_15(SysTick)와 PRI_14(PendSV)를 가장 낮은 3으로 |
+| ICSR | 0xe000ed04 | SysTick 핸들러가 PENDSVSET(bit 28)을 씀 |
+
+예외 진입 때 하드웨어가 r0~r3, r12, lr, pc, xPSR을 PSP에 쌓으므로 PendSV는 나머지 r4~r11만 그 아래에 저장합니다. M0+의 `stmia`는 r0~r7만 다루므로 r8~r11은 r4~r7로 옮겨 저장합니다. 저장한 PSP를 작업 표에 넣고 다른 작업의 PSP를 꺼내 같은 순서로 되돌린 뒤, EXC_RETURN(lr)으로 돌아가면 다른 작업이 이어서 실행됩니다. 하드웨어가 쌓는 레지스터 순서와 EXC_RETURN 0xfffffffd의 의미는 ARMv6-M 규칙입니다.
+
+main은 PSP를 stack0 끝으로 두고 CONTROL.SPSEL(bit 1)을 켠 뒤 작업 0 함수를 부릅니다. 작업 1은 하드웨어 프레임 8워드(pc = 작업 함수, xPSR = 0x01000000)와 저장분 8워드를 stack1에 미리 만들어 둡니다.
+
+| 항목 | 결과 |
+| --- | --- |
+| SysTick 때 돌던 작업 (1초마다, 5회) | 작업 0 500회, 작업 1 500회 |
+| 작업 0 지역 변수 주소 | 0x20000804. stack0 0x20000428~0x20000828 안 |
+| 작업 1 지역 변수 주소 | 0x20000424. stack1 0x20000028~0x20000428 안 |
+
+첫 버전에서는 main 함수 안에서 PSP로 바꾼 뒤 같은 함수에서 계속 일했고, 지역 변수 주소가 0x20000824로 stack0 밖에 나왔습니다. 컴파일러는 함수의 지역 변수를 SP 기준으로 잡는데 함수 중간에 SP가 바뀌었기 때문입니다. 스택을 바꾼 직후 새 함수를 부르도록 고쳤습니다. 또 작업 0이 작업 1의 카운터를 0으로 되돌리는 방식은 작업 1의 읽기와 쓰기 사이에 전환이 끼면 덮어써져 동작하지 않았고, 이전 값과의 차이로 세도록 바꿨습니다.
+
+SIO 나눗셈기는 작업 0만 씁니다. 두 작업이 함께 쓰면 전환 때 나눗셈기 상태도 저장해야 합니다(board.c 주석, 2.3.1.5).
+
+## flash SFDP와 고유 ID
+
+`lab/flash-boot/flash_id.c`는 flash 칩에 명령을 직접 보내 JEDEC ID(0x9f), SFDP(0x5a), 고유 ID(0x4b)를 읽습니다. `make MAIN=flash_id.c`로 빌드합니다. 전송 방식은 `tools/jedec-id/main.c`와 같고, flash 부팅 기록처럼 SRAM 함수에서 인터럽트를 끄고 실행한 뒤 SRAM에 복사한 boot2로 XIP를 되살립니다. 마지막에 XIP로 읽은 0x100000fc가 0x7a4eb274여서 XIP 복귀를 확인했습니다.
+
+| 명령 | 보낸 바이트 | 받은 값 |
+| --- | --- | --- |
+| JEDEC ID | 0x9f | 85 60 15 |
+| SFDP | 0x5a, 주소 3바이트 0, dummy 1바이트 | 256바이트 (아래) |
+| 고유 ID | 0x4b, dummy 4바이트 | 16바이트. 앞 7바이트가 ASCII "AP4R680", 나머지 9바이트는 공개 저장소라 적지 않음 |
+
+SFDP 해석은 JESD216의 필드 배치를 따른 것이고 규격 원문과 Puya 데이터시트로는 확인하지 않았습니다.
+
+| 위치 | 값 | 해석 |
+| --- | --- | --- |
+| 0x00 | 53 46 44 50 | 서명 "SFDP" |
+| 0x04 | 00 01 01 | SFDP 1.0, 파라미터 헤더 2개 |
+| 0x08 | 00 00 01 09 30 00 00 ff | 기본 파라미터 표(ID 0x00) 1.0, 9 dword, 위치 0x30 |
+| 0x10 | 85 00 01 03 60 00 00 ff | 제조사 0x85(Puya, JEDEC ID 첫 바이트와 같음) 표 1.0, 3 dword, 위치 0x60 |
+| 0x30 dword 1 | 0xfff920e5 | 4KB 지우기 명령 0x20, 3바이트 주소, 1-1-2·1-2-2·1-4-4·1-1-4 읽기 지원 |
+| 0x34 dword 2 | 0x00ffffff | 용량 0x00ffffff + 1 = 16 Mbit = 2MB |
+| 0x38 dword 3 | 0x6b08eb44 | 1-4-4 읽기 0xeb, mode 2클럭, dummy 4클럭. 1-1-4 읽기 0x6b, dummy 8클럭 |
+| 0x3c dword 4 | 0xbb803b08 | 1-1-2 읽기 0x3b, dummy 8클럭. 1-2-2 읽기 0xbb, mode 4클럭 |
+| 0x4c dword 8 | 0x520f200c | 지우기 단위 4KB(0x20), 32KB(0x52) |
+| 0x50 dword 9 | 0x8108d810 | 지우기 단위 64KB(0xd8), 256바이트(0x81) |
+
+용량 2MB는 JEDEC ID의 0x15(2^21바이트)와 같습니다. 공장 boot2의 원본인 pico-sdk `boot2_w25q080.S`는 CMD_READ 0xeb, MODE_CONTINUOUS_READ 0xa0(4선에서 8비트 = 2클럭), WAIT_CYCLES 4로 읽기를 설정하고, 이 값이 칩이 SFDP로 밝힌 1-4-4 읽기 조건과 같습니다. 회로도와 다른 Puya 칩에서 공장 boot2가 동작하는 것과 맞습니다. 0x60의 Puya 표 3 dword(0x23003600, 0x6477f99e, 0xffffe8d9)는 해석하지 않았습니다.
