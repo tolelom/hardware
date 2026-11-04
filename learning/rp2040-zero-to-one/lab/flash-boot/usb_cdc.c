@@ -352,7 +352,8 @@ static void reset_to_bootsel(void) {
     reset(0u, 0u);
 }
 
-/* clk_sys와 clk_usb가 다르면 AVAILABLE을 나머지 비트보다 늦게 써야 한다 (4.1.2.7.4) */
+/* clk_sys와 clk_usb가 다르면 AVAILABLE을 나머지 비트보다 늦게 써야 한다 (4.1.2.7.4).
+   대기 길이는 데이터시트에 없고, 4회 루프는 시험에서 동작한 값이다 */
 static void buf_ctrl_write(uint32_t offset, uint32_t value) {
     DPRAM32(offset) = value & ~BUF_AVAILABLE;
     for (volatile int i = 0; i < 4; i++) {
@@ -439,7 +440,7 @@ static void handle_get_descriptor(uint32_t value, uint32_t length) {
     } else if (type == DESC_STRING && index < STRING_COUNT) {
         ep0_in_start(string_buffer, string_descriptor(index), length);
     } else {
-        ep0_stall();  /* device qualifier 등. full speed 장치는 STALL이 정답 */
+        ep0_stall();  /* device qualifier 등. full speed 전용 장치는 STALL로 답한다 (USB 2.0 규격, 원문 미확인) */
     }
 }
 
@@ -583,7 +584,7 @@ static void usb_init(void) {
         DPRAM32(offset) = 0u;
     }
     USB_MUXING = MUXING_TO_PHY | MUXING_SOFTCON;
-    /* VBUS 감지 핀이 없어 VBUS가 있다고 강제한다 */
+    /* VBUS 감지 신호를 GPIO에 연결하지 않고 있다고 강제한다 */
     USB_PWR = PWR_VBUS_DETECT | PWR_VBUS_DETECT_OVERRIDE_EN;
     USB_MAIN_CTRL = MAIN_CTRL_CONTROLLER_EN;
     USB_SIE_CTRL = SIE_CTRL_EP0_INT_1BUF;

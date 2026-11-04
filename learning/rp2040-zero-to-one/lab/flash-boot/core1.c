@@ -229,7 +229,7 @@ static void core1_launch(uint32_t vector_table, uint32_t sp, void (*entry)(void)
     }
 }
 
-/* M0+ 예외 진입은 SP를 8바이트 정렬로 맞추므로 스택 끝도 8바이트 정렬 */
+/* 함수 경계의 SP는 8바이트 정렬이어야 한다 (ARM 호출 규약 AAPCS) */
 static uint32_t core1_stack[CORE1_STACK_WORDS] __attribute__((aligned(8)));
 
 static void core1_main(void) {

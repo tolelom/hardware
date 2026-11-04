@@ -35,7 +35,7 @@ LED 깜빡임으로는 바이트 값을 읽기 어려워 UART를 붙입니다.
 | 2 | CLK_PERI_CTRL (0x40008048) | 끈 뒤 AUXSRC = 4(XOSC), 그다음 ENABLE(bit 11). AUXSRC는 바꿀 때 글리치가 남 |
 | 3 | RESETS | UART0(bit 22) 리셋 해제 |
 | 4 | UARTIBRD, UARTFBRD (0x40034024, 028) | 6, 33. 12MHz ÷ (16 × 115200) = 6.5104 |
-| 5 | UARTLCR_H (0x4003402c) | 8비트, FIFO 켬. IBRD·FBRD는 LCR_H를 쓸 때 반영되므로 뒤에 씀 |
+| 5 | UARTLCR_H (0x4003402c) | 8비트, FIFO 켬. IBRD·FBRD 뒤에 씀. SDK `uart.c` 주석: PL011은 LCR_H를 써야 분주값이 반영됨(데이터시트에는 없음) |
 | 6 | UARTCR (0x40034030) | UARTEN, TXE, RXE |
 | 7 | GPIO0·1 CTRL | FUNCSEL = 2(UART) |
 
@@ -52,14 +52,14 @@ flash에 명령 0x9F를 보내면 JEDEC ID 3바이트(제조사, 메모리 종�
 3. SSI(0x18000000)의 DR0(0x60)로 `9F 00 00 00`을 보내며 4바이트를 받음. SR(0x28)의 TFNF(bit 1), RFNE(bit 3)로 FIFO 확인
 4. OUTOVER를 HIGH로 해 CS를 올림
 
-이 순서는 SDK `hardware_flash`의 `flash_do_cmd`와 같습니다. 코드는 `tools/jedec-id/main.c`이고 `make APP=tools/jedec-id`로 빌드합니다.
+송수신 루프(동시에 보내 둔 바이트 14개 제한 포함)는 SDK `hardware_flash`의 `flash_do_cmd_cs`와 같습니다. SDK는 앞뒤로 boot2 복사본을 준비하고 XIP를 다시 켜는 단계를 더 하고, 이 코드는 SRAM에서 실행되어 그 단계를 뺐습니다. 코드는 `tools/jedec-id/main.c`이고 `make APP=tools/jedec-id`로 빌드합니다.
 
 | 자료 | flash 칩 |
 | --- | --- |
-| 회로도 v1.3 U3 | GD25Q16CEIG (GigaDevice, 0xC8) |
-| 칩이 보낸 JEDEC ID | `85 60 15`. 제조사 0x85 Puya, 0x60 P25Q 계열, 0x15 = 2MB |
+| 회로도 v1.3 U3 | GD25Q16CEIG (GigaDevice). 제조사 코드 0xC8은 로컬 자료로 확인하지 않음 |
+| 칩이 보낸 JEDEC ID | `85 60 15`. 제조사 0x85 Puya, 0x60 P25Q 계열, 0x15 = 2MB(2^21). 세 바이트의 해석은 공개 자료 기준이고 Puya 데이터시트로는 확인하지 않음 |
 
-0x85 6015를 P25Q16H로 대응시킨 근거는 Xradio의 flash 지원 목록과 Puya 칩을 읽은 공개 기록이고, Puya 공식 데이터시트로는 확인하지 않았습니다.
+0x85 6015를 P25Q16H로 대응시킨 근거는 Xradio의 flash 지원 목록과 Puya 칩을 읽은 공개 기록입니다.
 
 boot2는 flash 칩에 맞춰 XIP를 설정하므로, SDK 기본 boot2(`boot2_w25q080.S`)가 이 칩에 맞는다는 보장은 없습니다. 공장 펌웨어가 이 보드에서 flash 부팅되므로, 공장 백업의 앞 256바이트는 이 칩에서 동작하는 boot2입니다.
 
@@ -105,7 +105,7 @@ boot2가 XIP 설정을 마친 뒤의 동작은 데이터시트가 아니라 SDK 
 
 SRAM 빌드와 다른 점은 .data입니다. 실행 주소(VMA)는 SRAM, 초기값의 저장 주소(LMA)는 flash라 `> SRAM AT > FLASH`로 두 주소를 나누고, 시작 코드가 `LOADADDR(.data)`에서 SRAM으로 복사합니다. SP는 boot2가 벡터 테이블에서 이미 설정하므로 시작 코드에서 다시 쓰지 않습니다.
 
-.rodata 끝을 4바이트로 맞추지 않으면 .data의 LMA가 문자열 길이만큼 어긋납니다. 첫 빌드에서 LMA가 4의 배수가 아니어서 `flash.ld`의 ASSERT가 링크를 멈췄습니다. Cortex-M0+는 비정렬 `ldr`에서 HardFault를 내므로 복사 루프가 첫 워드에서 멈춥니다.
+.rodata 끝을 4바이트로 맞추지 않으면 .data의 LMA가 문자열 길이만큼 어긋납니다. 첫 빌드에서 LMA가 4의 배수가 아니어서 `flash.ld`의 ASSERT가 링크를 멈췄습니다. 데이터시트 CCR(UNALIGN_TRP)에 따르면 비정렬 접근은 모두 HardFault라, 그대로 올렸다면 복사 루프의 첫 `ldr`에서 멈췄을 것입니다. 보드에서 돌려 확인하지는 않았습니다.
 
 `.word _reset`처럼 `.thumb_func` 심볼을 가리키는 워드에는 링커가 bit 0(Thumb)을 넣습니다. 빌드 결과 벡터는 reset 0x10000111, hang 0x10000139입니다.
 
@@ -161,7 +161,7 @@ TIMER로 1초마다 출력하는 `t=N s` 줄의 간격은 PC 시계로 0.999~1.0
 
 `lab/flash-boot/irq.c`는 TIMER 알람 0(IRQ 0, 데이터시트 2.3.2 Table 80)으로 0.5초마다 LED를 뒤집습니다. main은 `wfi`로 잠들었다가 깨어날 때마다 횟수를 UART로 찍습니다. `make MAIN=irq.c`로 빌드합니다.
 
-벡터 테이블은 시스템 예외 16칸과 IRQ 32칸으로 192바이트입니다. VTOR은 bit 31:8만 쓰므로 0x10000100(256바이트 정렬)에 둡니다. `start.S`는 핸들러 이름을 모두 `.weak`와 `.thumb_set name, hang`으로 선언하고, C에서 같은 이름의 함수(`isr_irq0`)를 정의하면 링커가 그 주소를 테이블에 넣습니다. 정의하지 않은 칸은 hang을 가리켜, 예상하지 못한 인터럽트가 오면 그 자리에서 멈춥니다. Cortex-M0+는 예외 진입 때 r0~r3, r12, lr, pc, xPSR을 하드웨어로 스택에 쌓으므로 핸들러를 평범한 C 함수로 쓸 수 있습니다.
+벡터 테이블은 시스템 예외 16칸과 IRQ 32칸으로 192바이트입니다. VTOR은 bit 31:8만 쓰므로 0x10000100(256바이트 정렬)에 둡니다. `start.S`는 핸들러 이름을 모두 `.weak`와 `.thumb_set name, hang`으로 선언하고, C에서 같은 이름의 함수(`isr_irq0`)를 정의하면 링커가 그 주소를 테이블에 넣습니다. 정의하지 않은 칸은 hang을 가리켜, 예상하지 못한 인터럽트가 오면 그 자리에서 멈춥니다. Cortex-M0+는 예외 진입 때 r0~r3, r12, lr, pc, xPSR을 하드웨어로 스택에 쌓으므로 핸들러를 평범한 C 함수로 쓸 수 있습니다. 이 동작은 ARMv6-M 아키텍처 규칙이고 RP2040 데이터시트에는 없습니다.
 
 | 순서 | 레지스터 | 값 |
 | --- | --- | --- |
@@ -193,7 +193,7 @@ core0이 보내는 값은 `0, 0, 1, VTOR, SP, entry`입니다. core1의 bootrom�
 | SIO FIFO_WR | 0xd0000054 | 상대 코어로 보냄. 쓴 뒤 `sev` |
 | SIO FIFO_RD | 0xd0000058 | 상대 코어가 보낸 값. 비어 있으면 `wfe`로 대기 |
 
-core1의 스택은 `.bss`의 1KB 배열이고, 끝 주소를 8바이트 정렬로 둡니다. 벡터 테이블은 core0과 같은 0x10000100을 씁니다. UART는 core0만 써서 spinlock 없이 동작합니다.
+core1의 스택은 `.bss`의 1KB 배열이고, 끝 주소를 8바이트 정렬로 둡니다. 8바이트는 ARM 호출 규약(AAPCS)이 함수 경계에서 요구하는 정렬이고, SDK `multicore_launch_core1_with_stack`은 4바이트 배수만 검사합니다. 벡터 테이블은 core0과 같은 0x10000100을 씁니다. UART는 core0만 써서 spinlock 없이 동작합니다.
 
 보드 결과:
 
@@ -206,7 +206,7 @@ core1의 스택은 `.bss`의 1KB 배열이고, 끝 주소를 8바이트 정렬�
 
 ## NeoPixel (PIO)
 
-회로도 v1.3의 RGB1은 DIN이 GPIO12(NEOPIXEL), VCC가 GPIO11(NEO_PWR)에 직접 연결됩니다. LED 전원을 GPIO가 주므로 GPIO11을 high로 두어야 켜지고, 패드 최대 구동 전류가 12mA라 색 값을 16/255로 낮게 둡니다. GPIO11 패드는 DRIVE = 12mA(2.19.6.3)로 설정합니다.
+회로도 v1.3의 RGB1은 DIN이 GPIO12(NEOPIXEL), VCC가 GPIO11(NEO_PWR)에 직접 연결됩니다. LED 전원을 GPIO가 주므로 GPIO11을 high로 두어야 켜집니다. 패드 구동 세기 설정의 최댓값이 12mA라 색 값을 16/255로 낮게 둡니다. 16은 LED 전류를 계산해 정한 값이 아니라 보수적으로 고른 값입니다. GPIO11 패드는 DRIVE = 12mA(2.19.6.3)로 설정합니다.
 
 `lab/flash-boot/neopixel.c`는 PIO0 SM0으로 WS2812 신호를 만듭니다. `make MAIN=neopixel.c`로 빌드합니다. PIO 프로그램은 pico-sdk `pico_status_led/ws2812.pio`(T1 3, T2 3, T3 4)를 데이터시트 3.4 Table 366의 형식으로 직접 인코딩했습니다. side-set 1비트가 Delay/side-set 필드의 bit 12, delay가 bit 11:8입니다.
 
@@ -217,7 +217,7 @@ core1의 스택은 `.bss`의 1KB 배열이고, 끝 주소를 8바이트 정렬�
 | 2 | `jmp 0 side 1 [2]` | 0x1200 |
 | 3 | `nop side 0 [2]` (`mov y, y`) | 0xa242 |
 
-한 비트는 10사이클입니다. 1은 high 5사이클, 0은 high 3사이클이고 나머지는 low입니다.
+한 비트는 10사이클(8MHz에서 1.25us)입니다. `out`이 low 4사이클, `jmp !x`가 high 3사이클이고, 비트가 1이면 `jmp`가 high 3사이클을 더해 high 6·low 4(750ns·500ns), 0이면 `nop`이 low 3사이클을 더해 high 3·low 7(375ns·875ns)입니다.
 
 | 레지스터 | 값 |
 | --- | --- |
@@ -228,7 +228,7 @@ core1의 스택은 `.bss`의 1KB 배열이고, 끝 주소를 8바이트 정렬�
 | SM0_INSTR | `set pindirs, 1`(0xe081)로 GPIO12를 출력으로, `jmp 0`(0x0000) |
 | GPIO12 CTRL | FUNCSEL 6(PIO0) |
 
-TXF0에는 `(G << 24) | (R << 16) | (B << 8)`을 씁니다. WS2812는 초록, 빨강, 파랑 순서로 MSB부터 받고, 왼쪽 시프트라 OSR의 bit 31부터 나갑니다.
+TXF0에는 `(G << 24) | (R << 16) | (B << 8)`을 씁니다. 왼쪽 시프트라 OSR의 bit 31부터 나갑니다. 초록, 빨강, 파랑 순서는 SDK 예제와 같고, WS2812 데이터시트로는 확인하지 않았으며 보드에서 색이 맞게 나오는 것으로 확인했습니다.
 
 보드 결과:
 
@@ -249,16 +249,16 @@ TXF0에는 `(G << 24) | (R << 16) | (B << 8)`을 씁니다. WS2812는 초록, �
 | 인터페이스 | 0: CDC 통신(ACM), EP1 IN interrupt. 1: CDC 데이터, EP2 OUT·IN bulk 64바이트 |
 | DPRAM (0x50100000) | 0x00 SETUP 8바이트, EP 제어 0x08~, 버퍼 제어 0x80~, EP0 버퍼 0x100, EP1 IN 0x180, EP2 OUT 0x1c0, EP2 IN 0x200 |
 
-초기화 순서는 USBCTRL 리셋 해제, DPRAM 0 채움, USB_MUXING = TO_PHY | SOFTCON, USB_PWR = VBUS_DETECT | VBUS_DETECT_OVERRIDE_EN, MAIN_CTRL = CONTROLLER_EN, SIE_CTRL = EP0_INT_1BUF, 엔드포인트 제어 기록, 마지막으로 SIE_CTRL PULLUP_EN입니다. D+ 풀업을 켜는 순간 호스트가 장치 연결을 감지합니다. 이 보드는 VBUS 감지 핀이 없어 VBUS를 강제로 켭니다.
+초기화 순서는 USBCTRL 리셋 해제, DPRAM 0 채움, USB_MUXING = TO_PHY | SOFTCON, USB_PWR = VBUS_DETECT | VBUS_DETECT_OVERRIDE_EN, MAIN_CTRL = CONTROLLER_EN, SIE_CTRL = EP0_INT_1BUF, 엔드포인트 제어 기록, 마지막으로 SIE_CTRL PULLUP_EN입니다. D+ 풀업을 켜는 순간 호스트가 장치 연결을 감지합니다(4.1.2.10). VBUS 감지 신호는 GPIO에 연결하지 않고 USB_PWR로 강제로 켭니다. 보드에 VBUS 감지 배선이 있는지는 회로도로 확인하지 않았습니다.
 
-버퍼 제어 레지스터는 clk_sys와 clk_usb가 다르면 AVAILABLE 비트를 나머지보다 늦게 써야 합니다(4.1.2.7.4). 값을 AVAILABLE 없이 한 번 쓰고 짧게 기다린 뒤 AVAILABLE을 포함해 다시 씁니다.
+버퍼 제어 레지스터는 clk_sys와 clk_usb가 다르면 AVAILABLE 비트를 나머지보다 늦게 써야 합니다(4.1.2.7.4). 값을 AVAILABLE 없이 한 번 쓰고 빈 루프 4회(125MHz에서 약 190ns로 추정)를 기다린 뒤 AVAILABLE을 포함해 다시 씁니다. 데이터시트에는 대기 길이가 없고, 4회는 시험에서 동작한 값입니다.
 
 제어 전송에서 처리하는 요청:
 
 | 요청 | 처리 |
 | --- | --- |
 | GET_DESCRIPTOR 장치·설정·문자열 | EP0 IN으로 64바이트씩. 설정 디스크립터 67바이트는 64 + 3 |
-| GET_DESCRIPTOR device qualifier (0x06) | STALL. EP_STALL_ARM과 버퍼 제어 STALL을 함께 세움 |
+| GET_DESCRIPTOR device qualifier (0x06) | STALL. EP_STALL_ARM과 버퍼 제어 STALL을 함께 세움(4.1.2.8.1). full speed 전용 장치가 STALL로 답하는 것은 USB 2.0 규격 기억에 따른 것이고, 호스트는 3회 다시 묻고 넘어감 |
 | SET_ADDRESS | 길이 0 IN으로 상태 단계를 끝낸 뒤 ADDR_ENDP를 바꿈 |
 | SET_CONFIGURATION | EP2 데이터 PID를 DATA0으로 되돌리고 EP2 OUT을 받을 준비 |
 | SET_LINE_CODING (0x21 0x20) | EP0 OUT으로 7바이트를 받고 길이 0 IN으로 상태 단계 |
@@ -270,7 +270,7 @@ SETUP 뒤의 데이터·상태 단계는 DATA1부터 시작합니다. IN 데이�
 
 ### 64바이트 패킷과 길이 0 패킷
 
-첫 버전에서는 64바이트를 보내면 돌려받지 못했습니다. 그 데이터는 다음 시험 데이터 앞에 붙어서 늦게 나왔습니다. bulk IN 전송은 최대 크기보다 짧은 패킷으로 끝을 알립니다. 64바이트 패킷으로 끝나면 호스트 쪽 읽기 요청이 다음 데이터를 기다리며 끝나지 않습니다. 64바이트를 보낸 뒤에는 길이 0 패킷을 한 번 더 보내고 나서 다음 OUT을 받도록 고쳤습니다.
+첫 버전에서는 64바이트를 보내면 돌려받지 못했습니다. 그 데이터는 다음 시험 데이터 앞에 붙어서 늦게 나왔습니다. 64바이트를 보낸 뒤 길이 0 패킷을 한 번 더 보내고 나서 다음 OUT을 받도록 고치자 64바이트도 바로 돌아왔습니다. 원인은 bulk 전송이 최대 크기보다 짧은 패킷으로 끝을 알린다는 USB 규칙과, 호스트 읽기 요청이 64바이트보다 크게 걸려 있어 다음 패킷을 기다렸기 때문으로 봅니다. USB 규격과 Linux cdc_acm 소스로는 확인하지 않았습니다.
 
 `lab/flash-boot/echo_test.py`의 결과입니다(호스트 Linux, 포트 `/dev/serial/by-id/usb-tolelom_RP2040_0to1_CDC_0001-if00`).
 
@@ -280,7 +280,7 @@ SETUP 뒤의 데이터·상태 단계는 DATA1부터 시작합니다. IN 데이�
 | 1024바이트 | 일치 | 4.5 ms |
 | 64 KiB 무작위 | 일치 | 261.7 ms, 245 KiB/s |
 
-패킷을 하나씩 받고 돌려보낸 뒤 다음을 받는 방식이라 full speed(12Mbps) 한계보다 느립니다.
+full speed(12Mbps) 한계보다 느린 이유는 패킷 하나를 돌려보낸 뒤에야 다음을 받는 구조 때문으로 추정하고, 재 보지는 않았습니다.
 
 ### 버튼 없이 BOOTSEL로
 
