@@ -41,6 +41,7 @@
 | SPI·UART 루프백 | 오류 0, SPH=0은 프레임마다 1.5비트 간격, UART 상한 750000 | TIMER, 값 비교 |
 | RTC와 DORMANT | XOSC로 도는 RTC는 DORMANT에서 멈추고 알람으로 못 깨움 | RTC 값, GPIO 깨움 |
 | DMA와 PIO0·PIO1 | PIO 하나는 워드당 3클럭, 둘 동시면 DMA가 병목 | SysTick, 값 비교 |
+| USB 복합 장치 | CDC+MSC를 IAD로 묶어 동시 사용, 두 기능 모두 값 일치 | 커널 로그, 에코·파일 비교 |
 
 ## UART
 
@@ -989,3 +990,29 @@ PIO n마다 DMA 채널 두 개를 씁니다. 채널 2n은 SRAM 원본 8192워드
 | PIO0과 PIO1 동시 | 54666 | PIO마다 6.67, 합쳐 3.34 | 0, 0 |
 
 PIO 하나일 때는 워드당 3클럭으로, 3명령 프로그램 한 바퀴와 같습니다. DMA가 상태 머신을 따라잡았다는 뜻입니다. 둘을 함께 돌리면 데이터는 2배인데 시간은 2.2배가 걸렸고, 합친 처리량은 하나일 때보다 조금 낮았습니다. 이때 DMA는 채널 4개가 32768번 옮기는 데 54666클럭이 걸려 클럭당 0.6번입니다. 데이터시트는 DMA가 클럭마다 읽기 한 번과 쓰기 한 번을 할 수 있다고 적지만(2.5), DREQ로 박자를 맞추는 이 구성에서는 그 최대치에 닿지 않았습니다. 차이의 원인(DREQ 응답 지연, 채널 중재)은 확인하지 않았습니다.
+
+## USB 복합 장치
+
+`lab/flash-boot/usb_composite.c`는 CDC ACM 에코와 MSC 디스크를 장치 하나에 넣습니다. `make MAIN=usb_composite.c`로 빌드합니다. CDC 처리는 USB CDC 절, MSC 처리는 USB 대용량 저장장치 절과 같고 엔드포인트 번호와 디스크립터만 다릅니다.
+
+| 항목 | 값 |
+| --- | --- |
+| 장치 class | 0xef / 0x02 / 0x01 (Miscellaneous, IAD 사용) |
+| bcdDevice, 제품 문자열 | 3.00, "RP2040 0to1 CDC+MSC" |
+| 설정 디스크립터 | 98바이트, 인터페이스 3개 |
+| IAD (8바이트, type 0x0b) | 인터페이스 0부터 2개가 CDC ACM 한 기능 |
+| 인터페이스 0 | CDC 통신, EP1 IN interrupt |
+| 인터페이스 1 | CDC 데이터, EP2 OUT·IN bulk |
+| 인터페이스 2 | MSC, EP3 IN·OUT bulk |
+| DPRAM 버퍼 | EP1 IN 0x180, EP2 OUT 0x1c0, EP2 IN 0x200, EP3 IN 0x240, EP3 OUT 0x280 |
+
+CDC 두 인터페이스를 묶는 IAD와 0xef/0x02/0x01 장치 class는 USB-IF의 IAD 규칙을 기억으로 따른 것이고, 규격 원문으로는 확인하지 않았습니다. 커널 로그에서 cdc_acm이 인터페이스 1-2.2:1.0에 붙어 ttyACM1이 됐고, usb-storage가 1-2.2:1.2에 붙어 MSC 단독 때와 같은 64KiB 쓰기 금지 디스크가 나왔습니다. CDC 포트는 `/dev/serial/by-id/usb-tolelom_RP2040_0to1_CDC+MSC_000000000003-if00`입니다.
+
+두 기능을 PC에서 스레드 두 개로 동시에 썼습니다.
+
+| 기능 | 동시 사용 결과 | 혼자 쓸 때 (앞 절) |
+| --- | --- | --- |
+| CDC 64 KiB 무작위 에코 | 일치, 332.0 ms | 261.7 ms |
+| MSC PATTERN.BIN 49152바이트 처음 읽기 | 틀린 워드 0, 126.9 ms | 63.5 ms |
+
+두 기능 모두 값이 맞았고, 같은 full speed 버스와 main 루프 하나를 나눠 써서 각각 느려졌습니다. 이번에는 데스크톱이 디스크를 자동 마운트했습니다. MSC 단독 때는 자동 마운트가 되지 않았고, 차이의 원인은 확인하지 않았습니다.
