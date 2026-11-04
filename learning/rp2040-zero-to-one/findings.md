@@ -410,7 +410,12 @@ flash를 지우고 쓰는 동안 XIP로 읽을 수 없으므로, 그 구간을 S
 | BOOTSEL에서 `picotool save -r 0x101ff000 0x10200000` | 워드 0, 1, 2 뒤로 모두 0xffffffff |
 | 워드 4개로 줄인 임시 빌드로 섹터 채움 | `sector full, erase` 뒤 0부터 기록. 지우기와 쓰기 19.0 ms |
 
-`picotool load`는 이미지 범위만 쓰므로 다시 올려도 마지막 섹터의 기록이 남습니다. 전원을 뽑았다 꽂은 뒤의 확인은 아직 하지 않았습니다.
+`picotool load`는 이미지 범위만 쓰므로 다시 올려도 마지막 섹터의 기록이 남습니다.
+
+| 전원 시험 | 결과 |
+| --- | --- |
+| interp.c가 올라간 상태로 USB-C를 뽑았다 꽂음 | 그 뒤 `picotool save`로 읽은 섹터가 워드 0, 1 그대로 |
+| flash_counter.c를 올리고 USB-C를 뽑았다 꽂음 | 버튼 없이 부팅해 `previous boots recorded 3`, 4번째 기록 |
 
 ## 두 코어와 spinlock
 
