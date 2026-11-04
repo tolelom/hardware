@@ -6,6 +6,7 @@
  * A0: GPIO26 CTRL의 INOVER로 주변장치 쪽 입력만 바꾸면 INTR에 반영되는지 본다.
  * A: 인터럽트를 켜지 않고 INTR3의 GPIO25 비트 4개를 본다. 엣지는 래치되고 레벨은 아니다.
  * B: EDGE_HIGH 인터럽트(IO_IRQ_BANK0, IRQ 13)의 진입 지연을 SysTick 클럭 수로 잰다.
+ *    XIP 캐시를 FLUSH한 직후에도 재서 1회째 지연이 캐시 미스인지 본다.
  * C: GPIO 핸들러 안에서 IRQ 0을 NVIC_ISPR로 대기시키고, 우선순위에 따라 끼어드는지 본다.
  */
 #include "board.h"
@@ -28,6 +29,7 @@
 #define SYST_CVR REG(0xe000e018u)
 #define NVIC_ISPR REG(0xe000e200u)
 #define NVIC_IPR(n) REG(0xe000e400u + (n) * 4u)
+#define XIP_FLUSH REG(0x14000004u)
 #define IRQ_TIMER0 0u
 #define IRQ_BANK0 13u
 
@@ -160,6 +162,22 @@ static void part_b(void) {
         while (entries == before_entries) {
         }
         uart_puts("B irq on, store to handler: ");
+        uart_putdec((cvr_before - cvr_isr) & 0xffffffu);
+        uart_puts(" cycles\r\n");
+    }
+    /* 매번 XIP 캐시를 비운 뒤 cpsid 조건으로 잰다 */
+    for (int i = 0; i < 4; i++) {
+        pin_low();
+        uint32_t before_entries = entries;
+        __asm volatile("cpsid i");
+        XIP_FLUSH = 1u;
+        (void) XIP_FLUSH; /* 읽기는 flush가 끝날 때까지 버스를 잡는다 */
+        uint32_t cvr_before = SYST_CVR;
+        SIO_GPIO_OUT_SET = 1u << PIN;
+        __asm volatile("cpsie i");
+        while (entries == before_entries) {
+        }
+        uart_puts("B after XIP flush: ");
         uart_putdec((cvr_before - cvr_isr) & 0xffffffu);
         uart_puts(" cycles\r\n");
     }

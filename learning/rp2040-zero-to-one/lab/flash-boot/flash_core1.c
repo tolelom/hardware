@@ -3,6 +3,7 @@
  * flash 명령 동안 XIP를 쓸 수 없으므로 core1의 코드·스택·데이터도 모두 SRAM에 둔다.
  * core1은 TIMER를 읽으며 루프 횟수와 루프 사이 최대 간격을 센다. core0은 같은 시간
  * 길이의 평소 구간과 flash 지우기·쓰기 구간에서 그 값을 비교한다.
+ * 평소 구간은 core0이 하는 일을 바꿔 core1 루프 속도가 무엇에 따라 달라지는지도 본다.
  * 섹터는 offset 0x1fe000이다. 0x1ff000은 flash_counter.c가 쓴다.
  * core1이 flash 명령 중에 XIP를 읽는 경우는 SDK가 안전하지 않다고 적은 경우라 시험하지 않는다.
  */
@@ -67,6 +68,22 @@ RAMFUNC static void flash_erase_program(void) {
     ((rom_void_fn) ((uint32_t) boot2_copy + 1u))();
 }
 
+/* 레지스터만 쓰는 빈 루프. 버스를 쓰지 않는다 */
+RAMFUNC static void spin_sram(uint32_t n) {
+    __asm volatile(".syntax unified\n1: subs %0, %0, #1\n bne 1b" : "+l"(n));
+}
+
+static void spin_flash(uint32_t n) {
+    __asm volatile(".syntax unified\n1: subs %0, %0, #1\n bne 1b" : "+l"(n));
+}
+
+/* TIMER를 계속 읽는 루프 */
+RAMFUNC static void timer_poll_sram(uint32_t us) {
+    uint32_t start = TIMER_TIMERAWL;
+    while (TIMER_TIMERAWL - start < us) {
+    }
+}
+
 static void fifo_drain(void) {
     while (SIO_FIFO_ST & FIFO_ST_VLD) {
         (void) SIO_FIFO_RD;
@@ -115,8 +132,8 @@ static void report(const char *label, uint32_t took, uint32_t loops, uint32_t ga
     uart_puts(" us, core1 loops ");
     uart_putdec(loops);
     uart_puts(" (");
-    uart_putdec(took ? loops / took : 0u);
-    uart_puts(" per us), max gap ");
+    uart_putdec(took ? loops * 1000u / took : 0u);
+    uart_puts(" per ms), max gap ");
     uart_putdec(gap);
     uart_puts(" us\r\n");
 }
@@ -146,6 +163,32 @@ int main(void) {
     sleep_us(30000u);
     uint32_t took = time_us() - start;
     report("normal 30 ms:        ", took, core1_loops, core1_max_gap);
+
+    const struct {
+        const char *label;
+        int kind;
+    } cases[] = {
+        {"core0 SRAM spin:     ", 0},
+        {"core0 flash spin:    ", 1},
+        {"core0 SRAM TIMER poll:", 2},
+    };
+    for (unsigned c = 0; c < 3; c++) {
+        __asm volatile("cpsid i");
+        restart_core1_counts();
+        start = time_us();
+        if (cases[c].kind == 0) {
+            spin_sram(1250000u);
+        } else if (cases[c].kind == 1) {
+            spin_flash(1250000u);
+        } else {
+            timer_poll_sram(30000u);
+        }
+        took = time_us() - start;
+        uint32_t loops = core1_loops;
+        uint32_t gap = core1_max_gap;
+        __asm volatile("cpsie i");
+        report(cases[c].label, took, loops, gap);
+    }
 
     restart_core1_counts();
     start = time_us();
