@@ -5,6 +5,8 @@
 #   make dump     역어셈블을 본다
 #   make load     보드 flash에 쓴다 (BOOTSEL 모드여야 한다. 공장 펌웨어를 덮어쓴다)
 #   make clean    산출물을 지운다
+#
+#   MAIN=<파일>   main.c 대신 그 파일로 빌드한다. 예: make MAIN=clock.c load
 
 CROSS    := arm-none-eabi-
 CC       := $(CROSS)gcc
@@ -13,7 +15,8 @@ OBJDUMP  := $(CROSS)objdump
 NM       := $(CROSS)nm
 PICOTOOL := picotool
 
-BUILD    := build
+MAIN     ?= main.c
+BUILD    := build/$(basename $(MAIN))
 ELF      := $(BUILD)/firmware.elf
 UF2      := $(BUILD)/firmware.uf2
 LDSCRIPT := flash.ld
@@ -23,7 +26,7 @@ CFLAGS  := $(ARCH) -nostdlib -ffreestanding -Og -g -Wall -Wextra \
            -ffunction-sections -fdata-sections
 LDFLAGS := --gc-sections
 
-OBJS := $(BUILD)/boot2.S.o $(BUILD)/start.S.o $(BUILD)/main.c.o
+OBJS := $(BUILD)/boot2.S.o $(BUILD)/start.S.o $(BUILD)/$(MAIN).o
 
 .PHONY: all check dump load clean
 all: $(UF2)
@@ -53,4 +56,4 @@ load: $(UF2)
 	$(PICOTOOL) load -x $(UF2)
 
 clean:
-	rm -rf $(BUILD)
+	rm -rf build
