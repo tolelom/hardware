@@ -10,6 +10,7 @@
 | flash 부팅 이미지 | `lab/flash-boot/` | `make check` |
 | clk_sys | PLL_SYS 125MHz | FC0 주파수 카운터, PC 시계로 1초 간격 |
 | 인터럽트 | TIMER 알람 IRQ 0, 0.5초 간격 | UART 줄 간격 |
+| core1 | FIFO 순서로 기동, CPUID 1, 0.25초 간격 LED | UART 줄 간격 |
 
 ## UART
 
@@ -176,3 +177,27 @@ TIMER로 1초마다 출력하는 `t=N s` 줄의 간격은 PC 시계로 0.999~1.0
 | VTOR | 0x10000100 |
 | 테이블의 irq0 칸 | 0x100003b1 (`isr_irq0`, Thumb 비트 포함) |
 | `irq N` 줄 간격 (PC 시계) | 0.498~0.503초, 11회 |
+
+## core1
+
+리셋 뒤 core1은 bootrom 안에서 잠들어 있다가 core0이 FIFO로 보낸 순서를 받으면 깨어납니다(데이터시트 2.8.2). `lab/flash-boot/core1.c`는 core1에 LED를 맡기고, core0은 core1이 FIFO로 보낸 값을 UART로 찍습니다. `make MAIN=core1.c`로 빌드합니다.
+
+core0이 보내는 값은 `0, 0, 1, VTOR, SP, entry`입니다. core1의 bootrom은 받은 값을 그대로 돌려보내고, core0은 돌아온 값이 보낸 값과 다르면 처음부터 다시 보냅니다. 0을 보내기 전에는 core0의 RX FIFO를 비우고 `sev`로 core1을 깨웁니다. entry는 Thumb 비트가 붙은 함수 주소이고, C의 함수 포인터 값이 이미 홀수입니다.
+
+| 레지스터 | 주소 | 용도 |
+| --- | --- | --- |
+| SIO CPUID | 0xd0000000 | 읽는 코어 번호. core0은 0, core1은 1 |
+| SIO FIFO_ST | 0xd0000050 | VLD(bit 0) 받을 값 있음, RDY(bit 1) 보낼 자리 있음 |
+| SIO FIFO_WR | 0xd0000054 | 상대 코어로 보냄. 쓴 뒤 `sev` |
+| SIO FIFO_RD | 0xd0000058 | 상대 코어가 보낸 값. 비어 있으면 `wfe`로 대기 |
+
+core1의 스택은 `.bss`의 1KB 배열이고, 끝 주소를 8바이트 정렬로 둡니다. 벡터 테이블은 core0과 같은 0x10000100을 씁니다. UART는 core0만 써서 spinlock 없이 동작합니다.
+
+보드 결과:
+
+| 항목 | 값 |
+| --- | --- |
+| core0 CPUID | 0 |
+| core1 CPUID (core1이 FIFO로 보냄) | 1 |
+| core1 SP, entry | 0x20000400, 0x10000445 |
+| `core1 toggles N` 줄 간격 (PC 시계) | 0.249~0.255초, 12회 |
