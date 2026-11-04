@@ -957,7 +957,7 @@ SDK 계산을 따라 정수부가 0이 되면 분주값을 1로 묶으므로, cl
 
 ## RTC 알람과 DORMANT
 
-DORMANT에서는 GPIO 이벤트나 RTC 인터럽트로 깨어날 수 있지만, RTC로 깨우려면 RTC가 외부 클럭으로 돌아야 합니다(2.11.3). 이 보드에는 32kHz 크리스털이 없고 GPIN 핀(GPIO20, GPIO22)도 헤더에 나와 있지 않습니다. `lab/flash-boot/rtc_dormant.c`는 clk_rtc를 XOSC / 256(46875Hz)으로 둔 RTC가 DORMANT 동안 멈추는지 봅니다. `make MAIN=rtc_dormant.c`로 빌드합니다.
+DORMANT에서는 GPIO 이벤트나 RTC 인터럽트로 깨어날 수 있지만, RTC로 깨우려면 RTC가 외부 클럭으로 돌아야 합니다(2.11.3). 외부 클럭 입력은 GPIN0(GPIO20)과 GPIN1(GPIO22)입니다(2.19.2 기능 표). 이 두 핀은 XIAO 헤더 11핀에 없는 것으로 알고 있으나 이번에 회로도로 확인하지는 않았습니다. `lab/flash-boot/rtc_dormant.c`는 clk_rtc를 XOSC / 256(46875Hz)으로 둔 RTC가 DORMANT 동안 멈추는지 봅니다. `make MAIN=rtc_dormant.c`로 빌드합니다.
 
 RTC를 00:00:00으로 맞추고, IRQ_SETUP_1에 SEC_ENA와 초 2, IRQ_SETUP_0에 MATCH_ENA를 쓰고, INTE를 켭니다. DORMANT 진입과 GPIO1 깨움 순서는 SLEEP과 DORMANT 절과 같고, PC는 dormant 진입 줄을 받고 5초 뒤 0x00을 보냅니다.
 
