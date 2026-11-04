@@ -33,6 +33,7 @@
 | GPIO 인터럽트 | 엣지 래치, 진입 29 클럭, 같은 우선순위끼리는 끼어들지 않음 | SysTick, 핸들러 순서 기록 |
 | watchdog 부팅 | SCRATCH4~7로 SRAM 함수 진입, bootrom이 SCRATCH4를 지움 | scratch에 남긴 값 |
 | SRAM·XIP 속도 | 캐시 hit면 SRAM과 같음, 캐시를 끄면 27배, miss는 워드 단위 | SysTick, XIP 카운터 |
+| core1과 flash 쓰기 | SRAM의 core1은 지우기·쓰기 19 ms 동안 최대 간격 1 us | TIMER, 다시 읽기 |
 
 ## UART
 
@@ -780,3 +781,18 @@ PSM_WDSEL에 SRAM0~5가 들어 있었지만 리셋 전에 `.data`로 복사해 �
 데이터시트의 캐시 줄은 8바이트이지만(2.6.3.2), FLUSH 직후 순차로 읽으면 2048워드가 모두 miss였습니다. 짝수 워드만 읽어 줄을 채운 뒤 같은 줄의 홀수 워드를 읽어도 1024번 중 54번만 hit였습니다. 이 설정에서는 miss 한 번이 옆 워드를 캐시에 넣지 않았습니다. 코드 쪽 miss 7번도 0x1c바이트 함수의 워드 수 7과 같습니다. boot2 `boot2_w25q080.S`는 SSI CTRLR1 NDF를 0("single 32b read")으로 두므로 XIP 읽기 한 번이 32비트만 가져오는 것이 원인 후보이지만 확인하지 않았습니다.
 
 캐시를 끈 읽기 약 50클럭은 1-4-4 연속 읽기 한 번(주소 6클럭, mode 2클럭, dummy 4클럭, 데이터 8클럭 = SCK 20클럭, clk_sys/2라 clk_sys 40클럭)에 CS와 SSI 처리 시간을 더한 값으로 보고 있으며, SSI 쪽 시간은 따로 재지 않았습니다.
+
+## core1이 도는 동안 flash 쓰기
+
+`lab/flash-boot/flash_core1.c`는 core1을 깨워 루프를 돌리고, 그동안 core0이 flash 섹터(offset 0x1fe000)를 지우고 한 페이지를 씁니다. `make MAIN=flash_core1.c`로 빌드합니다. 0x1ff000 섹터는 flash 부팅 기록이 쓰므로 그 앞 섹터를 씁니다.
+
+flash 명령 동안에는 XIP를 쓸 수 없으므로 core1의 코드(`.ramfunc`, 0x20000001), 스택, 변수를 모두 SRAM에 둡니다. 역어셈블로 core1 루프와 리터럴 풀에 flash 주소가 없는 것을 확인했습니다. core1은 TIMERAWL을 읽으며 루프 횟수와 루프 사이 최대 간격을 셉니다. pico-sdk `hardware/flash.h`는 다른 코어의 XIP 접근을 사용자가 막아야 한다고 적고 `multicore_lockout`을 권합니다. core1이 flash를 읽는 경우는 동작이 정해지지 않았고 보드가 멈출 수 있어 시험하지 않았습니다.
+
+| 구간 | core0 | 길이 | core1 루프 | 1 us당 | 최대 간격 |
+| --- | --- | --- | --- | --- | --- |
+| 평소 | flash 코드에서 `sleep_us` | 30001 us | 125017 | 4.17 | 1 us |
+| flash 명령 | SRAM 함수와 bootrom에서 섹터 지우기와 256바이트 쓰기 | 18986 us | 81458 | 4.29 | 1 us |
+
+core1은 flash 명령 동안 멈추지 않았습니다. 다시 읽은 섹터는 쓴 64워드가 모두 맞고 나머지 960워드가 0xffffffff였습니다. 끝난 뒤 UART "BOOTSEL" 전환도 됐습니다.
+
+flash 명령 구간에서 core1이 1 us당 3% 더 돌았습니다. 평소 구간에서는 core0도 `sleep_us`로 TIMER를 계속 읽어 같은 APB 경로를 두고 다투기 때문으로 보며, 확인하지 않았습니다.
