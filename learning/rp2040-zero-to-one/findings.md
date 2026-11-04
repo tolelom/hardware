@@ -745,4 +745,4 @@ bootrom은 POR·BOR가 아닌 리셋 뒤 watchdog SCRATCH4~7을 보고, 값이 �
 
 PSM_WDSEL에 SRAM0~5가 들어 있었지만 리셋 전에 `.data`로 복사해 둔 `sram_entry` 코드는 리셋 뒤에도 남아 실행됐습니다. PSM_WDSEL 자체도 watchdog 리셋으로 지워지지 않았습니다. 진입 시점에 clk_ref와 clk_sys는 ROSC에서 돌고 있었고, DORMANT 기록에서 ROSC를 꺼 둔 채 재부팅하면 멈춘 현상과 맞는 조건입니다.
 
-리셋 명령부터 두 번째 flash 부팅의 첫 줄까지 PC 기준 16ms였습니다. 이 시간에는 bootrom의 watchdog 부팅, `sram_entry`, 두 번째 bootrom과 boot2, `board_init`이 모두 들어 있습니다.
+리셋 직전 줄과 두 번째 flash 부팅의 첫 줄은 PC 수신 시각으로 약 16ms 떨어져 있었습니다. 이 시간에는 bootrom의 watchdog 부팅, `sram_entry`, 두 번째 bootrom과 boot2, `board_init`이 모두 들어 있습니다.
