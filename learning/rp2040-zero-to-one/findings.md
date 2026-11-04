@@ -34,6 +34,7 @@
 | watchdog 부팅 | SCRATCH4~7로 SRAM 함수 진입, bootrom이 SCRATCH4를 지움 | scratch에 남긴 값 |
 | SRAM·XIP 속도 | 캐시 hit면 SRAM과 같음, 캐시를 끄면 27배, miss는 워드 단위 | SysTick, XIP 카운터 |
 | core1과 flash 쓰기 | SRAM의 core1은 지우기·쓰기 19 ms 동안 최대 간격 1 us | TIMER, 다시 읽기 |
+| 코어별 NVIC | 켠 코어만 받음, 둘 다 켜면 둘 다 실행, FIFO ROE가 IRQ를 계속 검 | 핸들러 횟수 |
 
 ## UART
 
@@ -796,3 +797,18 @@ flash 명령 동안에는 XIP를 쓸 수 없으므로 core1의 코드(`.ramfunc`
 core1은 flash 명령 동안 멈추지 않았습니다. 다시 읽은 섹터는 쓴 64워드가 모두 맞고 나머지 960워드가 0xffffffff였습니다. 끝난 뒤 UART "BOOTSEL" 전환도 됐습니다.
 
 flash 명령 구간에서 core1이 1 us당 3% 더 돌았습니다. 평소 구간에서는 core0도 `sleep_us`로 TIMER를 계속 읽어 같은 APB 경로를 두고 다투기 때문으로 보며, 확인하지 않았습니다.
+
+## 코어별 NVIC
+
+두 코어는 NVIC를 하나씩 따로 가집니다(2.3.2). `lab/flash-boot/core1_irq.c`는 core1이 자기 NVIC에서 SIO_IRQ_PROC1(IRQ 16), TIMER_IRQ_1, TIMER_IRQ_2를 켜고, core0은 board.c의 UART0(IRQ 20)와 뒤에서 켜는 TIMER_IRQ_2만 씁니다. `make MAIN=core1_irq.c`로 빌드합니다. 두 코어는 같은 벡터 테이블(0x10000100)을 쓰고, 핸들러가 SIO CPUID로 어느 코어에서 돌았는지 나눠 셉니다.
+
+| 시험 | core0 핸들러 | core1 핸들러 |
+| --- | --- | --- |
+| NVIC_ISER를 각 코어에서 읽음 | 0x00100000 (IRQ 20) | 0x00010006 (IRQ 1, 2, 16) |
+| core0이 FIFO로 1~10을 보냄 | 0회 | 10회, 합 55 |
+| core1이 TIMER 알람 1을 1ms마다 다시 걸어 100번 | 0회 | 100회 |
+| 두 코어가 TIMER_IRQ_2를 켜고 알람 2를 10번 | 10회, 매번 INTR 비트가 서 있음 | 10회, 매번 INTR 비트가 서 있음 |
+
+같은 IRQ를 두 코어가 켜면 알람 한 번에 두 핸들러가 모두 돌고, 둘 다 INTR 비트를 지우기 전에 읽었습니다. 한 이벤트를 한 코어만 처리하려면 NVIC를 한쪽에서만 켭니다.
+
+첫 버전은 core1이 IRQ 16을 켜자마자 멈췄습니다. 각 코어의 SIO IRQ는 자기 FIFO_ST의 VLD, WOF, ROE의 OR이고 WOF와 ROE는 sticky입니다(2.3.1.3 FIFO_ST). core1 진입 직후 FIFO_ST는 0xa(RDY, ROE)였으므로 빈 FIFO를 읽은 기록이 남아 있었고, 핸들러가 VLD만 비우고 ROE를 지우지 않아 IRQ 16이 계속 걸린 것입니다. 누가 빈 FIFO를 읽었는지는 확인하지 않았습니다. core1 시작 때와 핸들러 끝에서 FIFO_ST에 써서 WOF와 ROE를 지우도록 고친 뒤 위 결과가 나왔습니다.
