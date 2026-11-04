@@ -15,7 +15,7 @@
 | USB CDC | 1209:0001로 열거, 에코 64 KiB 일치, 1200 baud로 BOOTSEL | `echo_test.py`, `lsusb` |
 | UART로 BOOTSEL | "BOOTSEL" 수신 시 bootrom으로 재부팅 | 재부팅 뒤 2e8a:0003 열거 |
 | ADC 온도 | 38.8도 안팎, ERR 0. 정확도 미판정 | UART |
-| PWM | 1kHz wrap 1000회/초, duty 기대값과 ±6/1000 | INTR 횟수, 핀 입력 샘플 |
+| PWM | 1kHz wrap 1000회/초, duty 기대값과 ±6/1000, 색 전환 | INTR 횟수, 핀 입력 샘플, 눈으로 확인 |
 | DMA | 4 KiB 복사 10 us, sniffer CRC가 boot2 CRC와 일치, UART TX | UART |
 | watchdog | REASON timer/force 구분, scratch 유지, 타임아웃 LOAD / 2 us | UART 줄 간격 |
 | flash 기록 | 마지막 섹터에 부팅 순번 누적, 쓰기 1.74 ms | UART, `picotool save` |
@@ -346,6 +346,7 @@ gcc는 M0+에서 `/`와 `%`를 `__aeabi_uidiv` 같은 함수 호출로 바꿉니
 | wrap 횟수 | 1000회/초 |
 | GPIO16 high 비율 | 746/1000 |
 | GPIO17 high 비율 | 244/1000 |
+| 숨쉬기 패턴 (눈으로 확인) | 빨강, 초록, 파랑 순서로 전환. 깜빡임 안 보임 |
 
 ## DMA
 
