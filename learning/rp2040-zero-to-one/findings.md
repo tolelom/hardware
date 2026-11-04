@@ -424,7 +424,16 @@ PSM WDSEL의 리셋값이 0이라 설정하지 않으면 watchdog이 울려도 �
 | LOAD 600000 만료 중 50 ms 간격 6회 | 10000. 약 300 ms 뒤 리셋, REASON 0x1 |
 | 만료 리셋 뒤 다음 부팅 | 10000 |
 
-이 프로그램이 쓴 LOAD는 리셋 시간에는 반영되었지만 TIME에는 한 번도 나타나지 않았습니다. bootrom의 `watchdog_reboot`(pico-bootrom-rp2040 `usb_device_tiny/runtime.c`)는 `watchdog_hw->load = delay_ms * 1000`을 씁니다. picotool은 RP2040에 지연 500 ms(`con.reboot(..., 500)`)를, bootrom `reset_usb_boot`는 지연 10 ms를 넘기므로 두 값이 500000과 10000에 맞습니다. 다만 이번 실행에서는 `reset_usb_boot`(10 ms) 뒤에 picotool 재부팅(500 ms)이 있었는데도 10000이 읽혔으므로, 마지막 bootrom LOAD가 남는다는 설명으로는 맞지 않습니다. TIME이 어느 쓰기를 붙잡는지는 판정하지 않았습니다. 전원을 다시 넣은 뒤 첫 LOAD가 남는지는 전원 재투입 시험으로 가를 수 있습니다.
+이 프로그램이 쓴 LOAD는 리셋 시간에는 반영되었지만 TIME에는 한 번도 나타나지 않았습니다. bootrom의 `watchdog_reboot`(pico-bootrom-rp2040 `usb_device_tiny/runtime.c`)는 `watchdog_hw->load = delay_ms * 1000`을 씁니다. picotool은 RP2040에 지연 500 ms(`con.reboot(..., 500)`)를, bootrom `reset_usb_boot`는 지연 10 ms를 넘기므로 두 값이 500000과 10000에 맞습니다. 다만 `reset_usb_boot`(10 ms) 뒤에 picotool 재부팅(500 ms)이 있었는데도 10000이 읽혔습니다. USB-C를 뽑았다 꽂아 bootrom을 거치지 않고 이 프로그램으로 바로 부팅하자 다음과 같았습니다.
+
+| 시점 | CTRL | TIME |
+| --- | --- | --- |
+| 전원 직후, 쓰기 전 | 0x07000000 (리셋값, PAUSE 세 비트 1) | 0 |
+| 첫 LOAD 3000000 뒤 | 0x072dc6c0 | 3000000 |
+| LOAD 6000000, 9000000, 600000 뒤 | 0x472dc6c0 | 3000000 |
+| 그 뒤 `reset_usb_boot`(10 ms), picotool(500 ms)을 거친 부팅 | 0x402dc6c0 | 3000000 |
+
+TIME에는 전원을 넣은 뒤 처음 쓴 LOAD 값이 나뉘지 않고 그대로 남고, 그 뒤의 LOAD 쓰기와 watchdog 리셋으로는 바뀌지 않았습니다. 앞의 500000과 10000도 각각 그 전원 투입 뒤 bootrom이 처음 쓴 값으로 보면 맞습니다. 전원 직후 부팅에서는 LOAD 600000을 켜도 60초 동안 리셋이 없었고, PAUSE 세 비트를 지운 뒤에도 같았습니다. bootrom을 거친 부팅에서는 같은 코드가 약 300 ms 뒤 리셋되었습니다. 이 프로그램은 PSM_WDSEL을 쓰지 않으므로, 전원 직후에는 WDSEL 리셋값 0 때문에 리셋되는 블록이 없었던 것으로 봅니다. 그때의 WDSEL 값은 직접 읽지 않았습니다.
 
 `picotool load -x` 직후 첫 부팅의 REASON도 0x1(timer)입니다. picotool은 RP2040에 PC_REBOOT 명령(지연 500 ms)을 보내고, bootrom은 이를 `watchdog_reboot`로 처리해 지연이 끝날 때 watchdog 타이머로 리셋합니다(picotool `main.cpp`, bootrom `usb_boot_device.c`). 리셋 뒤 첫 줄 앞에 공백 한 글자가 붙어 나오는 일이 있었습니다. 리셋 중 TX 핀 상태가 바뀌어 수신 쪽이 한 글자로 읽은 것으로 추정합니다.
 
