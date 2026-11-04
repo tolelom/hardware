@@ -11,7 +11,7 @@
 |---|---|
 | MCU | Raspberry Pi RP2040, Cortex-M0+ 듀얼코어, 최대 133 MHz |
 | RAM | 264 KB SRAM |
-| Flash | 외부 QSPI 2 MB. Winbond W25Q080 계열 |
+| Flash | 외부 QSPI 2 MB. Puya P25Q16H 계열, JEDEC ID `85 60 15` (2026-11-04 칩에서 읽음). 회로도 v1.3의 부품은 GD25Q16CEIG |
 | 노출 GPIO | 11 (전부 PWM 가능) |
 | 아날로그 입력 | 4 |
 | 인터페이스 | I2C ×1, UART ×1, SPI ×1 |
