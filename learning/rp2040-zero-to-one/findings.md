@@ -42,6 +42,7 @@
 | RTC와 DORMANT | XOSC로 도는 RTC는 DORMANT에서 멈추고 알람으로 못 깨움 | RTC 값, GPIO 깨움 |
 | DMA와 PIO0·PIO1 | PIO 하나는 워드당 3클럭, 둘 동시면 DMA가 병목 | SysTick, 값 비교 |
 | USB 복합 장치 | CDC+MSC를 IAD로 묶어 동시 사용, 두 기능 모두 값 일치 | 커널 로그, 에코·파일 비교 |
+| USB HID 키보드 | BOOT 버튼이 Caps Lock 키, 호스트 LED 상태를 SET_REPORT로 받음 | 커널 입력 장치 목록, LED 리포트 |
 
 ## UART
 
@@ -1055,3 +1056,30 @@ IAD의 필드 8개(8바이트)와 타입 11(0x0b)은 USB-IF IAD ECN과 같습니
 | MSC PATTERN.BIN 49152바이트 처음 읽기 | 틀린 워드 0, 126.9 ms | 63.5 ms |
 
 두 기능 모두 값이 맞았고, 같은 full speed 버스와 main 루프 하나를 나눠 써서 각각 느려졌습니다. 이번에는 데스크톱이 디스크를 자동 마운트했습니다. MSC 단독 때는 자동 마운트가 되지 않았고, 차이의 원인은 확인하지 않았습니다.
+
+## USB HID 키보드
+
+`lab/flash-boot/usb_hid.c`는 HID boot 키보드입니다. `make MAIN=usb_hid.c`로 빌드합니다. 키는 보드의 BOOT 버튼 하나이고 Caps Lock(사용 코드 0x39)을 보냅니다. 호스트가 보내는 LED 상태를 받아 초록 LED에 Num Lock, 파랑 LED에 Caps Lock을 보입니다. UART로 'N'을 받으면 Num Lock(0x53)을 한 번 눌렀다 뗍니다. 보내는 키는 이 두 개뿐이라 포커스 창에 글자가 들어가지 않습니다. VID:PID는 1209:0001, bcdDevice는 3.00입니다.
+
+| 항목 | 값 |
+| --- | --- |
+| 인터페이스 | class 0x03, subclass 0x01(boot), protocol 0x01(키보드) |
+| HID 디스크립터 | HID 1.11, report 디스크립터 1개 63바이트 |
+| report 디스크립터 | HID 1.11 부록 B.1 boot 키보드: 수식 키 8비트, 예약 1바이트, LED 출력 5비트, 키 6개 |
+| 엔드포인트 | EP1 IN interrupt 8바이트, bInterval 1(1 ms) |
+| LED 출력 | interrupt OUT 엔드포인트 없이 EP0 SET_REPORT(0x21, 0x09, wValue 0x0200) 데이터 단계 1바이트 |
+
+BOOT 버튼은 flash CS(QSPI_SS)에 붙어 있습니다. 읽을 때는 IO_QSPI의 GPIO_QSPI_SS_CTRL(0x4001800c) OEOVER(bit 13:12)를 2로 두어 CS 출력을 끄고, SIO GPIO_HI_IN(0xd0000008) bit 1을 읽은 뒤 원래 값으로 되돌립니다. pico-examples `picoboard/button`과 같은 방식입니다. CS를 끈 동안에는 XIP를 읽을 수 없으므로 읽기 함수를 `.ramfunc`에 두고 인터럽트를 끈 채 부릅니다. 역어셈블로 함수 본문과 리터럴 풀에 flash 주소가 없는 것을 확인했습니다. 5 ms마다 읽고 같은 값이 4번 이어지면 바뀐 것으로 봅니다.
+
+연결 직후 요청 순서는 장치 디스크립터, SET_ADDRESS, device qualifier 3회(STALL), 설정 디스크립터, 문자열, SET_CONFIGURATION, SET_IDLE(0), report 디스크립터 63바이트, SET_REPORT(LED 00), SET_REPORT(LED 01)였습니다. `/proc/bus/input/devices`에 "tolelom RP2040 0to1 HID"가 `kbd event26 leds` 핸들러로 올라왔습니다. 이 PC의 사용자는 input 그룹이 아니고 `/dev/hidraw*`는 root 0600이라 키 이벤트를 직접 읽지 않고, 호스트가 돌려보내는 LED 리포트로 키가 들어갔는지 봅니다.
+
+| 시험 | 장치가 보낸 것 | 호스트가 보낸 LED |
+| --- | --- | --- |
+| UART 'N' 1회 | Num Lock 누름, 다음 프레임에 뗌 | 01 → 00, 누름 뒤 1781 us |
+| UART 'N' 2회 | 같음 | 00 → 01, 누름 뒤 696 us |
+| BOOT 1회 누름 | Caps Lock 누름 | 03, 누름 직후 |
+| BOOT 1회 뗌 (0.27초 뒤) | 뗌 | 없음 |
+| BOOT 2회 누름 | Caps Lock 누름 | 없음 |
+| BOOT 2회 뗌 (2.09초 뒤) | 뗌 | 01, 뗌 직후 |
+
+이 데스크톱(GNOME, Wayland)은 이 장치가 보낸 lock 키로 바뀐 LED 상태를 이 장치에 SET_REPORT로 돌려보냈습니다. 다른 키보드의 LED도 함께 바뀌었는지는 보지 않았습니다. 두 lock 키 모두 켤 때는 누름에서, 끌 때는 뗌에서 LED가 바뀌었습니다. Num Lock 1회의 1781 us도 누름 뒤 1 ms 프레임에 보낸 뗌 뒤입니다. XKB의 LockMods 동작(누르면 잠그고, 누르기 전에 잠겨 있었으면 뗄 때 푼다)과 맞는 모양이며, XKB 규격 원문은 확인하지 않았습니다. 지연 값에는 장치의 UART 로그 출력 시간이 들어 있습니다.
