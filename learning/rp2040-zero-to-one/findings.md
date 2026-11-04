@@ -786,7 +786,7 @@ PSM_WDSEL에 SRAM0~5가 들어 있었지만 리셋 전에 `.data`로 복사해 �
 
 `lab/flash-boot/flash_core1.c`는 core1을 깨워 루프를 돌리고, 그동안 core0이 flash 섹터(offset 0x1fe000)를 지우고 한 페이지를 씁니다. `make MAIN=flash_core1.c`로 빌드합니다. 0x1ff000 섹터는 flash 부팅 기록이 쓰므로 그 앞 섹터를 씁니다.
 
-flash 명령 동안에는 XIP를 쓸 수 없으므로 core1의 코드(`.ramfunc`, 0x20000001), 스택, 변수를 모두 SRAM에 둡니다. 역어셈블로 core1 루프와 리터럴 풀에 flash 주소가 없는 것을 확인했습니다. core1은 TIMERAWL을 읽으며 루프 횟수와 루프 사이 최대 간격을 셉니다. pico-sdk `hardware/flash.h`는 다른 코어의 XIP 접근을 사용자가 막아야 한다고 적고 `multicore_lockout`을 권합니다. core1이 flash를 읽는 경우는 동작이 정해지지 않았고 보드가 멈출 수 있어 시험하지 않았습니다.
+flash 명령 동안에는 XIP를 쓸 수 없으므로 core1의 코드(`.ramfunc`, 0x20000001), 스택, 변수를 모두 SRAM에 둡니다. 역어셈블로 core1 루프와 리터럴 풀에 flash 주소가 없는 것을 확인했습니다. core1은 TIMERAWL을 읽으며 루프 횟수와 루프 사이 최대 간격을 셉니다. pico-sdk `hardware/flash.h`는 다른 코어가 flash에서 실행 중이면 이 함수들이 안전하지 않다고 적고, 방법 하나로 `multicore_lockout`을 듭니다. core1이 flash 명령 중에 XIP를 읽는 경우는 보드가 멈추면 USB 재연결로만 복구되므로 시험하지 않았습니다.
 
 | 구간 | core0 | 길이 | core1 루프 | 1 us당 | 최대 간격 |
 | --- | --- | --- | --- | --- | --- |

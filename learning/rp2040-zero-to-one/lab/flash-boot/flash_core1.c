@@ -4,7 +4,7 @@
  * core1은 TIMER를 읽으며 루프 횟수와 루프 사이 최대 간격을 센다. core0은 같은 시간
  * 길이의 평소 구간과 flash 지우기·쓰기 구간에서 그 값을 비교한다.
  * 섹터는 offset 0x1fe000이다. 0x1ff000은 flash_counter.c가 쓴다.
- * core1이 flash를 읽게 하는 경우는 동작이 정해지지 않았고 보드가 멈출 수 있어 시험하지 않는다.
+ * core1이 flash 명령 중에 XIP를 읽는 경우는 SDK가 안전하지 않다고 적은 경우라 시험하지 않는다.
  */
 #include "board.h"
 
