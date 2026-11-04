@@ -60,4 +60,5 @@ __image_end = __data_load + SIZEOF(.data);
 ASSERT(SIZEOF(.boot2) == 256, "boot2 must be 256 bytes")
 ASSERT(ADDR(.vectors) == ORIGIN(FLASH) + 0x100,
        "vector table must be at 0x10000100")
+ASSERT(SIZEOF(.vectors) == 48 * 4, "vector table must have 16 + 32 entries")
 ASSERT(__data_load % 4 == 0, ".data load address must be word aligned")
