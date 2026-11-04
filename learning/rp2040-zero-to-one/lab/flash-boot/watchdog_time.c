@@ -1,6 +1,8 @@
 /*
  * watchdog CTRL.TIME 읽기 (데이터시트 4.7). watchdog.c에서 TIME이 LOAD와 경과 시간에
  * 관계없이 0x7a120으로 읽혔다. LOAD를 바꿔 가며 TIME과 TICK 레지스터를 시간에 따라 읽는다.
+ * 결과: TIME에는 전원 투입 뒤 첫 LOAD가 남는다. PSM_WDSEL을 쓰지 않으므로 전원 직후 부팅에서는
+ * 만료되어도 리셋되지 않는다.
  * RP2040-E1로 LOAD / 2 us 뒤 만료되므로 LOAD는 1.5초 이상으로 두고 100ms 뒤 ENABLE을 끈다.
  */
 #include "board.h"
@@ -10,6 +12,7 @@
 #define WATCHDOG_LOAD REG(WATCHDOG_BASE + 0x04u)
 #define WATCHDOG_TICK REG(WATCHDOG_BASE + 0x2cu)
 #define WATCHDOG_CTRL_ENABLE (1u << 30)
+#define WATCHDOG_CTRL_PAUSE (7u << 24)
 #define WATCHDOG_REASON REG(WATCHDOG_BASE + 0x08u)
 #define WATCHDOG_SCRATCH(n) REG(WATCHDOG_BASE + 0x0cu + (n) * 4u)
 #define TIME_MASK 0xffffffu
@@ -69,6 +72,9 @@ int main(void) {
     run(9000000u, 1);
     /* 만료까지 두고 다음 부팅에서 TIME을 본다. E1로 600000은 약 300ms */
     WATCHDOG_SCRATCH(0) = MAGIC;
+    /* 전원 직후에는 PAUSE_DBG0, PAUSE_DBG1, PAUSE_JTAG가 리셋값 1이다. 지운 뒤 만료를 본다 */
+    WATCHDOG_CTRL &= ~WATCHDOG_CTRL_PAUSE;
+    sample("  pause cleared");
     WATCHDOG_LOAD = 600000u;
     WATCHDOG_CTRL |= WATCHDOG_CTRL_ENABLE;
     for (int i = 0; i < 10; i++) {
