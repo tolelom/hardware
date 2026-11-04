@@ -39,6 +39,7 @@
 | 오버클럭 | SRAM 실행 1.10V 324MHz, 1.15V 348MHz까지 계산 일치, 다음 단계에서 멈춤 | FC0, xorshift, watchdog |
 | 캐시를 SRAM으로 | 16KB가 main SRAM과 같은 속도, watchdog 리셋 뒤 3836/4096워드 남음 | 쓰기·비교, XIP CTRL |
 | SPI·UART 루프백 | 오류 0, SPH=0은 프레임마다 1.5비트 간격, UART 상한 750000 | TIMER, 값 비교 |
+| RTC와 DORMANT | XOSC로 도는 RTC는 DORMANT에서 멈추고 알람으로 못 깨움 | RTC 값, GPIO 깨움 |
 
 ## UART
 
@@ -953,3 +954,17 @@ UART1은 8N1로 256바이트를 보내고 받습니다. 분주값은 SDK `uart_s
 | 1000000 | 750000 | 0 | 0 | 3415 us | 3413 us |
 
 SDK 계산을 따라 정수부가 0이 되면 분주값을 1로 묶으므로, clk_peri 12MHz에서는 12MHz / 16 = 750000이 상한입니다. 1000000을 요청해도 750000이 됩니다.
+
+## RTC 알람과 DORMANT
+
+DORMANT에서는 GPIO 이벤트나 RTC 인터럽트로 깨어날 수 있지만, RTC로 깨우려면 RTC가 외부 클럭으로 돌아야 합니다(2.11.3). 이 보드에는 32kHz 크리스털이 없고 GPIN 핀(GPIO20, GPIO22)도 헤더에 나와 있지 않습니다. `lab/flash-boot/rtc_dormant.c`는 clk_rtc를 XOSC / 256(46875Hz)으로 둔 RTC가 DORMANT 동안 멈추는지 봅니다. `make MAIN=rtc_dormant.c`로 빌드합니다.
+
+RTC를 00:00:00으로 맞추고, IRQ_SETUP_1에 SEC_ENA와 초 2, IRQ_SETUP_0에 MATCH_ENA를 쓰고, INTE를 켭니다. DORMANT 진입과 GPIO1 깨움 순서는 SLEEP과 DORMANT 절과 같고, PC는 dormant 진입 줄을 받고 5초 뒤 0x00을 보냅니다.
+
+| 구간 | 결과 |
+| --- | --- |
+| 대조: DORMANT 없이 알람 대기 | 999 ms 뒤 INTR, RTC 0:0:2 |
+| DORMANT, 5초 뒤 UART 바이트 | GPIO1 엣지로 깨어남. TIMER 36 us, RTC INTR 0, RTC 0:0:1 |
+| 깨어난 뒤 12MHz로 2.5초 | RTC INTR 1, RTC 0:0:3 |
+
+RTC는 DORMANT 5초 동안 멈췄고 알람으로 깨어나지 않았습니다. 깨어난 뒤에는 다시 흘러 알람 조건에 닿았습니다. 대조 구간에서 알람이 2초가 아니라 999 ms에 온 것은 RTC 절의 "설정한 첫 초가 읽히지 않음"과 같은 모양입니다. 설정한 0초가 곧 1초로 넘어간 것으로 보이며, 원인은 여전히 확인하지 못했습니다.
