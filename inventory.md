@@ -145,7 +145,7 @@
 | 6 | LiPo와 JST 1.25mm 커넥터 ×2 | 컨트롤러 6단계. 5단계까지는 USB 전원으로 진행된다 |
 | 7 | 로직 애널라이저 (저가 8ch) | I2S/SPI 디버깅 시. 아직 그 단계 아님 |
 | 8 | 3D 프린터 | 컨트롤러 7단계(케이스). 구매 검토 중 |
-| - | 이펙터 부품 (아날로그 입출력단 부품, 릴레이, 9V 어댑터, 페달화 부품). Seed3는 주문함 | 이펙터 전체. 표는 [devices/bass-effector/docs/plan.md](devices/bass-effector/docs/plan.md) |
+| - | 이펙터 부품 (아날로그 입출력단 부품, 릴레이, 9V 어댑터, 페달화 부품). Seed3는 보유 | 이펙터 전체. 표는 [devices/bass-effector/docs/plan.md](devices/bass-effector/docs/plan.md) |
 | - | USB-A 소켓 (USB1 배선용) | 오디오 플레이어 2단계와 LDAC 동글 3단계 공용 |
 | - | USB WiFi 동글 (MT7612U 계열), 헤드폰 앰프 | 오디오 플레이어 2·3단계 |
 | - | Bluetooth 동글 (RTL8761B 계열), Lightning 어댑터 A1619, LDAC 수신기 | LDAC 동글 2·3단계. 0단계 판정 뒤에 산다. 품명은 [devices/ldac-dongle/README.md](devices/ldac-dongle/README.md) |
