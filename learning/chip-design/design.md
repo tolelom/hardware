@@ -19,7 +19,7 @@ CPU와 NPU를 Verilog로 설계하고, 작은 설계를 Tiny Tapeout(TT) 셔틀�
 범위에서 제외:
 - 아날로그·혼성 신호 설계
 - 고수준 HDL(Chisel, Amaranth, SpinalHDL). CPU 단계를 마친 뒤 두 번째 바퀴로 둡니다
-- 로컬 OpenLane 하드닝. M4의 디스크·메모리 여유로는 PDK와 OpenLane 이미지를 둘 수 없습니다
+- 로컬 OpenLane 하드닝. 하드닝은 TT 템플릿의 GitHub Actions로만 합니다
 - 상용 EDA(Vivado, Quartus 등)
 
 CPU와 NPU는 하위 프로젝트로 나눕니다. 이 설계서는 트랙 골격과 CPU 테이프아웃까지 다룹니다.
@@ -66,15 +66,17 @@ Verilog → 시뮬레이션 → 합성(Yosys) → 배치·배선(OpenROAD, TT Ac
 
 | 용도 | 도구 | 설치 |
 |---|---|---|
-| 시뮬레이터 | Icarus Verilog, Verilator | Homebrew |
-| 합성 | Yosys | Homebrew |
+| 시뮬레이터 | Icarus Verilog, Verilator | 기준 머신에 설치. 방법과 버전은 README에 기록 |
+| 합성 | Yosys | 기준 머신에 설치. 방법과 버전은 README에 기록 |
 | 테스트벤치 | cocotb | 트랙 폴더의 Python venv |
-| 파형 보기 | Surfer | 공식 macOS 배포본. Homebrew에 없음 |
+| 파형 보기 | Surfer | 기준 머신에 설치 |
 | 하드닝 | OpenLane(TT 템플릿의 GitHub Actions) | 설치 없음 |
-| RISC-V 툴체인 | riscv64-elf-gcc | 4a단계에서 Homebrew로 설치 |
+| RISC-V 툴체인 | RISC-V GCC(베어메탈 ELF 타깃) | 4a단계에서 기준 머신에 설치 |
 | FPGA | 오픈소스 툴체인이 지원하는 iCE40·ECP5 계열 | 5단계 전에 기종을 정해 구입 |
 
 TT 템플릿이 cocotb 테스트를 쓰므로 0단계부터 같은 테스트 방식을 씁니다.
+
+기준 머신은 Ubuntu 데스크톱입니다. notes.md에 남기는 lint 결과와 합성 셀 수는 기준 머신에서 낸 값을 씁니다. 다른 머신은 읽기와 시뮬레이션에만 씁니다.
 
 ---
 
