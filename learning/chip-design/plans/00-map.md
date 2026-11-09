@@ -91,6 +91,8 @@ git show --stat HEAD
 
 이 태스크는 저장소를 GitHub에 만들기 전에 로컬에서만 진행합니다.
 
+0단계에서는 Task 2와 Task 3을 합쳐 카운터 RTL 쓰기 → 파형 확인 → 테스트 쓰기 → RTL을 일부러 망가뜨려 FAIL 확인 → 되돌리기 순서로 진행합니다. 회로 모양을 보기 전에 테스트를 먼저 쓰는 순서가 Verilog 첫 실습에서는 따라가기 어렵기 때문입니다. 1단계부터는 테스트를 먼저 씁니다.
+
 **Files:**
 - Create: `$TT/`(템플릿 내용 복사, `git init`)
 - Modify: develop `.gitignore`
@@ -182,7 +184,7 @@ Expected: `test_reset_clears` PASS, 나머지 3개 FAIL(템플릿 덧셈기는 0
 - Produces: 루트 Makefile 타깃
   - `test`: `cd test && $(MAKE) -B`(`make -C`는 test/Makefile이 쓰는 `$(PWD)`를 바꾸지 않아 소스를 못 찾음)
   - `lint`: `verilator --lint-only -Wall src/tt_um_tolelom_counter.v`
-  - `synth`: `yosys -p "read_verilog src/tt_um_tolelom_counter.v; synth -top tt_um_tolelom_counter; check -assert; select -assert-none t:\$$_DLATCH*; stat"`. `check -assert`는 다중 드라이버, 구동 안 된 선, 조합 루프를 잡고, 래치는 `select -assert-none`이 잡음
+  - `synth`: `yosys -q -p "read_verilog src/tt_um_tolelom_counter.v; synth -top tt_um_tolelom_counter; check -assert; select -assert-none t:\$$_DLATCH*; tee -o /dev/stdout stat"`. `-q`로 로그를 줄이고 `tee`로 stat만 출력. `check -assert`는 다중 드라이버, 구동 안 된 선, 조합 루프를 잡고, 래치는 `select -assert-none`이 잡음
 
 - [ ] **Step 1: 카운터 구현**
 
@@ -203,7 +205,7 @@ Expected: 경고 0, 종료 코드 0
 Run: `make -C $TT synth`
 Expected: 종료 코드 0. `stat`에 `$_SDFF_PN0_` 8개와 게이트 셀(`$_XOR_`, `$_AND_` 등). 셀 수를 Task 5 notes.md에 옮김
 
-- [ ] **Step 5: 일부러 래치 만들기**
+- [ ] **Step 5: 일부러 래치 만들기(1단계 조합 회로 실습으로 옮김)**
 
 `reg [7:0] latch_tmp;`와 else 없는 `always @(*) if (ui_in[0]) latch_tmp = ui_in;`를 임시로 넣고 `uio_out`을 `latch_tmp`에 임시 연결(연결하지 않으면 합성이 지워서 래치가 안 보임). `make -C $TT synth`가 `select -assert-none`에서 실패하는 것을 사용자와 확인한 뒤 되돌림. 되돌린 뒤 Step 2~4 다시 통과
 
