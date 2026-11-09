@@ -69,7 +69,7 @@ Verilog → 시뮬레이션 → 합성(Yosys) → 배치·배선(OpenROAD, TT Ac
 | 시뮬레이터 | Icarus Verilog, Verilator | 기준 머신에 설치. 방법과 버전은 README에 기록 |
 | 합성 | Yosys | 기준 머신에 설치. 방법과 버전은 README에 기록 |
 | 테스트벤치 | cocotb | 트랙 폴더의 Python venv |
-| 파형 보기 | Surfer | 기준 머신에 설치 |
+| 파형 보기 | GTKWave | 기준 머신에 설치. TT 템플릿에 보기 설정 파일(tb.gtkw)이 있음 |
 | 하드닝 | OpenLane(TT 템플릿의 GitHub Actions) | 설치 없음 |
 | RISC-V 툴체인 | RISC-V GCC(베어메탈 ELF 타깃) | 4a단계에서 기준 머신에 설치 |
 | FPGA | 오픈소스 툴체인이 지원하는 iCE40·ECP5 계열 | 5단계 전에 기종을 정해 구입 |
@@ -84,7 +84,7 @@ TT 템플릿이 cocotb 테스트를 쓰므로 0단계부터 같은 테스트 방
 
 ```
 learning/chip-design/
-  README.md        트랙 소개, 단계표, 도구 설치 방법
+  README.md        트랙 소개, 설계서 링크, 도구 설치 방법
   design.md        이 문서
   requirements.txt cocotb 버전 고정
   stages/
