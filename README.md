@@ -9,7 +9,7 @@
 | 위치 | 내용 |
 |---|---|
 | `devices/` | 기기별 폴더. 기기 하나의 계획서·설계서와 펌웨어·회로가 한 폴더에 있다. 문서가 하나면 `README.md` |
-| `learning/` | 보드를 익히는 학습 트랙. `rp2040-baremetal/`(XIAO RP2040 베어메탈), `nrf52840-circuitpython/`(XIAO nRF52840 Sense CircuitPython) |
+| `learning/` | 보드를 익히는 학습 트랙. `rp2040-baremetal/`(XIAO RP2040 베어메탈), `nrf52840-circuitpython/`(XIAO nRF52840 Sense CircuitPython), `chip-design/`(Verilog 칩 설계, Tiny Tapeout) |
 | `parts/` | 부품 기준 문서. 스펙, 제약, 툴체인, 디버깅 경로, 데이터시트 출처. 한 부품이 여러 기기에 쓰여 여기에 모은다 |
 | `backups/` | 보드에서 채취한 공장 출하 플래시의 채취 기록과 해시. 덤프 원본은 비공개 저장소에 둔다 |
 | `inventory.md` | 보유 장비 목록 |
@@ -32,6 +32,7 @@
 |---|---|---|
 | RP2040 베어메탈 | XIAO RP2040 | [rp2040-baremetal](learning/rp2040-baremetal/) |
 | CircuitPython | XIAO nRF52840 Sense | [nrf52840-circuitpython](learning/nrf52840-circuitpython/) |
+| 칩 설계 | Tiny Tapeout(SKY130) | [chip-design](learning/chip-design/) |
 
 ## 부품
 
