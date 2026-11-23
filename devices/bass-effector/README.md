@@ -67,7 +67,7 @@ CMake와 g++로 돌린다. 저장소 루트에서 실행한다.
 
     cmake -S devices/bass-effector -B devices/bass-effector/build -DCMAKE_BUILD_TYPE=Release
     cmake --build devices/bass-effector/build
-    ./effector/build/native_tests
+    devices/bass-effector/build/native_tests
 
 ## 오프라인 청음
 
